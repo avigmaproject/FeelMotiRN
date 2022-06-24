@@ -1,14 +1,10 @@
 import {
   View,
-  Button,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Alert,
   Image,
-  Keyboard,
   ScrollView,
-  Platform,
 } from 'react-native';
 import {TextInput} from 'react-native-paper';
 import React, {useState} from 'react';
@@ -21,6 +17,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import InputText from "../CustomComponent/InputText"
 import Separator from '../Assets/Separator.png';
 import Social from "../CustomComponent/Social"
+import Button from "../CustomComponent/Button"
+
 const isValidField = obj => {
   return Object.values(obj).every(value => value.trim());
 };
@@ -82,8 +80,11 @@ const Signin = ({navigation}) => {
         .then(res => {
           console.log('res: ', JSON.stringify(res));
           setloading(false);
-          dispatch(setToken(res.access_token));
-          dispatch(setLoggedIn());
+         setloading(false);
+          if (res.access_token) {
+            dispatch(setToken(res.access_token));
+            dispatch(setLoggedIn());
+          }
         })
         .catch(error => {
           setloading(false);
@@ -117,7 +118,7 @@ alert("onClickApple")
   return (
 <SafeAreaView style={{flex:1,backgroundColor: '#FFFFFF'}}>
 <ScrollView
-      contentContainerStyle={{flex: 1}}
+      contentContainerStyle={{flexGrow: 1,marginHorizontal:20}}
       style={{backgroundColor: '#FFFFFF'}}>
       <View>
         <View style={styles.heading}>
@@ -143,27 +144,22 @@ alert("onClickApple")
 
           />
         </View>
-        <View style={styles.password}>
+        <View>
           <TouchableOpacity
             onPress={() => navigation.navigate('ForgetPassword')}>
             <Text style={styles.forgot}>Forgot password?</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.reset}>
+        <View>
           <TouchableOpacity
             onPress={() => navigation.navigate('ResetPassword')}>
             <Text style={styles.reset1}>Reset password?</Text>
           </TouchableOpacity>
         </View>
-
-        <View style={styles.button}>
-          <TouchableOpacity>
-            <Text style={styles.submit} onPress={submitForm}>
-              {' '}
-              Sign In
-            </Text>
-          </TouchableOpacity>
-        </View>
+  <View>
+        <Button onPress={submitForm} title="Sign In"/>
+      </View>
+       
        <Image resizeMode="stretch" source={Separator} style={{height:25,width:"90%",alignSelf:"center"}} />
        <Social onClickFB = {()=>onClickFB()} onClickGmail = {()=>onClickGmail()}onClickApple = {()=>onClickApple()}/>
         <View style={styles.containerFooter}>
@@ -181,7 +177,6 @@ alert("onClickApple")
 const styles = StyleSheet.create({
   heading: {
     marginTop: 25,
-    marginLeft: 20,
     width: '90%',
     height: 43,
 
@@ -196,7 +191,6 @@ const styles = StyleSheet.create({
   header: {
     width: '90%',
 
-    marginLeft: 20,
   },
   text2: {
     fontSize: 16,
@@ -205,7 +199,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   textinput: {
-    width: '90%',alignSelf:"center",marginTop:20
+    width: '100%',alignSelf:"center",marginTop:20
   },
   email: {
     height: 47,
@@ -215,61 +209,21 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     padding: 10,
   },
-  pas: {
-    height: 47,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#EBEBEB',
-    padding: 10,
-  },
-  password: {
-    width: '90%',
-
-    marginLeft: 20,
-    marginBottom: 5,
-  },
+ 
   forgot: {
     textAlign: 'right',
     marginTop: 5,
     fontSize: 14,
     fontWeight: '600',
-
     color: '#9B9C9F',
-  },
-  reset: {
-    width: '90%',
-
-    marginLeft: 20,
-    marginBottom: 15,
   },
   reset1: {
     textAlign: 'right',
     fontSize: 14,
     fontWeight: '600',
-
     color: '#9B9C9F',
+    marginVertical:5
   },
-  button: {
-    marginTop: 3,
-    width: '90%',
-    height: 60,
-    borderRadius: 10,
-    backgroundColor: '#DBBE80',
-    marginBottom: 40,
-    left: 20,
-  },
-  submit: {
-    textAlign: 'center',
-    padding: 18,
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
- 
-  
-
- 
-  
   containerFooter: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -298,7 +252,6 @@ const styles = StyleSheet.create({
 
     fontSize: 15,
     width: '90%',
-    marginLeft: 20,
   },
 });
 

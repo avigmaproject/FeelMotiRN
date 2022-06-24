@@ -16,9 +16,6 @@ import moti from '../Assets/moti.png';
 import bell from '../Assets/bell.png';
 import profile from '../Assets/profile.png';
 import user from '../Assets/user.png';
-import like from '../Assets/like.png';
-import comment from '../Assets/comment.png';
-import save from '../Assets/save.png';
 import body from '../Assets/body.jpeg';
 import React from 'react';
 import Icon from 'react-native-vector-icons/Entypo';
@@ -26,35 +23,27 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Tabs from '../Navigation/Tabs';
-Icon.loadFont();
-// import {NavigationContainer} from '@react-navigation/native';
 const DATA = [
   {
     image: require('../Assets/body.jpeg'),
-
     name: 'Ronald Richards',
     state: 'United States',
-
     likeCount: '22k',
-
     commentCount: '543',
   },
   {
     image: require('../Assets/body.jpeg'),
-
     name: 'Ronald Richards',
     state: 'United States',
-
     likeCount: '22k',
-
     commentCount: '543',
   },
 ];
 
-const Home = () => {
+const Home = ({navigation}) => {
   return (
-    <ScrollView contentContainerStyle={{flex: 1}}>
+   <SafeAreaView style={{flex:1}}>
+ <ScrollView contentContainerStyle={{flexGrow: 1}}>
       <View style={{backgroundColor: '##E5E5E5'}}>
         <View style={styles.header}>
           <TouchableOpacity>
@@ -65,7 +54,7 @@ const Home = () => {
               <Image source={bell} style={styles.bell} />
             </TouchableOpacity>
             <View>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={()=>navigation.navigate("Profile")}>
                 <Image source={profile} style={styles.profile} />
               </TouchableOpacity>
             </View>
@@ -91,7 +80,6 @@ const Home = () => {
 
                 <View style={styles.dot}>
                   <TouchableOpacity>
-                    {/* <Image source={like} style={styles.like} /> */}
                     <Icon
                       name={'dots-three-vertical'}
                       size={24}
@@ -117,8 +105,6 @@ const Home = () => {
                 <View style={styles.icon}>
                   <View style={styles.icontext}>
                     <TouchableOpacity>
-                      {/* <Image source={like} style={styles.like} /> */}
-
                       <Entypo
                         name={'heart'}
                         size={24}
@@ -171,6 +157,7 @@ const Home = () => {
         />
       </View>
     </ScrollView>
+</SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
@@ -224,14 +211,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     height: 19,
     color: '#36596A',
-    fontFamily: 'Open Sans',
     fontWeight: '400',
   },
   text2: {
     fontSize: 12,
     height: 16,
     color: '#A6A6A6',
-    fontFamily: 'Open Sans',
     fontWeight: '400',
   },
   image: {
@@ -255,7 +240,6 @@ const styles = StyleSheet.create({
   },
   content1: {
     margin: 10,
-    fontFamily: 'Open Sans',
     fontWeight: '400',
     fontSize: 14,
     color: '#9B9C9F',
@@ -267,7 +251,6 @@ const styles = StyleSheet.create({
   },
   liketext: {
     marginLeft: 10,
-    fontFamily: 'Open Sans',
     fontWeight: '400',
     fontSize: 14,
     color: '#231F20',
@@ -293,7 +276,6 @@ const styles = StyleSheet.create({
   },
   commenttext: {
     marginLeft: 10,
-    fontFamily: 'Open Sans',
     fontWeight: '400',
     fontSize: 14,
     color: '#231F20',

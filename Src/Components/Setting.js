@@ -11,9 +11,9 @@ import {
   Keyboard,
   ScrollView,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
 import back from '../Assets/back.png';
-import Search from 'react-native-vector-icons/AntDesign';
 import Right from 'react-native-vector-icons/Entypo';
 import Edit from 'react-native-vector-icons/Feather';
 import Credit from 'react-native-vector-icons/SimpleLineIcons';
@@ -21,32 +21,21 @@ import Star from 'react-native-vector-icons/EvilIcons';
 import User from 'react-native-vector-icons/Feather';
 import Lock from 'react-native-vector-icons/Feather';
 import Shield from 'react-native-vector-icons/Ionicons';
-const EditProfile = ({navigation}) => {
+import Header from "../CustomComponent/Header"
+
+const Setting = ({navigation}) => {
   return (
-    <ScrollView
-      style={{
-        height: Dimensions.get('screen').height,
-      }}>
+     <SafeAreaView style={{flex:1,backgroundColor:"#F8F8FA",}}>
+      <ScrollView contentContainerStyle={{marginHorizontal:10}}>
       <View>
-        <View style={styles.heading}>
-          <View style={styles.back}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('ForgetPassword')}>
-              <Image source={back} style={styles.back1} />
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.text}>Setting</Text>
-          <TouchableOpacity>
-            <Search name={'search1'} size={24} color="#424242" />
-          </TouchableOpacity>
-        </View>
+              <Header onPress={() => navigation.navigate('Profile')} search = {true}title ={"Setting"}/>
         <View style={styles.heading1}>
-          <View style={styles.subheading}>
+          <View style={styles.subheading2}>
             <Text style={styles.account}>Account</Text>
           </View>
 
           <View style={styles.box}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress ={() => navigation.navigate("EditProfile")}>
               <View style={styles.boxcontent}>
                 <Edit name={'edit'} size={24} color="#DBBE80" />
                 <Text style={styles.edit}>Edit Profile</Text>
@@ -63,7 +52,7 @@ const EditProfile = ({navigation}) => {
               </View>
             </TouchableOpacity>
           </View>
-          <View style={styles.box2}>
+          <View style={{...styles.box2,borderBottomWidth:0}}>
             <TouchableOpacity>
               <View style={styles.boxcontent2}>
                 <Star name={'star'} size={24} color="#DBBE80" />
@@ -78,7 +67,7 @@ const EditProfile = ({navigation}) => {
             <Text style={styles.account}>Subscription</Text>
           </View>
 
-          <View style={styles.boxB}>
+          <View style={{...styles.boxB,borderBottomWidth:0}}>
             <TouchableOpacity>
               <View style={styles.boxcontentB}>
                 <User name={'user-check'} size={24} color="#DBBE80" />
@@ -106,7 +95,7 @@ const EditProfile = ({navigation}) => {
               </View>
             </TouchableOpacity>
           </View>
-          <View style={styles.boxC}>
+          <View style={{...styles.boxC,borderBottomWidth:0}}>
             <TouchableOpacity>
               <View style={styles.boxcontentC}>
                 <Lock name={'lock'} size={24} color="#DBBE80" />
@@ -148,7 +137,7 @@ const EditProfile = ({navigation}) => {
               </View>
             </TouchableOpacity>
           </View>
-          <View style={styles.box2}>
+          <View style={{...styles.box2,borderBottomWidth:0}}>
             <TouchableOpacity>
               <View style={styles.boxcontent2}>
                 <Star name={'star'} size={24} color="#DBBE80" />
@@ -160,6 +149,7 @@ const EditProfile = ({navigation}) => {
         </View>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -170,7 +160,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 25,
-    marginLeft: 20,
     marginBottom: 15,
     width: '90%',
     height: 32,
@@ -182,22 +171,18 @@ const styles = StyleSheet.create({
     fontSize: 24,
     // backgroundColor: 'red',
     color: '#424242',
-    fontFamily: 'Open Sans',
     fontWeight: '700',
   },
   heading1: {
     backgroundColor: '#FFFFFF',
-    marginLeft: 20,
-    width: '90%',
+    width: '100%',
     borderWidth: 1,
     borderColor: '#FFF7E4',
     borderRadius: 4,
   },
   subheading: {
-    marginLeft: 25,
   },
   account: {
-    fontFamily: 'Open Sans',
     fontWeight: '600',
     fontSize: 18,
     color: '#424242',
@@ -205,14 +190,9 @@ const styles = StyleSheet.create({
   box: {
     marginTop: 10,
     height: 55,
-    width: '90%',
-    borderWidth: 1,
-    borderColor: '#00000',
-    // opacity: 0.05,
-    marginLeft: 20,
-    // margin: 15,
-
-    // backgroundColor: 'red',
+    width: '100%',
+    borderBottomWidth: 1,
+    borderColor: 'lightgray',
   },
   boxcontent: {
     padding: 15,
@@ -221,7 +201,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   edit: {
-    fontFamily: 'Open Sans',
     fontWeight: '600',
     fontSize: 16,
     color: '#424242',
@@ -231,14 +210,10 @@ const styles = StyleSheet.create({
   box1: {
     // marginTop: 10,
     height: 55,
-    width: '90%',
-    borderWidth: 1,
-    borderColor: '#00000',
-    // opacity: 0.05,
-    marginLeft: 20,
-    // margin: 15,
+    width: '100%',
+    borderBottomWidth: 1,
+    borderColor: 'lightgray',
 
-    // backgroundColor: 'red',
   },
   boxcontent1: {
     padding: 15,
@@ -247,7 +222,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   wallet: {
-    fontFamily: 'Open Sans',
     fontWeight: '600',
     fontSize: 16,
     color: '#424242',
@@ -256,11 +230,10 @@ const styles = StyleSheet.create({
   box2: {
     // marginTop: 10,
     height: 55,
-    width: '90%',
-    borderWidth: 1,
-    borderColor: '#00000',
+    width: '100%',
+    borderBottomWidth: 1,
+    borderColor: 'lightgray',
     // opacity: 0.05,
-    marginLeft: 20,
     // margin: 15,
 
     // backgroundColor: 'red',
@@ -272,7 +245,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   creator: {
-    fontFamily: 'Open Sans',
     fontWeight: '600',
     fontSize: 16,
     color: '#424242',
@@ -281,17 +253,16 @@ const styles = StyleSheet.create({
   heading2: {
     marginTop: 20,
     backgroundColor: '#FFFFFF',
-    marginLeft: 20,
-    width: '90%',
+    width: '100%',
     borderWidth: 1,
     borderColor: '#FFF7E4',
     borderRadius: 4,
   },
-  subheading2: {
-    marginLeft: 25,
+  subheading2: {  
+paddingVertical:10,
+paddingHorizontal:20
   },
   account: {
-    fontFamily: 'Open Sans',
     fontWeight: '600',
     fontSize: 18,
     color: '#424242',
@@ -299,11 +270,10 @@ const styles = StyleSheet.create({
   boxB: {
     marginTop: 10,
     height: 55,
-    width: '90%',
-    borderWidth: 1,
-    borderColor: '#00000',
+    width: '100%',
+    borderBottomWidth: 1,
+    borderColor: 'lightgray',
     // opacity: 0.05,
-    marginLeft: 20,
     // margin: 15,
 
     // backgroundColor: 'red',
@@ -315,25 +285,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   subscription: {
-    fontFamily: 'Open Sans',
     fontWeight: '600',
     fontSize: 16,
     color: '#424242',
     marginRight: 60,
   },
   boxC: {
-    // marginTop: 20,
     height: 55,
-    width: '90%',
-    borderWidth: 1,
-    borderColor: '#00000',
-    // opacity: 0.05,
-    marginLeft: 20,
-    // margin: 15,
-
-    // backgroundColor: 'red',
-  },
-  boxcontentC: {
+    width: '100%',
+    borderBottomWidth: 1,
+    borderColor: 'lightgray',},
+    boxcontentC: {
     padding: 15,
     display: 'flex',
     flexDirection: 'row',
@@ -341,14 +303,12 @@ const styles = StyleSheet.create({
   },
 
   privacy: {
-    fontFamily: 'Open Sans',
     fontWeight: '600',
     fontSize: 16,
     color: '#424242',
     marginRight: 40,
   },
   password: {
-    fontFamily: 'Open Sans',
     fontWeight: '600',
     fontSize: 16,
     color: '#424242',
@@ -358,32 +318,28 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 30,
     backgroundColor: '#FFFFFF',
-    marginLeft: 20,
-    width: '90%',
+    width: '100%',
     borderWidth: 1,
     borderColor: '#FFF7E4',
     borderRadius: 4,
   },
   card: {
-    fontFamily: 'Open Sans',
     fontWeight: '600',
     fontSize: 16,
     color: '#424242',
     marginRight: 100,
   },
   payout: {
-    fontFamily: 'Open Sans',
     fontWeight: '600',
     fontSize: 16,
     color: '#424242',
     marginRight: 60,
   },
   withdraw: {
-    fontFamily: 'Open Sans',
     fontWeight: '600',
     fontSize: 16,
     color: '#424242',
     marginRight: 80,
   },
 });
-export default EditProfile;
+export default Setting;

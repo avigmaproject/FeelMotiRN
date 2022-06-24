@@ -14,6 +14,7 @@ export default function InputText(props) {
             theme={{colors: {primary: '#9B9C9F',background:"#fff",} ,roundness: 5}}
             right={props.right}
             secureTextEntry={props.secureTextEntry}
+            editable={!props.editable}
           />
         <Text style={{color: '#DBBE80',
 

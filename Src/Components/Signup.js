@@ -1,17 +1,13 @@
 import {
   View,
-  Button,
   Text,
   StyleSheet,
-  BackHandler,
   TouchableOpacity,
   Image,
-  Keyboard,
   ScrollView,
-  Alert,
 } from 'react-native';
 import React, {useState} from 'react';
-import {register, getverificationlink} from '../Utils/apiconfig';
+import {register,} from '../Utils/apiconfig';
 import qs from 'qs';
 import {useDispatch, useSelector} from 'react-redux';
 import {setLoggedIn, setToken} from '../store/action/auth/action';
@@ -21,6 +17,8 @@ import InputText from "../CustomComponent/InputText"
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Social from "../CustomComponent/Social"
+import Header from "../CustomComponent/Header"
+import Button from "../CustomComponent/Button"
 
 const isValidField = obj => {
   return Object.values(obj).every(value => value.trim());
@@ -138,12 +136,8 @@ const Signup = ({navigation}) => {
 >
       <View>
         <View>
-          <MaterialCommunityIcons
-            onPress={() => navigation.navigate('Signin')}
-            name={'keyboard-backspace'}
-            size={35}
-            color="#424242"
-           />
+        <Header onPress={() => navigation.navigate('Signin')}/>
+         
          
         </View>
         <View style={styles.heading}>
@@ -181,14 +175,17 @@ const Signup = ({navigation}) => {
 
           />
         </View>
-        <View style={styles.button}>
+        <View>
+        <Button onPress={submitForm} title="Sign Up"/>
+      </View>
+        {/* <View style={styles.button}>
           <TouchableOpacity>
             <Text style={styles.submit} onPress={submitForm}>
               {' '}
               Sign Up
             </Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
        <Image resizeMode="stretch" source={Separator} style={{height:25,width:"90%",alignSelf:"center"}} />
 
         <Social onClickFB = {()=>onClickFB()} onClickGmail = {()=>onClickGmail()}onClickApple = {()=>onClickApple()}/>
@@ -210,7 +207,6 @@ export default Signup;
 const styles = StyleSheet.create({
   back: {
     marginTop: 18,
-    marginLeft: 20,
 
   },
   heading: {
@@ -221,7 +217,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 30,
-
     color: '#424242',
     fontWeight: '700',
   },
@@ -230,13 +225,12 @@ const styles = StyleSheet.create({
   },
   text2: {
     fontSize: 16,
-
     color: '#9B9C9F',
     fontWeight: '400',
   },
   textinput: {
     justifyContent: 'space-between',
-    width: '90%',
+    width: '100%',
     margin: 4,
   },
   input: {
@@ -246,27 +240,12 @@ const styles = StyleSheet.create({
     borderColor: '#EBEBEB',
   },
 
-  button: {
-    width: '90%',
-    height: 60,
-    borderRadius: 10,
-    backgroundColor: '#DBBE80',
-    marginBottom: 10,
-    alignSelf: 'center',
-  },
-  submit: {
-    textAlign: 'center',
-    padding: 18,
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
   
   containerFooter: {
     flexDirection: 'row',
     justifyContent: 'center',
     fontSize: 16,
-    width: '90%',
+    width: '100%',
     alignItems: 'center',
     alignSelf: 'center',
   },

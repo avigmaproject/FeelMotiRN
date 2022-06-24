@@ -12,14 +12,19 @@ import {
 import back from '../Assets/back.png';
 import InputText from "../CustomComponent/InputText"
 import {TextInput} from 'react-native-paper';
-  import { Dropdown } from 'react-native-element-dropdown';
-  import AntDesign from 'react-native-vector-icons/AntDesign';
+import { Dropdown } from 'react-native-element-dropdown';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import moment from "moment";
+import Header from '../CustomComponent/Header'
+import Button from "../CustomComponent/Button"
 
 const EditProfile = ({navigation}) => {
 const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
+const [value1, setValue1] = useState(null);
+    const [isFocus1, setIsFocus1] = useState(false);
+      const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
-    
 
   const [form, setForm] = useState({
     fullName: '',
@@ -28,48 +33,69 @@ const [value, setValue] = useState(null);
     profession: '',
     language: '',
     dob:'',
-    gender:''
+    company:'',
+    unitedstates:'',
+    gender:'',
+    city:'',
+    address:'',
+    postal:''
   });
   const [error, setError] = useState('');
   const [loading, setloading] = useState(false);
 const data = [
-    { label: 'Item 1', value: '1' },
-    { label: 'Item 2', value: '2' },
-    { label: 'Item 3', value: '3' },
-    { label: 'Item 4', value: '4' },
-    { label: 'Item 5', value: '5' },
-    { label: 'Item 6', value: '6' },
-    { label: 'Item 7', value: '7' },
-    { label: 'Item 8', value: '8' },
+    { label: 'English', value: '1' },
+    { label: 'Hindi', value: '2' },
+    { label: 'Franch', value: '3' },
+  ];
+const data1 = [
+    { label: 'Male', value: '1' },
+    { label: 'Female', value: '2' },
+    { label: "Can't determine", value: '3' },
   ];
 
+const handleOnChangeText = (value, fieldName) => {
+    setForm({...form, [fieldName]: value});
+  };
+ const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
 
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+ const handleConfirm = (date) => {
+    console.log("A date has been picked: ", date);
+    console.log("dateaeatatag", typeof moment(date).format("LL"));
+    setForm({...form, dob:  moment(date).format("LL")});
 
+    hideDatePicker();
+  };
 const renderLabel = () => {
       if (value || isFocus) {
         return (
-          <Text style={[styles.label, isFocus && { color: 'blue' }]}>
-            Dropdown label
+          <Text style={[styles.label, isFocus && { color: 'gray' }]}>
+          Language
           </Text>
         );
       }
       return null;
     };
-  const {fullName, email, profession, language,username,dob,gender} = form;
+const renderLabel1 = () => {
+      if (value1 || isFocus1) {
+        return (
+          <Text style={[styles.label, isFocus && { color: 'gray' }]}>
+          Gender
+          </Text>
+        );
+      }
+      return null;
+    };
+  const {fullName, email, profession,username,dob,company,unitedstates,gender,city,address,postal} = form;
   return (
-  <SafeAreaView>
-  <ScrollView
-      style={{
-        height: Dimensions.get('screen').height,
-      }}>
-      <View style={styles.heading}>
-        <View style={styles.back}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('ForgetPassword')}>
-            <Image source={back} style={styles.back1} />
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.text}>Edit Profile</Text>
+  <SafeAreaView style={{backgroundColor:"#fff", flex:1}}>
+  <ScrollView contentContainerStyle={{marginHorizontal:20}}>
+      <View>
+        <Header onPress={() => navigation.navigate('Setting')} title={"Edit Profile"}/>
       </View>
       <View style={{backgroundColor: '#FFFFFF', borderRadius: 20}}>
         <View style={styles.textinput}>
@@ -96,7 +122,7 @@ const renderLabel = () => {
 <View style={styles.container}>
         {renderLabel()}
         <Dropdown
-          style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+          style={[styles.dropdown, isFocus && { borderColor: 'gray' ,  borderWidth: 1.5}]}
           placeholderStyle={styles.placeholderStyle}
           selectedTextStyle={styles.selectedTextStyle}
           inputSearchStyle={styles.inputSearchStyle}
@@ -118,91 +144,80 @@ const renderLabel = () => {
           }}
         />
       </View>
-{/* <InputText             
-            onChangeText={value => handleOnChangeText(value, 'language')}
-             label={"Language*"}
-            value={language}
-          /> */}
+
+<View>
+  <DateTimePickerModal
+                  isVisible={isDatePickerVisible}
+                  mode="date"
+                  onConfirm={handleConfirm}
+                  onCancel={hideDatePicker}
+                />
 <InputText             
             onChangeText={value => handleOnChangeText(value, 'dob')}
              label={"Date of Birth*"}
             value={dob}
-            right={<TextInput.Icon name= "calendar"  color={"#9B9C9F"} />}
-
+            right={<TextInput.Icon name= "calendar"  color={"#9B9C9F"}  onPress={()=>showDatePicker()}/>}
+            editable={true}
           />
-<InputText             
-            onChangeText={value => handleOnChangeText(value, 'gender')}
-             label={"Gender*"}
-            value={gender}
-          />
-          {/* <TextInput
-            style={styles.input}
-            autoCapitalize="none"
-            label="Full name*"
-            placeholder="Full name* "
-          />
-          <TextInput
-            style={styles.input}
-            autoCapitalize="none"
-            label="username"
-            placeholder="username*"
-          />
-          <TextInput
-            style={styles.input}
-            autoCapitalize="none"
-            label="Email Address"
-            placeholder="Email Address"
-          />
-          <TextInput
-            style={styles.input}
-            autoCapitalize="none"
-            label="Profession/Ocupation"
-            placeholder="Profession/Ocupation"
-          />
-          <TextInput
-            style={styles.input}
-            autoCapitalize="none"
-            label="Language"
-            placeholder="Language"
-          />
-
-          <TextInput
-            style={styles.input}
-            autoCapitalize="none"
-            label="Date of Birth"
-            placeholder="Date of Birth"
-          />
-          <TextInput
-            style={styles.input}
-            autoCapitalize="none"
-            label="Gender"
-            placeholder="Gender"
-          /> */}
+</View>
+<View style={styles.container}>
+        {renderLabel1()}
+        <Dropdown
+          style={[styles.dropdown, isFocus1 && { borderColor: 'gray',  borderWidth: 1.5 }]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={data1}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!isFocus1 ? 'Language*' : '...'}
+          searchPlaceholder="Search..."
+          value={value1}
+          onFocus={() => setIsFocus1(true)}
+          onBlur={() => setIsFocus1(false)}
+          onChange={item => {
+            handleOnChangeText(item.value, 'language')
+            setValue1(item.value);
+            setIsFocus1(false);
+          }}
+        />
+      </View>
         </View>
 
         <View style={styles.heading2}>
           <Text style={styles.text2}>Billing Information</Text>
         </View>
         <View style={styles.textinput}>
-          <TextInput
-            style={styles.input}
-            autoCapitalize="none"
-            label="Company"
-            placeholder="Company "
+<InputText             
+            onChangeText={value => handleOnChangeText(value, 'company')}
+            label={"Company*"} 
+            value={company}
           />
-          <TextInput
-            style={styles.input}
-            autoCapitalize="none"
-            label="United States"
-            placeholder="United States"
+<InputText             
+            onChangeText={value => handleOnChangeText(value, 'unitedstates')}
+            label={"United States*"} 
+            value={unitedstates}
+          />
+<InputText             
+            onChangeText={value => handleOnChangeText(value, 'city')}
+            label={"City*"} 
+            value={city}
           />
 
-          <TextInput
-            style={styles.input}
-            autoCapitalize="none"
-            label="City"
-            placeholder="City"
+<InputText             
+            onChangeText={value => handleOnChangeText(value, 'address')}
+            label={"Address*"} 
+            value={address}
           />
+<InputText             
+            onChangeText={value => handleOnChangeText(value, 'postal')}
+            label={"Postal/ZIP*"} 
+            value={postal}
+          />
+          {/* 
           <TextInput
             style={styles.input}
             autoCapitalize="none"
@@ -214,13 +229,12 @@ const renderLabel = () => {
             autoCapitalize="none"
             label="Postal/ZIP"
             placeholder="Postal/ZIP"
-          />
+          /> */}
+
         </View>
-        <View style={styles.button}>
-          <TouchableOpacity>
-            <Text style={styles.submit}>Save Changes</Text>
-          </TouchableOpacity>
-        </View>
+      <View>
+        <Button title="Save Changes"/>
+      </View>
       </View>
     </ScrollView>
   </SafeAreaView>
@@ -234,71 +248,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 25,
-    marginLeft: 20,
     marginBottom: 15,
-    width: '90%',
+    width: '100%',
     height: 32,
     // backgroundColor: 'red',
   },
-  text: {
-    color: '#424242',
-    fontSize: 24,
-    marginRight: 120,
-    color: '#424242',
-    // fontFamily: 'Open Sans',
-    fontWeight: '700',
-  },
+ 
   textinput: {
     marginTop: 10,
     justifyContent: 'space-between',
-    width: '90%',
+    width: '100%',
     backgroundColor: '#FFFFFF',
-    marginLeft: 20,
-    margin: 15,
   },
 
   input: {
-    height: 65,
+    height: 50,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: '#EBEBEB',
     borderRadius: 10,
-
     marginVertical: 10,
     padding: 15,
   },
-  button: {
-    width: '90%',
-    backgroundColor: '#FFFFFF',
-    height: 60,
-    backgroundColor: '#DBBE80',
-    marginBottom: 55,
-    borderRadius: 10,
-    left: 20,
-  },
-  submit: {
-    // backgroundColor: '#FFFFFF',
-    textAlign: 'center',
-    padding: 18,
-    fontSize: 18,
-    // fontFamily: 'Open Sans',
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
-  home: {
-    width: '45%',
-    height: 60,
-    backgroundColor: '#DBBE80',
-    padding: 20,
-    textAlign: 'center',
-    left: 100,
-    margin: 15,
-    borderRadius: 10,
-  },
+ 
   heading2: {
-    // backgroundColor: '#FFFFFF',
     marginTop: 25,
-    marginLeft: 20,
     width: '90%',
     height: 32,
   },
@@ -307,17 +281,17 @@ const styles = StyleSheet.create({
     fontSize: 24,
     // backgroundColor: '#FFFFFF',
     color: '#424242',
-    // fontFamily: 'Open Sans',
     fontWeight: '700',
   },
  container: {
       backgroundColor: 'white',
       // padding: 16,
+      marginTop:10
     },
     dropdown: {
       height: 55,
       borderColor: 'gray',
-      borderWidth: 0.5,
+      borderWidth: 1,
       borderRadius: 8,
       paddingHorizontal: 8,
     },
@@ -327,15 +301,18 @@ const styles = StyleSheet.create({
     label: {
       position: 'absolute',
       backgroundColor: 'white',
-      left: 22,
-      top: 8,
+      left: 8,
+      top: -7,
       zIndex: 999,
-      paddingHorizontal: 8,
-      fontSize: 14,
+      paddingHorizontal: 5,
+      fontSize: 12,
+      color:"gray"
+
     },
     placeholderStyle: {
       fontSize: 16,
       color:"gray"
+      
     },
     selectedTextStyle: {
       fontSize: 16,

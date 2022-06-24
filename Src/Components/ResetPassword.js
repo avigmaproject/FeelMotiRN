@@ -1,6 +1,5 @@
 import {
   View,
-  Button,
   Text,
   StyleSheet,
   TouchableOpacity,
@@ -11,9 +10,10 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import {TextInput} from 'react-native-paper';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import InputText from "../CustomComponent/InputText"
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Header from "../CustomComponent/Header"
+import Button from "../CustomComponent/Button"
 
 const ResetPassword = ({navigation}) => {
   const [resetPassword, setResetPassword] = useState({
@@ -43,14 +43,7 @@ const handleSecureEntry =() =>{
     <SafeAreaView style={{flex: 1,backgroundColor:"#fff"}}>
       <ScrollView contentContainerStyle={{flexGrow: 1,marginHorizontal:20}}>
       <View>
-         <View>
-            <MaterialCommunityIcons
-              onPress={() => navigation.navigate('Signin')}
-              name={'keyboard-backspace'}
-              size={35}
-              color="#424242"
-            />
-        </View>
+          <Header onPress={() => navigation.navigate('Signin')}/>
         <View style={styles.heading}>
           <Text style={styles.text}>Reset Password</Text>
         </View>
@@ -90,13 +83,10 @@ const handleSecureEntry =() =>{
             onChangeText={value => handleOnChangeText(value, 'confirmpassword')}
           /> */}
         </View>
-        <View style={styles.button}>
-          <TouchableOpacity>
-            <Text style={styles.submit} onPress={submitForm}>
-              Submit
-            </Text>
-          </TouchableOpacity>
-        </View>
+      <View>
+        <Button onPress={()=>submitForm()} title="Submit"/>
+      </View>
+
       </View>
     </ScrollView>
     </SafeAreaView>
@@ -125,20 +115,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginVertical: 15,
     padding: 10,
-  },
-  button: {
-    width: '100%',
-    height: 60,
-    backgroundColor: '#DBBE80',
-    marginBottom: 55,
-    borderRadius: 10,
-  },
-  submit: {
-    textAlign: 'center',
-    padding: 18,
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#FFFFFF',
   },
 });
 

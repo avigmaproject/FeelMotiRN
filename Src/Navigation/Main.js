@@ -1,24 +1,27 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import Home from "../Components/Home";
-import HomeTab from "./HomeTab"
-import SearchTab from "./SearchTab"
+import HomeTab from "./HomeTab";
+import SearchTab from "./SearchTab";
+import SendTab from "./SendTab";
+import AddTab from "./AddTab";
 
 import React from "react";
-import {Image} from 'react-native';
+import { Image } from "react-native";
 const Tab = createBottomTabNavigator();
 
-export default  function Main() {
+export default function Main() {
   return (
-    <Tab.Navigator  screenOptions={({ route }) => ({
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let image;
           if (route.name === "HomeTab") {
             image = focused
               ? require("../Assets/homeactive.png")
               : require("../Assets/homedeactvive.png");
-          } else if (route.name === "Send") {
+          } else if (route.name === "SendTab") {
             image = focused
               ? require("../Assets/sendactive.png")
               : require("../Assets/senddeactive.png");
@@ -26,11 +29,11 @@ export default  function Main() {
             image = focused
               ? require("../Assets/searchactive.png")
               : require("../Assets/searchdeactive.png");
-          } else if (route.name === "Add") {
+          } else if (route.name === "AddTab") {
             image = focused
               ? require("../Assets/adddeactive.png")
               : require("../Assets/adddeactive.png");
-          } 
+          }
           return (
             <Image
               source={image}
@@ -41,12 +44,12 @@ export default  function Main() {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarHideOnKeyboard: true,
-      })}>
+      })}
+    >
       <Tab.Screen name="HomeTab" component={HomeTab} />
       <Tab.Screen name="SearchTab" component={SearchTab} />
-      <Tab.Screen name="Send" component={Home} />
-      <Tab.Screen name="Add" component={Home} />
-
+      <Tab.Screen name="SendTab" component={SendTab} />
+      <Tab.Screen name="AddTab" component={AddTab} />
     </Tab.Navigator>
   );
 }

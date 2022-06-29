@@ -24,12 +24,24 @@ import InputText from "../CustomComponent/InputText";
 
 const Creator = ({ navigation }) => {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8FA" }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        // backgroundColor: "#ffffff",
+      }}
+    >
       <Header
         onPress={() => navigation.navigate("Setting")}
         title={"Be A Creator"}
       />
-      <ScrollView contentContainerStyle={{ marginHorizontal: 10 }}>
+
+      <ScrollView
+        contentContainerStyle={{
+          // marginHorizontal: 10,
+          backgroundColor: "#ffffff",
+          borderRadius: 25,
+        }}
+      >
         <View>
           <View style={styles.box}>
             <View style={styles.boxcontent}>
@@ -48,7 +60,7 @@ const Creator = ({ navigation }) => {
                 Fill in your address, city, ZIP and attach
               </Text>
               <Text style={styles.innertext2}>
-                your goverment issued picture ID
+                your government issued picture ID
               </Text>
             </View>
           </View>

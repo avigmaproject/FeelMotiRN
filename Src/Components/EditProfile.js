@@ -107,7 +107,6 @@ const EditProfile = ({ navigation }) => {
         title={"Edit Profile"}
       />
       <ScrollView contentContainerStyle={{ marginHorizontal: 20 }}>
-        <View></View>
         <View style={{ backgroundColor: "#FFFFFF", borderRadius: 20 }}>
           <View style={styles.textinput}>
             <InputText
@@ -122,12 +121,12 @@ const EditProfile = ({ navigation }) => {
             />
             <InputText
               onChangeText={(value) => handleOnChangeText(value, "email")}
-              label={"Email address*"}
+              label={"Email address"}
               value={email}
             />
             <InputText
               onChangeText={(value) => handleOnChangeText(value, "profession")}
-              label={"Profession/Ocupation*"}
+              label={"Profession/Ocupation"}
               value={profession}
             />
             <View style={styles.container}>
@@ -146,7 +145,7 @@ const EditProfile = ({ navigation }) => {
                 maxHeight={300}
                 labelField="label"
                 valueField="value"
-                placeholder={!isFocus ? "Language*" : "..."}
+                placeholder={!isFocus ? "Language" : "..."}
                 searchPlaceholder="Search..."
                 value={value}
                 onFocus={() => setIsFocus(true)}
@@ -168,7 +167,7 @@ const EditProfile = ({ navigation }) => {
               />
               <InputText
                 onChangeText={(value) => handleOnChangeText(value, "dob")}
-                label={"Date of Birth*"}
+                label={"Date of Birth"}
                 value={dob}
                 right={
                   <TextInput.Icon
@@ -196,7 +195,7 @@ const EditProfile = ({ navigation }) => {
                 maxHeight={300}
                 labelField="label"
                 valueField="value"
-                placeholder={!isFocus1 ? "Language*" : "..."}
+                placeholder={!isFocus1 ? "Gender" : "..."}
                 searchPlaceholder="Search..."
                 value={value1}
                 onFocus={() => setIsFocus1(true)}
@@ -216,30 +215,30 @@ const EditProfile = ({ navigation }) => {
           <View style={styles.textinput}>
             <InputText
               onChangeText={(value) => handleOnChangeText(value, "company")}
-              label={"Company*"}
+              label={"Company"}
               value={company}
             />
             <InputText
               onChangeText={(value) =>
                 handleOnChangeText(value, "unitedstates")
               }
-              label={"United States*"}
+              label={"United States"}
               value={unitedstates}
             />
             <InputText
               onChangeText={(value) => handleOnChangeText(value, "city")}
-              label={"City*"}
+              label={"City"}
               value={city}
             />
 
             <InputText
               onChangeText={(value) => handleOnChangeText(value, "address")}
-              label={"Address*"}
+              label={"Address"}
               value={address}
             />
             <InputText
               onChangeText={(value) => handleOnChangeText(value, "postal")}
-              label={"Postal/ZIP*"}
+              label={"Postal/ZIP"}
               value={postal}
             />
             {/* 

@@ -6,19 +6,20 @@ import Search from "react-native-vector-icons/AntDesign";
 
 export default function Header(props) {
   return (
-    <View style={{ flexDirection: "row" }}>
+    <View style={{ flexDirection: "row", backgroundColor: "#E5E5E5" }}>
       <View style={{ width: "15%" }}>
         <MaterialCommunityIcons
           onPress={props.onPress}
           name={"keyboard-backspace"}
           size={40}
           color="#424242"
+          style={{ marginLeft: 10 }}
         />
       </View>
       <View
         style={{ width: "75%", justifyContent: "center", alignItems: "center" }}
       >
-        <Text style={{ fontSize: 30, color: "#424242", fontWeight: "600" }}>
+        <Text style={{ fontSize: 24, color: "#424242", fontWeight: "700" }}>
           {props.title}
         </Text>
       </View>
@@ -26,12 +27,17 @@ export default function Header(props) {
         style={{ width: "10%", justifyContent: "center", alignItems: "center" }}
       >
         {props.search ? (
-          <Search name={"search1"} size={24} color="#424242" />
+          <Search
+            name={"search1"}
+            size={24}
+            color="#424242"
+            style={{ marginRight: 10 }}
+          />
         ) : props.settings ? (
           <Feather
             onPress={props.onPress2}
             name={"settings"}
-            size={30}
+            size={24}
             color="#424242"
           />
         ) : null}

@@ -19,6 +19,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import Social from "../CustomComponent/Social";
 import Header from "../CustomComponent/Header";
 import Button from "../CustomComponent/Button";
+import back from "../Assets/back.png";
 
 const isValidField = (obj) => {
   return Object.values(obj).every((value) => value.trim());
@@ -131,10 +132,24 @@ const Signup = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1, marginHorizontal: 20 }}>
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ flexGrow: 1, marginHorizontal: 20 }}
+      >
         <View>
-          <View>
-            <Header onPress={() => navigation.navigate("Signin")} />
+          {/* <View>
+            <Header
+              onPress={() => navigation.navigate("Signin")}
+              style={{ backgroundColor: "#" }}
+            />
+          </View>
+          <View style={styles.heading}>
+            <Text style={styles.text}>Sign Up</Text>
+          </View> */}
+          <View style={styles.back}>
+            <TouchableOpacity onPress={() => navigation.navigate("Signin")}>
+              <Image source={back} style={styles.back1} />
+            </TouchableOpacity>
           </View>
           <View style={styles.heading}>
             <Text style={styles.text}>Sign Up</Text>
@@ -224,10 +239,10 @@ export default Signup;
 
 const styles = StyleSheet.create({
   back: {
-    marginTop: 18,
+    marginTop: 12,
   },
   heading: {
-    marginTop: 2,
+    marginTop: 7,
     width: "90%",
     height: 43,
     marginVertical: 10,

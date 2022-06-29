@@ -118,6 +118,7 @@ const Signin = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <ScrollView
+        keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ flexGrow: 1, marginHorizontal: 20 }}
         style={{ backgroundColor: "#FFFFFF" }}
       >

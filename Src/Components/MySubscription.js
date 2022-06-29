@@ -31,8 +31,18 @@ const MySubscription = ({ navigation }) => {
         onPress={() => navigation.navigate("Setting")}
         title={"My Subscription"}
       />
-      <ScrollView contentContainerStyle={{ marginHorizontal: 10 }}>
-        <View style={{ backgroundColor: "#FFFFFF", borderRadius: 20 }}>
+      <ScrollView
+        contentContainerStyle={{ backgroundColor: "#ffffff", borderRadius: 30 }}
+      >
+        <View
+          style={
+            {
+              // backgroundColor: "#FFFFFF",
+              // borderRadius: 20,
+              // marginTop: 15,
+            }
+          }
+        >
           <View style={styles.box}>
             <View style={styles.innerbox}>
               <TouchableOpacity>
@@ -44,15 +54,40 @@ const MySubscription = ({ navigation }) => {
               </View>
             </View>
             <View>
-              <Text style={styles.intrval}>Intrval:Not Applicable</Text>
+              <Text style={styles.intrval}>
+                Interval:{" "}
+                <Text
+                  style={{
+                    fontWeight: "300",
+                  }}
+                >
+                  Not Applicable
+                </Text>
+              </Text>
             </View>
             <View style={styles.boxbottom}>
               <Text style={styles.boxbottomtext}>
-                Ends at:Free Subscription
+                Ends at:{" "}
+                <Text
+                  style={{
+                    fontWeight: "300",
+                  }}
+                >
+                  Free Subscription
+                </Text>
               </Text>
               <View style={styles.statusbox}>
                 <TouchableOpacity>
-                  <Text style={styles.status}>Status:Active</Text>
+                  <Text style={styles.status}>
+                    Status:
+                    <Text
+                      style={{
+                        fontWeight: "300",
+                      }}
+                    >
+                      Active
+                    </Text>
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -68,15 +103,40 @@ const MySubscription = ({ navigation }) => {
               </View>
             </View>
             <View>
-              <Text style={styles.intrval}>Intrval:Not Applicable</Text>
+              <Text style={styles.intrval}>
+                Interval:{" "}
+                <Text
+                  style={{
+                    fontWeight: "300",
+                  }}
+                >
+                  Not Applicable
+                </Text>
+              </Text>
             </View>
             <View style={styles.boxbottom}>
               <Text style={styles.boxbottomtext}>
-                Ends at:Free Subscription
+                Ends at:{" "}
+                <Text
+                  style={{
+                    fontWeight: "300",
+                  }}
+                >
+                  Free Subscription
+                </Text>
               </Text>
               <View style={styles.statusbox}>
                 <TouchableOpacity>
-                  <Text style={styles.status}>Status:Active</Text>
+                  <Text style={styles.status}>
+                    Status:
+                    <Text
+                      style={{
+                        fontWeight: "300",
+                      }}
+                    >
+                      Active
+                    </Text>
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -92,15 +152,40 @@ const MySubscription = ({ navigation }) => {
               </View>
             </View>
             <View>
-              <Text style={styles.intrval}>Intrval:Not Applicable</Text>
+              <Text style={styles.intrval}>
+                Interval:{" "}
+                <Text
+                  style={{
+                    fontWeight: "300",
+                  }}
+                >
+                  Not Applicable
+                </Text>
+              </Text>
             </View>
             <View style={styles.boxbottom}>
               <Text style={styles.boxbottomtext}>
-                Ends at:Free Subscription
+                Ends at:{" "}
+                <Text
+                  style={{
+                    fontWeight: "300",
+                  }}
+                >
+                  Free Subscription
+                </Text>
               </Text>
               <View style={styles.statusbox}>
                 <TouchableOpacity>
-                  <Text style={styles.status}>Status:Active</Text>
+                  <Text style={styles.status}>
+                    Status:
+                    <Text
+                      style={{
+                        fontWeight: "300",
+                      }}
+                    >
+                      Active
+                    </Text>
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -116,15 +201,40 @@ const MySubscription = ({ navigation }) => {
               </View>
             </View>
             <View>
-              <Text style={styles.intrval}>Intrval:Not Applicable</Text>
+              <Text style={styles.intrval}>
+                Interval:{" "}
+                <Text
+                  style={{
+                    fontWeight: "300",
+                  }}
+                >
+                  Not Applicable
+                </Text>
+              </Text>
             </View>
             <View style={styles.boxbottom}>
               <Text style={styles.boxbottomtext}>
-                Ends at:Free Subscription
+                Ends at:{" "}
+                <Text
+                  style={{
+                    fontWeight: "300",
+                  }}
+                >
+                  Free Subscription
+                </Text>
               </Text>
               <View style={styles.statusbox}>
                 <TouchableOpacity>
-                  <Text style={styles.status}>Status:Active</Text>
+                  <Text style={styles.status}>
+                    Status:
+                    <Text
+                      style={{
+                        fontWeight: "300",
+                      }}
+                    >
+                      Active
+                    </Text>
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>

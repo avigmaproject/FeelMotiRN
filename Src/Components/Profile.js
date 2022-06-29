@@ -15,6 +15,7 @@ import story2 from "../Assets/story2.png";
 import story3 from "../Assets/story3.png";
 import story4 from "../Assets/story4.png";
 import story5 from "../Assets/story5.png";
+import ProfileTabView from "../Navigation/ProfileTabView";
 
 export default function Profile({ navigation }) {
   return (
@@ -55,18 +56,24 @@ export default function Profile({ navigation }) {
           </View>
           <View style={styles.buttonConatainer}>
             <TouchableOpacity>
-              <View style={styles.box}>
-                <Text style={styles.subscribe}>Subscribe</Text>
+              <View style={{ marginRight: 10 }}>
+                <View style={styles.box}>
+                  <Text style={styles.subscribe}>Subscribe</Text>
+                </View>
               </View>
             </TouchableOpacity>
             <TouchableOpacity>
-              <View style={styles.box2}>
-                <Text style={styles.message}>Message</Text>
+              <View style={{ marginRight: 10 }}>
+                <View style={styles.box2}>
+                  <Text style={styles.message}>Message</Text>
+                </View>
               </View>
             </TouchableOpacity>
             <TouchableOpacity>
-              <View style={styles.box2}>
-                <Text style={styles.message}>Sponsor</Text>
+              <View style={{ marginRight: 10 }}>
+                <View style={styles.box2}>
+                  <Text style={styles.message}>Sponsor</Text>
+                </View>
               </View>
             </TouchableOpacity>
             <TouchableOpacity>
@@ -107,6 +114,9 @@ export default function Profile({ navigation }) {
               <Text style={styles.title}>Tit</Text>
             </View>
           </View>
+          <View>
+            <ProfileTabView />
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -114,10 +124,9 @@ export default function Profile({ navigation }) {
 }
 const styles = StyleSheet.create({
   buttonConatainer: {
-    // marginLeft: 10,
+    marginLeft: 10,
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-around",
   },
   box: {
     marginTop: 20,
@@ -125,7 +134,6 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#DBBE80",
     borderRadius: 4,
-    // marginRight: 20,
   },
   subscribe: {
     width: "100%",
@@ -141,6 +149,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(219, 190, 128, 0.1)",
     borderColor: "#EAE2D1",
     borderRadius: 4,
+    // marginHorizontal: 10,
   },
   message: {
     width: "100%",

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import AuthStack from "./Src/Navigation/AuthStack";
 import Main from "./Src/Navigation/Main";
@@ -21,6 +21,7 @@ function App() {
   console.log(user);
   return (
     <NavigationContainer>
+      <StatusBar backgroundColor="#f5f5f5" />
       {!user ? <AuthStack /> : <Main />}
     </NavigationContainer>
   );

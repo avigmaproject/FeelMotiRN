@@ -88,8 +88,8 @@ export const registerStoreImage = async (data, access_token) => {
       throw error;
     });
 };
-export const getverificationlink = async (data, access_token) => {
-  return axios(API.GET_VERIFICATION_LINK, {
+export const getuserpost = async (data, access_token) => {
+  return axios(API.GET_USER_POST, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

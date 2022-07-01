@@ -5,7 +5,7 @@ import * as React from "react";
 
 const Stack = createNativeStackNavigator();
 
-export default function SearchTab() {
+export default function NavigationTab() {
   return (
     <Stack.Navigator
       screenOptions={{

@@ -13,14 +13,20 @@ import home from '../Assets/home.png';
 import * as Animatable from 'react-native-animatable';
 
 function Launcher({navigation}) {
+React.useEffect(() => {
+  
+ let timer = setTimeout(() => navigation.navigate('Signin'), 2000);
+
+        return () => clearInterval(timer)
+}, [])
+
   return (
     <View style={styles.container}>
-   <Animatable.View animation={"zoomInDown"}>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Signin')}>
+    <Animatable.View animation="fadeInDownBig" easing="ease-out" >
+      <Animatable.View animation="pulse" >
         <Image source={home} />
-      </TouchableOpacity>
-</Animatable.View>
+      </Animatable.View>
+    </Animatable.View>
     </View>
   );
 }

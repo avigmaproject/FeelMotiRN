@@ -21,6 +21,8 @@ target 'Feelmoti' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+  pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
+
   target 'FeelmotiTests' do
     inherit! :complete
     # Pods for testing

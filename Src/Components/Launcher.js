@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Button,
@@ -8,19 +8,20 @@ import {
   TouchableOpacity,
   Alert,
   Image,
-} from 'react-native';
-import home from '../Assets/home.png';
-import * as Animatable from 'react-native-animatable';
+  StatusBar,
+} from "react-native";
+import home from "../Assets/home.png";
+import * as Animatable from "react-native-animatable";
 
-function Launcher({navigation}) {
+function Launcher({ navigation }) {
   return (
     <View style={styles.container}>
-   <Animatable.View animation={"zoomInDown"}>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Signin')}>
-        <Image source={home} />
-      </TouchableOpacity>
-</Animatable.View>
+      <StatusBar backgroundColor="#DBBE80" />
+      <Animatable.View animation={"zoomInDown"}>
+        <TouchableOpacity onPress={() => navigation.navigate("Signin")}>
+          <Image source={home} />
+        </TouchableOpacity>
+      </Animatable.View>
     </View>
   );
 }
@@ -28,10 +29,9 @@ function Launcher({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems:"center",
-    backgroundColor: '#DBBE80',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#DBBE80",
   },
-  
 });
 export default Launcher;

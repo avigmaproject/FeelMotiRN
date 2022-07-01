@@ -56,6 +56,7 @@ export default function Main() {
       <Tab.Screen name="SearchTab" component={SearchTab} />
       <Tab.Screen name="SendTab" component={SendTab} />
       <Tab.Screen name="AddTab" component={AddTab} />
+
       {/* <Tab.Screen name="NavigationTab" component={NavigationTab} /> */}
     </Tab.Navigator>
   );

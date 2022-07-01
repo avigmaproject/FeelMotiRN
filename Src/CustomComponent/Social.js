@@ -13,12 +13,14 @@ export default function Social(props) {
   return (
     <View style={styles.containerIcon}>
       <View style={styles.circle}>
-        <MaterialCommunityIcons
-          onPress={props.onClickFB}
-          name={"facebook"}
-          size={35}
-          color="#3B5998"
-        />
+        <TouchableOpacity>
+          <MaterialCommunityIcons
+            onPress={props.onClickFB}
+            name={"facebook"}
+            size={35}
+            color="#3B5998"
+          />
+        </TouchableOpacity>
       </View>
       <View style={styles.circle}>
         <TouchableOpacity onPress={props.onClickGmail}>
@@ -27,12 +29,14 @@ export default function Social(props) {
       </View>
       {Platform.OS === "ios" && (
         <View style={styles.circle}>
-          <MaterialCommunityIcons
-            onPress={props.onClickApple}
-            name={"apple"}
-            size={35}
-            color="#000"
-          />
+          <TouchableOpacity>
+            <MaterialCommunityIcons
+              onPress={props.onClickApple}
+              name={"apple"}
+              size={35}
+              color="#000"
+            />
+          </TouchableOpacity>
         </View>
       )}
     </View>

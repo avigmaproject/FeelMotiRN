@@ -31,7 +31,9 @@ const Setting = ({ navigation }) => {
         search={true}
         title={"Setting"}
       />
-      <ScrollView contentContainerStyle={{ marginHorizontal: 10 }}>
+      <ScrollView
+        contentContainerStyle={{ marginHorizontal: 10, marginTop: 10 }}
+      >
         <View>
           <View style={styles.heading1}>
             <View style={styles.subheading2}>
@@ -107,7 +109,9 @@ const Setting = ({ navigation }) => {
             </View>
 
             <View style={styles.boxB}>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("PrivacySecurity")}
+              >
                 <View style={styles.boxcontentB}>
                   <Shield
                     name={"shield-checkmark-outline"}
@@ -143,7 +147,7 @@ const Setting = ({ navigation }) => {
             </View>
 
             <View style={styles.box}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate("Explore")}>
                 <View style={styles.boxcontent}>
                   <Edit name={"edit"} size={24} color="#DBBE80" />
                   <Text style={styles.edit}>Payments</Text>

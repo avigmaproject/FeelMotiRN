@@ -32,7 +32,11 @@ const MySubscription = ({ navigation }) => {
         title={"My Subscription"}
       />
       <ScrollView
-        contentContainerStyle={{ backgroundColor: "#ffffff", borderRadius: 30 }}
+        contentContainerStyle={{
+          backgroundColor: "#ffffff",
+          borderRadius: 30,
+          marginTop: 10,
+        }}
       >
         <View
           style={

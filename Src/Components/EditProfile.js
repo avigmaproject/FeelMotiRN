@@ -106,7 +106,12 @@ const EditProfile = ({ navigation }) => {
         onPress={() => navigation.navigate("Setting")}
         title={"Edit Profile"}
       />
-      <ScrollView contentContainerStyle={{ marginHorizontal: 20 }}>
+      <ScrollView
+        contentContainerStyle={{
+          backgroundColor: "#fff",
+          marginHorizontal: 20,
+        }}
+      >
         <View style={{ backgroundColor: "#FFFFFF", borderRadius: 20 }}>
           <View style={styles.textinput}>
             <InputText

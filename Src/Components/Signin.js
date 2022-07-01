@@ -109,15 +109,15 @@ const Signin = ({ navigation }) => {
       console.log("info", userInfo);
     }
   };
-  const onClickFB = () => {
-    alert("onClickFB");
-  };
-  const onClickGmail = () => {
-    alert("onClickGmail");
-  };
-  const onClickApple = () => {
-    alert("onClickApple");
-  };
+  // const onClickFB = () => {
+  //   alert("onClickFB");
+  // };
+  // const onClickGmail = () => {
+  //   alert("onClickGmail");
+  // };
+  // const onClickApple = () => {
+  //   alert("onClickApple");
+  // };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <ScrollView
@@ -179,9 +179,9 @@ const Signin = ({ navigation }) => {
             style={{ height: 25, width: "90%", alignSelf: "center" }}
           />
           <Social
-            onClickFB={() => onClickFB()}
-            onClickGmail={() => onClickGmail()}
-            onClickApple={() => onClickApple()}
+          // onClickFB={() => onClickFB()}
+          // onClickGmail={() => onClickGmail()}
+          // onClickApple={() => onClickApple()}
           />
           <View style={styles.containerFooter}>
             <Text style={styles.footer}>Don't have an account? </Text>

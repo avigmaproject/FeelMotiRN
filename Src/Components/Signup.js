@@ -31,15 +31,15 @@ const updateError = (error, stateUpdate) => {
     stateUpdate("");
   }, 2500);
 };
-const onClickFB = () => {
-  alert("onClickFB");
-};
-const onClickGmail = () => {
-  alert("onClickGmail");
-};
-const onClickApple = () => {
-  alert("onClickApple");
-};
+// const onClickFB = () => {
+//   alert("onClickFB");
+// };
+// const onClickGmail = () => {
+//   alert("onClickGmail");
+// };
+// const onClickApple = () => {
+//   alert("onClickApple");
+// };
 const isValidEmail = (value) => {
   const regx = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
   return regx.test(value);
@@ -223,9 +223,9 @@ const Signup = ({ navigation }) => {
           />
 
           <Social
-            onClickFB={() => onClickFB()}
-            onClickGmail={() => onClickGmail()}
-            onClickApple={() => onClickApple()}
+          // onClickFB={() => onClickFB()}
+          // onClickGmail={() => onClickGmail()}
+          // onClickApple={() => onClickApple()}
           />
 
           <View style={styles.containerFooter}>

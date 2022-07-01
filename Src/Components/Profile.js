@@ -19,9 +19,10 @@ import ProfileTabView from "../Navigation/ProfileTabView";
 
 export default function Profile({ navigation }) {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#F5F5F5" }}>
       <Header
         settings={true}
+        onPress={() => navigation.navigate("Home")}
         onPress2={() => navigation.navigate("Setting")}
         title={"Leslie Alexander"}
       />
@@ -114,9 +115,9 @@ export default function Profile({ navigation }) {
               <Text style={styles.title}>Tit</Text>
             </View>
           </View>
-          <View>
+          {/* <View>
             <ProfileTabView />
-          </View>
+          </View> */}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -133,6 +134,8 @@ const styles = StyleSheet.create({
     height: 42,
     width: "100%",
     backgroundColor: "#DBBE80",
+    borderWidth: 1,
+    borderColor: "#EAE2D1",
     borderRadius: 4,
   },
   subscribe: {
@@ -149,7 +152,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(219, 190, 128, 0.1)",
     borderColor: "#EAE2D1",
     borderRadius: 4,
-    // marginHorizontal: 10,
+    borderWidth: 1,
   },
   message: {
     width: "100%",

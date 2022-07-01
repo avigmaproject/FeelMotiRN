@@ -21,7 +21,7 @@ function App() {
   console.log(user);
   return (
     <NavigationContainer>
-      <StatusBar backgroundColor="#f5f5f5" />
+      <StatusBar backgroundColor="#ffffff" />
       {!user ? <AuthStack /> : <Main />}
     </NavigationContainer>
   );

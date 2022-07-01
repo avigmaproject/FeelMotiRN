@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 60,
     backgroundColor: "#DBBE80",
-    marginBottom: 55,
+    marginBottom: 45,
     borderRadius: 10,
   },
   submit: {

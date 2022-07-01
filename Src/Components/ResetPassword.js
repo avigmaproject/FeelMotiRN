@@ -14,7 +14,7 @@ import InputText from "../CustomComponent/InputText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../CustomComponent/Header";
 import Button from "../CustomComponent/Button";
-
+import back from "../Assets/back.png";
 const ResetPassword = ({ navigation }) => {
   const [resetPassword, setResetPassword] = useState({
     password: "",
@@ -42,7 +42,12 @@ const ResetPassword = ({ navigation }) => {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <ScrollView contentContainerStyle={{ flexGrow: 1, marginHorizontal: 20 }}>
         <View>
-          <Header onPress={() => navigation.navigate("Signin")} />
+          {/* <Header onPress={() => navigation.navigate("Signin")} /> */}
+          <View style={styles.back}>
+            <TouchableOpacity onPress={() => navigation.navigate("Signin")}>
+              <Image source={back} style={styles.back1} />
+            </TouchableOpacity>
+          </View>
           <View style={styles.heading}>
             <Text style={styles.text}>Reset Password</Text>
           </View>

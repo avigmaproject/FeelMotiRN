@@ -49,7 +49,7 @@ const EditProfile = ({ navigation }) => {
   const data1 = [
     { label: "Male", value: "1" },
     { label: "Female", value: "2" },
-    { label: "Can't determine", value: "3" },
+    { label: "other", value: "3" },
   ];
 
   const handleOnChangeText = (value, fieldName) => {
@@ -126,7 +126,7 @@ const EditProfile = ({ navigation }) => {
             />
             <InputText
               onChangeText={(value) => handleOnChangeText(value, "profession")}
-              label={"Profession/Ocupation"}
+              label={"Profession/Occupation"}
               value={profession}
             />
             <View style={styles.container}>

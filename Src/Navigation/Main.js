@@ -6,9 +6,11 @@ import HomeTab from "./HomeTab";
 import SearchTab from "./SearchTab";
 import SendTab from "./SendTab";
 import AddTab from "./AddTab";
-
+import NavigationTab from "./NavigationTab";
+import compass from "react-native-vector-icons/SimpleLineIcons";
 import React from "react";
 import { Image } from "react-native";
+import Ionic from "react-native-vector-icons/Ionicons";
 const Tab = createBottomTabNavigator();
 
 export default function Main() {
@@ -31,8 +33,12 @@ export default function Main() {
               : require("../Assets/searchdeactive.png");
           } else if (route.name === "AddTab") {
             image = focused
-              ? require("../Assets/adddeactive.png")
-              : require("../Assets/adddeactive.png");
+              ? require("../Assets/bell.png")
+              : require("../Assets/bell.png");
+          } else if (route.name === "AddTab") {
+            image = focused
+              ? require("../Assets/bell.png")
+              : require("../Assets/bell.png");
           }
           return (
             <Image
@@ -50,6 +56,7 @@ export default function Main() {
       <Tab.Screen name="SearchTab" component={SearchTab} />
       <Tab.Screen name="SendTab" component={SendTab} />
       <Tab.Screen name="AddTab" component={AddTab} />
+      {/* <Tab.Screen name="NavigationTab" component={NavigationTab} /> */}
     </Tab.Navigator>
   );
 }

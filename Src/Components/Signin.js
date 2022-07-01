@@ -44,7 +44,7 @@ const Signin = ({ navigation }) => {
   });
   const [loading, setloading] = useState(false);
   const [error, setError] = useState("");
-  const [secureTextEntry, setsecureTextEntry] = useState(false);
+  const [secureTextEntry, setsecureTextEntry] = useState(true);
 
   const { email, password } = userInfo;
   const handleOnChangeText = (value, fieldName) => {
@@ -59,7 +59,10 @@ const Signin = ({ navigation }) => {
       return updateError("Required all fields!", setError);
     if (!isValidEmail(email)) return updateError("Invalid email!", setError);
     if (!password.trim() || password.length < 8)
-      return updateError("Password must be atleast 8 chracter long!", setError);
+      return updateError(
+        "Password must be atleast 8 character long!",
+        setError
+      );
     return true;
   };
 
@@ -118,7 +121,7 @@ const Signin = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <ScrollView
-        keyboardShouldPersistTaps="handled"
+        // keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ flexGrow: 1, marginHorizontal: 20 }}
         style={{ backgroundColor: "#FFFFFF" }}
       >

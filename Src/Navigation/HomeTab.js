@@ -6,6 +6,7 @@ import Setting from "../Components/Setting";
 import Wallet from "../Components/Wallet";
 import Creator from "../Components/Creator";
 import MySubscription from "../Components/MySubscription";
+import Password from "../Components/Password";
 
 import * as React from "react";
 
@@ -25,6 +26,7 @@ export default function HomeTab() {
       <Stack.Screen name="Wallet" component={Wallet} />
       <Stack.Screen name="Creator" component={Creator} />
       <Stack.Screen name="MySubscription" component={MySubscription} />
+      <Stack.Screen name="Password" component={Password} />
     </Stack.Navigator>
   );
 }

@@ -124,7 +124,7 @@ const Setting = ({ navigation }) => {
               </TouchableOpacity>
             </View>
             <View style={{ ...styles.boxC, borderBottomWidth: 0 }}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate("Password")}>
                 <View style={styles.boxcontentC}>
                   <Lock name={"lock"} size={24} color="#DBBE80" />
                   <Text style={styles.password}>Password</Text>

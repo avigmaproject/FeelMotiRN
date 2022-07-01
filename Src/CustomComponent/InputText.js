@@ -11,13 +11,13 @@ export default function InputText(props) {
         autoCapitalize="none"
         label={props.label}
         onChangeText={props.onChangeText}
+        style={{ borderColor: "#EBEBEB" }}
         theme={{
           colors: {
             primary: "#9B9C9F",
             background: "#fff",
           },
           roundness: 5,
-          borderColor: "#EBEBEB",
         }}
         right={props.right}
         secureTextEntry={props.secureTextEntry}

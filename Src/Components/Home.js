@@ -42,7 +42,7 @@ const DATA = [
 
 const Home = ({ navigation }) => {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={{ backgroundColor: "##E5E5E5" }}>
           <View style={styles.header}>
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   header: {
     marginLeft: 20,
     width: "90%",
-    marginTop: 15,
+    marginTop: 5,
     flexDirection: "row",
     justifyContent: "space-between",
     paddingTop: 10,
@@ -223,10 +223,9 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    // marginLeft: 20,
     backgroundColor: "green",
   },
-  image1: { height: 200, width: "100%" },
+  image1: { height: 450, width: "100%" },
   dot: {
     marginRight: 20,
     justifyContent: "flex-end",

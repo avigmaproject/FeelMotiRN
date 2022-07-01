@@ -54,8 +54,8 @@ const Signup = ({ navigation }) => {
     password: "",
     confirmPassword: "",
   });
-  const [secureTextEntry, setsecureTextEntry] = useState(false);
-  const [csecureTextEntry, csetsecureTextEntry] = useState(false);
+  const [secureTextEntry, setsecureTextEntry] = useState(true);
+  const [csecureTextEntry, csetsecureTextEntry] = useState(true);
 
   const [error, setError] = useState("");
   const [loading, setloading] = useState(false);
@@ -133,7 +133,7 @@ const Signup = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <ScrollView
-        keyboardShouldPersistTaps="handled"
+        // keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ flexGrow: 1, marginHorizontal: 20 }}
       >
         <View>
@@ -155,12 +155,12 @@ const Signup = ({ navigation }) => {
             <Text style={styles.text}>Sign Up</Text>
           </View>
           <View style={styles.header}>
-            <Text style={styles.text2}>Please sign up to enter in a app</Text>
+            <Text style={styles.text2}>Please sign up to enter in app</Text>
           </View>
           <View style={styles.textinput}>
             <InputText
               onChangeText={(value) => handleOnChangeText(value, "fullName")}
-              label={"Full name"}
+              label={"Full name*"}
               value={fullName}
             />
             <InputText
@@ -214,7 +214,12 @@ const Signup = ({ navigation }) => {
           <Image
             resizeMode="stretch"
             source={Separator}
-            style={{ height: 25, width: "90%", alignSelf: "center" }}
+            style={{
+              height: 25,
+              width: "90%",
+              alignSelf: "center",
+              tintColor: "#9B9C9F",
+            }}
           />
 
           <Social

@@ -36,26 +36,12 @@ import Dot from "react-native-vector-icons/Entypo";
 import Compus from "react-native-vector-icons/SimpleLineIcons";
 import {getuserpost} from "../Utils/apiconfig"
 const windowHeight = Dimensions.get('window').height;
+import {  useSelector } from "react-redux";
 
-
-const DATA = [
-  {
-    image: require("../Assets/body.jpeg"),
-    name: "Jhnoe",
-    state: "United States",
-    likeCount: "22k",
-    commentCount: "543",
-  },
-  {
-    image: require("../Assets/body.jpeg"),
-    name: "Ronald Richards",
-    state: "United kingdom",
-    likeCount: "29k",
-    commentCount: "599",
-  },
-];
 
 const Home = ({ navigation }) => {
+  const token = useSelector((state) => state.authReducer.token);
+
 const [loading, setloading] = React.useState(false)
 const [userpost, setuserpost] = React.useState([])
 React.useEffect(() => {
@@ -72,9 +58,9 @@ React.useEffect(() => {
        Type:1
       };
       console.log("loginnnnnn", data);
-      await getuserpost(data)
+      await getuserpost(data,token)
         .then((res) => {
-          console.log("res: ", res);
+          console.log("res:minal ", res);
           setloading(false);
           setuserpost(res[0])
         })

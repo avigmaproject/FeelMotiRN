@@ -24,7 +24,7 @@ import Check from "react-native-vector-icons/AntDesign";
 import Dot from "react-native-vector-icons/Entypo";
 import Compus from "react-native-vector-icons/SimpleLineIcons";
 import profile from "../Assets/profile.png";
-const Explore = () => {
+const Explore = ({navigation}) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>

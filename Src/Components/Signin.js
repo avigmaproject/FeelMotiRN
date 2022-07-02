@@ -3,7 +3,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Image,
+  StatusBar,
   ScrollView,
 } from "react-native";
 import { TextInput } from "react-native-paper";
@@ -15,7 +15,6 @@ import qs from "qs";
 import { useDispatch, useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import InputText from "../CustomComponent/InputText";
-import Separator from "../Assets/Separator.png";
 import Social from "../CustomComponent/Social";
 import Button from "../CustomComponent/Button";
 
@@ -109,28 +108,28 @@ const Signin = ({ navigation }) => {
       console.log("info", userInfo);
     }
   };
-  // const onClickFB = () => {
-  //   alert("onClickFB");
-  // };
-  // const onClickGmail = () => {
-  //   alert("onClickGmail");
-  // };
-  // const onClickApple = () => {
-  //   alert("onClickApple");
-  // };
+  const onClickFB = () => {
+    alert("onClickFB");
+  };
+  const onClickGmail = () => {
+    alert("onClickGmail");
+  };
+  const onClickApple = () => {
+    alert("onClickApple");
+  };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+{/* <StatusBar backgroundColor="#ffffff" /> */}
       <ScrollView
-        // keyboardShouldPersistTaps="handled"
+        keyboardShouldPersistTaps={"handled"}        
         contentContainerStyle={{ flexGrow: 1, marginHorizontal: 20 }}
-        style={{ backgroundColor: "#FFFFFF" }}
-      >
+        style={{ backgroundColor: "#FFFFFF" }}>
         <View>
           <View style={styles.heading}>
             <Text style={styles.text}>Sign In</Text>
           </View>
           <View style={styles.header}>
-            <Text style={styles.text2}>Please sign in to enter in a app</Text>
+            <Text style={styles.text2}>Please sign in to enter in app</Text>
           </View>
 
           <View style={styles.textinput}>
@@ -172,16 +171,22 @@ const Signin = ({ navigation }) => {
           <View>
             <Button onPress={submitForm} title="Sign In" />
           </View>
-
-          <Image
+ {/* <View style={styles.bar_container}>
+          <View style={styles.bar} />
+          <View>
+            <Text style={styles.or}>OR</Text>
+          </View>
+          <View style={styles.bar} />
+        </View> */}
+          {/* <Image
             resizeMode="stretch"
             source={Separator}
             style={{ height: 25, width: "90%", alignSelf: "center" }}
-          />
+          /> */}
           <Social
-          // onClickFB={() => onClickFB()}
-          // onClickGmail={() => onClickGmail()}
-          // onClickApple={() => onClickApple()}
+            onClickFB={() => onClickFB()}
+            onClickGmail={() => onClickGmail()}
+            onClickApple={() => onClickApple()}
           />
           <View style={styles.containerFooter}>
             <Text style={styles.footer}>Don't have an account? </Text>
@@ -252,6 +257,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     width: "90%",
     alignSelf: "center",
+    marginVertical:20
   },
   footer: {
     fontSize: 16,
@@ -275,6 +281,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     width: "90%",
   },
+
 });
 
 export default Signin;

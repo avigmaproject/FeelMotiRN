@@ -7,6 +7,7 @@ import {
   Image,
   Keyboard,
   ScrollView,
+StatusBar
 } from "react-native";
 import React, { useState } from "react";
 import { TextInput } from "react-native-paper";
@@ -40,9 +41,10 @@ const ResetPassword = ({ navigation }) => {
   };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1, marginHorizontal: 20 }}>
+      {/* <StatusBar backgroundColor="#ffffff" /> */}
+      <Header onPress={() => navigation.navigate("Signin")} />
+      <ScrollView keyboardShouldPersistTaps={"always"} contentContainerStyle={{ flexGrow: 1, marginHorizontal: 20 }}>
         <View>
-          {/* <Header onPress={() => navigation.navigate("Signin")} /> */}
           <View style={styles.back}>
             <TouchableOpacity onPress={() => navigation.navigate("Signin")}>
               <Image source={back} style={styles.back1} />

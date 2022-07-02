@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+StatusBar
 } from "react-native";
 import React, { useState } from "react";
 import { register } from "../Utils/apiconfig";
@@ -12,7 +13,6 @@ import qs from "qs";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoggedIn, setToken } from "../store/action/auth/action";
 import { TextInput } from "react-native-paper";
-import Separator from "../Assets/Separator.png";
 import InputText from "../CustomComponent/InputText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -31,15 +31,15 @@ const updateError = (error, stateUpdate) => {
     stateUpdate("");
   }, 2500);
 };
-// const onClickFB = () => {
-//   alert("onClickFB");
-// };
-// const onClickGmail = () => {
-//   alert("onClickGmail");
-// };
-// const onClickApple = () => {
-//   alert("onClickApple");
-// };
+const onClickFB = () => {
+  alert("onClickFB");
+};
+const onClickGmail = () => {
+  alert("onClickGmail");
+};
+const onClickApple = () => {
+  alert("onClickApple");
+};
 const isValidEmail = (value) => {
   const regx = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
   return regx.test(value);
@@ -85,8 +85,6 @@ const Signup = ({ navigation }) => {
 
   const submitForm = async () => {
     if (isValidForm()) {
-      // Keyboard.dismiss();
-      // const link = await generateLink(form.email);
       setloading(true);
       let data = qs.stringify({
         grant_type: "password",
@@ -128,31 +126,18 @@ const Signup = ({ navigation }) => {
     }
   };
 
-  console.log(form);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+    <Header onPress={() => navigation.navigate('Signin')}/>
+    {/* <StatusBar backgroundColor="#ffffff" /> */}
       <ScrollView
-        // keyboardShouldPersistTaps="handled"
+        keyboardShouldPersistTaps={"always"}
         contentContainerStyle={{ flexGrow: 1, marginHorizontal: 20 }}
       >
         <View>
-          {/* <View>
-            <Header
-              onPress={() => navigation.navigate("Signin")}
-              style={{ backgroundColor: "#" }}
-            />
-          </View>
           <View style={styles.heading}>
-            <Text style={styles.text}>Sign Up</Text>
-          </View> */}
-          <View style={styles.back}>
-            <TouchableOpacity onPress={() => navigation.navigate("Signin")}>
-              <Image source={back} style={styles.back1} />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.heading}>
-            <Text style={styles.text}>Sign Up</Text>
+            <Text style={styles.text}>Sign up</Text>
           </View>
           <View style={styles.header}>
             <Text style={styles.text2}>Please sign up to enter in app</Text>
@@ -211,21 +196,11 @@ const Signup = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
         </View> */}
-          <Image
-            resizeMode="stretch"
-            source={Separator}
-            style={{
-              height: 25,
-              width: "90%",
-              alignSelf: "center",
-              tintColor: "#9B9C9F",
-            }}
-          />
 
           <Social
-          // onClickFB={() => onClickFB()}
-          // onClickGmail={() => onClickGmail()}
-          // onClickApple={() => onClickApple()}
+            onClickFB={() => onClickFB()}
+            onClickGmail={() => onClickGmail()}
+            onClickApple={() => onClickApple()}
           />
 
           <View style={styles.containerFooter}>
@@ -284,6 +259,8 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     alignSelf: "center",
+    marginVertical:20
+
   },
   footer: {
     fontSize: 16,

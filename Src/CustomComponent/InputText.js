@@ -11,17 +11,21 @@ export default function InputText(props) {
         autoCapitalize="none"
         label={props.label}
         onChangeText={props.onChangeText}
-        style={{ borderColor: "#EBEBEB" }}
+        outlineColor={"#EBEBEB"}
+        // style={{ borderColor: "red" ,borderWidth:1}}
         theme={{
           colors: {
-            primary: "#9B9C9F",
+            primary: "#EBEBEB",
             background: "#fff",
+            placeholder:"#EBEBEB"
           },
           roundness: 5,
         }}
         right={props.right}
         secureTextEntry={props.secureTextEntry}
         editable={!props.editable}
+          underlineColor="transparent"   // add this
+
       />
       <Text
         style={{

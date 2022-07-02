@@ -26,7 +26,7 @@ export default function Profile({ navigation }) {
         onPress2={() => navigation.navigate("Setting")}
         title={"Leslie Alexander"}
       />
-      <ScrollView contentContainerStyle={{ marginHorizontal: 10 }}>
+      <ScrollView keyboardShouldPersistTaps={"always"} contentContainerStyle={{ marginHorizontal: 10 }}>
         <View>
           <View>
             <View

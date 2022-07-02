@@ -6,7 +6,7 @@ import Search from "react-native-vector-icons/AntDesign";
 
 export default function Header(props) {
   return (
-    <View style={{ flexDirection: "row", backgroundColor: "#F5F5F5" }}>
+    <View style={{ flexDirection: "row", backgroundColor:  "#ffff"}}>
       <View style={{ width: "15%" }}>
         <MaterialCommunityIcons
           onPress={props.onPress}

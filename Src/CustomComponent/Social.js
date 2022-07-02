@@ -3,7 +3,7 @@ import {
   StyleSheet,
   Platform,
   TouchableOpacity,
-  Image,
+  Image,Text
 } from "react-native";
 import React from "react";
 import google from "../Assets/google.png";
@@ -11,16 +11,22 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 
 export default function Social(props) {
   return (
+  <>
+  <View style={styles.bar_container}>
+    <View style={styles.bar} />
+      <View>
+        <Text style={styles.or}>OR</Text>
+      </View>
+     <View style={styles.bar} />
+   </View>
     <View style={styles.containerIcon}>
       <View style={styles.circle}>
-        <TouchableOpacity>
-          <MaterialCommunityIcons
-            onPress={props.onClickFB}
-            name={"facebook"}
-            size={35}
-            color="#3B5998"
-          />
-        </TouchableOpacity>
+        <MaterialCommunityIcons
+          onPress={props.onClickFB}
+          name={"facebook"}
+          size={35}
+          color="#3B5998"
+        />
       </View>
       <View style={styles.circle}>
         <TouchableOpacity onPress={props.onClickGmail}>
@@ -29,17 +35,17 @@ export default function Social(props) {
       </View>
       {Platform.OS === "ios" && (
         <View style={styles.circle}>
-          <TouchableOpacity>
-            <MaterialCommunityIcons
-              onPress={props.onClickApple}
-              name={"apple"}
-              size={35}
-              color="#000"
-            />
-          </TouchableOpacity>
+          <MaterialCommunityIcons
+            onPress={props.onClickApple}
+            name={"apple"}
+            size={35}
+            color="#000"
+          />
         </View>
       )}
     </View>
+</>
+
   );
 }
 const styles = StyleSheet.create({
@@ -72,5 +78,20 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
     padding: 10,
+  },
+bar_container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 5,
+  },
+  bar: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#989FAA',
+  },
+  or: {
+    width: 50,
+    textAlign: 'center',
+    color: '#B2AEAE',
   },
 });

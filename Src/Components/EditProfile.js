@@ -106,12 +106,7 @@ const EditProfile = ({ navigation }) => {
         onPress={() => navigation.navigate("Setting")}
         title={"Edit Profile"}
       />
-      <ScrollView
-        contentContainerStyle={{
-          backgroundColor: "#fff",
-          marginHorizontal: 20,
-        }}
-      >
+      <ScrollView keyboardShouldPersistTaps={"always"} contentContainerStyle={{ marginHorizontal: 20 }}>
         <View style={{ backgroundColor: "#FFFFFF", borderRadius: 20 }}>
           <View style={styles.textinput}>
             <InputText
@@ -189,7 +184,7 @@ const EditProfile = ({ navigation }) => {
               <Dropdown
                 style={[
                   styles.dropdown,
-                  isFocus1 && { borderColor: "gray", borderWidth: 1.5 },
+                  isFocus1 && { borderColor: "#EBEBEB", borderWidth: 1.5 },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -318,7 +313,7 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     height: 55,
-    borderColor: "gray",
+    borderColor: "#EBEBEB",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 8,
@@ -338,7 +333,7 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: 16,
-    color: "gray",
+    color: "#EBEBEB",
   },
   selectedTextStyle: {
     fontSize: 16,

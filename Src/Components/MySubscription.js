@@ -31,22 +31,10 @@ const MySubscription = ({ navigation }) => {
         onPress={() => navigation.navigate("Setting")}
         title={"My Subscription"}
       />
-      <ScrollView
-        contentContainerStyle={{
-          backgroundColor: "#ffffff",
-          borderRadius: 30,
-          marginTop: 10,
-        }}
+      <ScrollView keyboardShouldPersistTaps={"always"}
+        contentContainerStyle={{ backgroundColor: "#ffffff", borderRadius: 30 }}
       >
-        <View
-          style={
-            {
-              // backgroundColor: "#FFFFFF",
-              // borderRadius: 20,
-              // marginTop: 15,
-            }
-          }
-        >
+        <View>
           <View style={styles.box}>
             <View style={styles.innerbox}>
               <TouchableOpacity>
@@ -60,11 +48,7 @@ const MySubscription = ({ navigation }) => {
             <View>
               <Text style={styles.intrval}>
                 Interval:{" "}
-                <Text
-                  style={{
-                    fontWeight: "300",
-                  }}
-                >
+                <Text style={{fontWeight: "300",}}>
                   Not Applicable
                 </Text>
               </Text>

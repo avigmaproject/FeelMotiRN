@@ -2,7 +2,7 @@ import {
   View,
   Text,
   StyleSheet,
-  ActivityIndicator,
+  StatusBar,
   ScrollView,
   SafeAreaView,
   TouchableOpacity,
@@ -48,15 +48,10 @@ const ForgetPassword = ({ navigation }) => {
   };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <ScrollView contentContainerStyle={{ flex: 1, marginHorizontal: 20 }}>
+      {/* <StatusBar backgroundColor="#ffffff" /> */}
+       <Header onPress={() => navigation.navigate('Signin')}/>
+      <ScrollView keyboardShouldPersistTaps={"always"} contentContainerStyle={{ flex: 1, marginHorizontal: 20 }}>
         <View>
-          {/* <Header onPress={() => navigation.navigate('Signin')}/>
-           */}
-          <View style={styles.back}>
-            <TouchableOpacity onPress={() => navigation.navigate("Signin")}>
-              <Image source={back} style={styles.back1} />
-            </TouchableOpacity>
-          </View>
           <View style={styles.heading}>
             <Text style={styles.text}>Forgot Password</Text>
           </View>

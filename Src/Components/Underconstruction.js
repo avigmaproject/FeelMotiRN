@@ -15,7 +15,7 @@ import {
 const Underconstruction = () => {
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
-      <ScrollView contentContainerStyle={{ marginHorizontal: 20 }}>
+      <ScrollView keyboardShouldPersistTaps={"always"} contentContainerStyle={{ marginHorizontal: 20 }}>
         <View>
           <Text style={styles.container}>Under Construction</Text>
         </View>

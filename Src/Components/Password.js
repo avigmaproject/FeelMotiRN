@@ -36,7 +36,7 @@ const Password = ({ navigation }) => {
         onPress={() => navigation.navigate("Setting")}
         title={"Password"}
       />
-      <ScrollView
+      <ScrollView keyboardShouldPersistTaps={"always"}
         contentContainerStyle={{
           backgroundColor: "#ffffff",
           borderRadius: 25,
@@ -47,7 +47,7 @@ const Password = ({ navigation }) => {
           <InputText label={"Old Password*"} />
           {/* <InputText label={"New Password*"} /> */}
           <InputText
-            // onChangeText={(value) => handleOnChangeText(value, "  NewPassword")}
+            onChangeText={(value) => handleOnChangeText(value, "  NewPassword")}
             label={"New Password*"}
             value={NewPassword}
             secureTextEntry={secureTextEntry}

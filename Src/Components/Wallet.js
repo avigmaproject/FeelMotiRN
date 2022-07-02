@@ -21,7 +21,7 @@ const ForgetPassword = ({ navigation }) => {
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
       <Header onPress={() => navigation.navigate("Setting")} title={"Wallet"} />
-      <ScrollView contentContainerStyle={{ marginHorizontal: 20 }}>
+      <ScrollView keyboardShouldPersistTaps={"always"} contentContainerStyle={{ marginHorizontal: 20 }}>
         <View>
           <View style={styles.cash}>
             <Text style={styles.cashtext}>$0.00 USD</Text>

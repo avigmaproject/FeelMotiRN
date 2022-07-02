@@ -40,7 +40,6 @@ const Creator = ({ navigation }) => {
           // marginHorizontal: 10,
           backgroundColor: "#ffffff",
           borderRadius: 25,
-          marginTop: 10,
         }}
       >
         <View>

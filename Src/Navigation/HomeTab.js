@@ -8,6 +8,7 @@ import Creator from "../Components/Creator";
 import MySubscription from "../Components/MySubscription";
 import Password from "../Components/Password";
 import Explore from "../Components/Explore";
+import PrivacySecurity from "../Components/PrivacySecurity";
 
 import * as React from "react";
 
@@ -29,6 +30,7 @@ export default function HomeTab() {
       <Stack.Screen name="MySubscription" component={MySubscription} />
       <Stack.Screen name="Password" component={Password} />
       <Stack.Screen name="Explore" component={Explore} />
+      <Stack.Screen name="PrivacySecurity" component={PrivacySecurity} />
 
     </Stack.Navigator>
   );

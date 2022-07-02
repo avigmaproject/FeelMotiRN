@@ -107,7 +107,7 @@ const Setting = ({ navigation }) => {
             </View>
 
             <View style={styles.boxB}>
-              <TouchableOpacity onPress={() => navigation.navigate("Explore")}>
+              <TouchableOpacity onPress={() => navigation.navigate("PrivacySecurity")}>
                 <View style={styles.boxcontentB}>
                   <Shield
                     name={"shield-checkmark-outline"}

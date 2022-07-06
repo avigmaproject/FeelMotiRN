@@ -11,6 +11,7 @@ import {
   ScrollView,
   Dimensions,
   SafeAreaView,
+  TextInput,
 } from "react-native";
 import moti from "../Assets/moti.png";
 
@@ -24,7 +25,8 @@ import Check from "react-native-vector-icons/AntDesign";
 import Dot from "react-native-vector-icons/Entypo";
 import Compus from "react-native-vector-icons/SimpleLineIcons";
 import profile from "../Assets/profile.png";
-const Explore = ({navigation}) => {
+const Explore = ({ navigation }) => {
+  const [text, onChangeText] = React.useState("Useless Text");
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -68,7 +70,13 @@ const Explore = ({navigation}) => {
           <TouchableOpacity>
             <Image source={profile} style={styles.profile} />
           </TouchableOpacity>
-          <Text style={styles.textareatext}> Write something...</Text>
+          <TextInput
+            style={styles.textareatext}
+            onChangeText={onChangeText}
+            value={text}
+            editable
+            maxLength={40}
+          />
         </View>
         <View style={styles.iconbox}>
           <TouchableOpacity>

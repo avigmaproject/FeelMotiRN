@@ -12,7 +12,6 @@ import {
   SafeAreaView,
 } from "react-native";
 import cash from "../Assets/cash.png";
-import back from "../Assets/back.png";
 import wallet from "../Assets/wallet.png";
 import Check from "react-native-vector-icons/Feather";
 import Cloud from "react-native-vector-icons/Feather";
@@ -27,7 +26,7 @@ const Creator = ({ navigation }) => {
     <SafeAreaView
       style={{
         flex: 1,
-        // backgroundColor: "#ffffff",
+         backgroundColor: "#F8F8FA"
       }}
     >
       <Header
@@ -39,7 +38,7 @@ const Creator = ({ navigation }) => {
         contentContainerStyle={{
           // marginHorizontal: 10,
           backgroundColor: "#ffffff",
-          borderRadius: 25,
+          borderRadius: 30,paddingTop:10,marginTop:10
         }}
       >
         <View>

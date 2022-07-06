@@ -11,7 +11,6 @@ import {
   SafeAreaView,
 } from "react-native";
 import cash from "../Assets/cash.png";
-import back from "../Assets/back.png";
 import React, { useState } from "react";
 import Header from "../CustomComponent/Header";
 import { TextInput } from "react-native-paper";
@@ -19,9 +18,9 @@ import { TextInput } from "react-native-paper";
 import InputText from "../CustomComponent/InputText";
 const ForgetPassword = ({ navigation }) => {
   return (
-    <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
+    <SafeAreaView style={{  backgroundColor: "#F8F8FA", flex: 1 }}>
       <Header onPress={() => navigation.navigate("Setting")} title={"Wallet"} />
-      <ScrollView keyboardShouldPersistTaps={"always"} contentContainerStyle={{ marginHorizontal: 20 }}>
+      <ScrollView keyboardShouldPersistTaps={"always"} contentContainerStyle={{ marginHorizontal: 20 ,}}>
         <View>
           <View style={styles.cash}>
             <Text style={styles.cashtext}>$0.00 USD</Text>

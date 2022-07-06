@@ -15,7 +15,6 @@ import InputText from "../CustomComponent/InputText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../CustomComponent/Header";
 import Button from "../CustomComponent/Button";
-import back from "../Assets/back.png";
 const ResetPassword = ({ navigation }) => {
   const [resetPassword, setResetPassword] = useState({
     password: "",

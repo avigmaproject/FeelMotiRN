@@ -19,7 +19,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import Social from "../CustomComponent/Social";
 import Header from "../CustomComponent/Header";
 import Button from "../CustomComponent/Button";
-import back from "../Assets/back.png";
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const isValidField = (obj) => {
   return Object.values(obj).every((value) => value.trim());

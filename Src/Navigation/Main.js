@@ -33,12 +33,12 @@ export default function Main() {
               : require("../Assets/searchdeactive.png");
           } else if (route.name === "AddTab") {
             image = focused
-              ? require("../Assets/bell.png")
-              : require("../Assets/bell.png");
-          } else if (route.name === "AddTab") {
+              ? require("../Assets/activesaved.png")
+              : require("../Assets/deactivesaved.png");
+          } else if (route.name === "NavigationTab") {
             image = focused
-              ? require("../Assets/bell.png")
-              : require("../Assets/bell.png");
+              ? require("../Assets/adddeactive.png")
+              : require("../Assets/adddeactive.png");
           }
           return (
             <Image
@@ -56,7 +56,7 @@ export default function Main() {
       <Tab.Screen name="SearchTab" component={SearchTab} />
       <Tab.Screen name="SendTab" component={SendTab} />
       <Tab.Screen name="AddTab" component={AddTab} />
-      {/* <Tab.Screen name="NavigationTab" component={NavigationTab} /> */}
+      <Tab.Screen name="NavigationTab" component={NavigationTab} />
     </Tab.Navigator>
   );
 }

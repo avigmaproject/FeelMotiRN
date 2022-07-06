@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  FlatList,
 } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,18 +16,69 @@ import story2 from "../Assets/story2.png";
 import story3 from "../Assets/story3.png";
 import story4 from "../Assets/story4.png";
 import story5 from "../Assets/story5.png";
-import ProfileTabView from "../Navigation/ProfileTabView";
+// import ProfileTabView from "../Navigation/ProfileTabView";
+import { useSelector, useDispatch } from "react-redux";
 
+const DATA = [
+  {
+    button: "Subscribe",
+  },
+  {
+    button: "Message",
+  },
+  {
+    button: "Sponsor",
+  },
+  {
+    button: "Tip",
+  },
+  {
+    button: "Sponsor",
+  },
+  {
+    button: "Sponsor",
+  },
+];
+const DATA1 = [
+  {
+    image: require("../Assets/story1.png"),
+    title: "Title here",
+  },
+  {
+    image: require("../Assets/story2.png"),
+    title: "Title here",
+  },
+  {
+    image: require("../Assets/story3.png"),
+    title: "Title here",
+  },
+  {
+    image: require("../Assets/story4.png"),
+    title: "Title here",
+  },
+  {
+    image: require("../Assets/story4.png"),
+    title: "Title here",
+  },
+  {
+    image: require("../Assets/story4.png"),
+    title: "Title here",
+  },
+];
 export default function Profile({ navigation }) {
+  const profile = useSelector((state) => state.profileReducer.profile);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F5F5F5" }}>
       <Header
         settings={true}
         onPress={() => navigation.navigate("Home")}
         onPress2={() => navigation.navigate("Setting")}
-        title={"Leslie Alexander"}
+        title={profile.User_Name}
       />
-      <ScrollView keyboardShouldPersistTaps={"always"} contentContainerStyle={{ marginHorizontal: 10 }}>
+      <ScrollView
+        keyboardShouldPersistTaps={"always"}
+        contentContainerStyle={{ marginHorizontal: 10 }}
+      >
         <View>
           <View>
             <View
@@ -40,8 +92,12 @@ export default function Profile({ navigation }) {
                 <TouchableOpacity>
                   <Image
                     resizeMode="contain"
-                    source={profile}
-                    style={{ height: 90, width: "100%" }}
+                    source={{
+                      uri: profile.User_Image_Path
+                        ? profile.User_Image_Path
+                        : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg",
+                    }}
+                    style={{ height: 50, width: 50, borderRadius: 50 }}
                   />
                 </TouchableOpacity>
               </View>
@@ -55,69 +111,39 @@ export default function Profile({ navigation }) {
               </View>
             </View>
           </View>
-          <View style={styles.buttonConatainer}>
-            <TouchableOpacity>
-              <View style={{ marginRight: 10 }}>
-                <View style={styles.box}>
-                  <Text style={styles.subscribe}>Subscribe</Text>
+          <FlatList
+            horizontal
+            data={DATA}
+            renderItem={({ item }) => (
+              <View>
+                <View style={styles.buttonConatainer}>
+                  <TouchableOpacity>
+                    <View style={{ marginRight: 10 }}>
+                      <View style={styles.box}>
+                        <Text style={styles.subscribe}>{item.button}</Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
                 </View>
               </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={{ marginRight: 10 }}>
-                <View style={styles.box2}>
-                  <Text style={styles.message}>Message</Text>
+            )}
+          />
+          <FlatList
+            horizontal
+            data={DATA1}
+            renderItem={({ item }) => (
+              <View>
+                <View style={styles.storyContainer}>
+                  <View>
+                    <TouchableOpacity>
+                      <Image source={item.image} style={styles.story} />
+                    </TouchableOpacity>
+                    <Text style={styles.title}>{item.title}</Text>
+                  </View>
                 </View>
               </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={{ marginRight: 10 }}>
-                <View style={styles.box2}>
-                  <Text style={styles.message}>Sponsor</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={styles.box2}>
-                <Text style={styles.message}>Tip</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.storyContainer}>
-            <View>
-              <TouchableOpacity>
-                <Image source={story1} style={styles.story} />
-              </TouchableOpacity>
-              <Text style={styles.title}>Title here</Text>
-            </View>
-            <View>
-              <TouchableOpacity>
-                <Image source={story2} style={styles.story} />
-              </TouchableOpacity>
-              <Text style={styles.title}>Title here</Text>
-            </View>
-            <View>
-              <TouchableOpacity>
-                <Image source={story3} style={styles.story} />
-              </TouchableOpacity>
-              <Text style={styles.title}>Title here</Text>
-            </View>
-            <View>
-              <TouchableOpacity>
-                <Image source={story4} style={styles.story} />
-              </TouchableOpacity>
-              <Text style={styles.title}>Title here</Text>
-            </View>
-            <View>
-              <TouchableOpacity>
-                <Image source={story5} style={styles.story} />
-              </TouchableOpacity>
-              <Text style={styles.title}>Tit</Text>
-            </View>
-          </View>
-          {/* <View>
-            <ProfileTabView />
-          </View> */}
+            )}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -169,9 +195,12 @@ const styles = StyleSheet.create({
   },
   story: {
     resizeMode: "contain",
+    marginLeft: 10,
+    marginRight: 15,
     // backgroundColor: "red",
   },
   title: {
+    marginLeft: 10,
     marginTop: 2,
     color: "#424242",
     fontSize: 14,

@@ -17,6 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import InputText from "../CustomComponent/InputText";
 import Social from "../CustomComponent/Social";
 import Button from "../CustomComponent/Button";
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const isValidField = (obj) => {
   return Object.values(obj).every((value) => value.trim());
@@ -77,6 +78,7 @@ const Signin = ({ navigation }) => {
         ClientId: 1,
         Role: 2,
       });
+
       console.log("loginnnnnn", data);
       await login(data)
         .then((res) => {
@@ -119,11 +121,17 @@ const Signin = ({ navigation }) => {
   };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-{/* <StatusBar backgroundColor="#ffffff" /> */}
+      {/* <StatusBar backgroundColor="#ffffff" /> */}
+ <Spinner
+          visible={loading}
+          textContent={'Loading...'}
+          textStyle={styles.spinnerTextStyle}
+        />
       <ScrollView
-        keyboardShouldPersistTaps={"handled"}        
+        keyboardShouldPersistTaps={"handled"}
         contentContainerStyle={{ flexGrow: 1, marginHorizontal: 20 }}
-        style={{ backgroundColor: "#FFFFFF" }}>
+        style={{ backgroundColor: "#FFFFFF" }}
+      >
         <View>
           <View style={styles.heading}>
             <Text style={styles.text}>Sign In</Text>
@@ -171,7 +179,7 @@ const Signin = ({ navigation }) => {
           <View>
             <Button onPress={submitForm} title="Sign In" />
           </View>
- {/* <View style={styles.bar_container}>
+          {/* <View style={styles.bar_container}>
           <View style={styles.bar} />
           <View>
             <Text style={styles.or}>OR</Text>
@@ -257,7 +265,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     width: "90%",
     alignSelf: "center",
-    marginVertical:20
+    marginVertical: 20,
   },
   footer: {
     fontSize: 16,
@@ -281,7 +289,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     width: "90%",
   },
-
+  spinnerTextStyle: {
+    color: '#FFF'
+  },
 });
 
 export default Signin;

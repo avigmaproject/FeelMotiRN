@@ -9,7 +9,6 @@ import {
   Dimensions,
   SafeAreaView,
 } from "react-native";
-import back from "../Assets/back.png";
 import InputText from "../CustomComponent/InputText";
 import { TextInput } from "react-native-paper";
 import { Dropdown } from "react-native-element-dropdown";
@@ -17,27 +16,46 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from "moment";
 import Header from "../CustomComponent/Header";
 import Button from "../CustomComponent/Button";
+import { updateprofile, getusermasterdata,uploadimage } from "../Utils/apiconfig";
+import { useSelector, useDispatch } from "react-redux";
+import { setProfile } from "../store/action/profile/profile";
+import { ActionSheetCustom as ActionSheet } from "react-native-actionsheet"
+import ImagePicker from "react-native-image-crop-picker";
+import Spinner from 'react-native-loading-spinner-overlay';
 
+const options = [
+  "Cancel",
+  <View>
+    <Text style={{ color: "black" }}>Gallery</Text>
+  </View>,
+  <View>
+    <Text style={{ color: "black"}}>Camera</Text>
+  </View>
+]
 const EditProfile = ({ navigation }) => {
+  const profile = useSelector((state) => state.profileReducer.profile);
+  const token = useSelector((state) => state.authReducer.token);
+  const dispatch = useDispatch();
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const [value1, setValue1] = useState(null);
   const [isFocus1, setIsFocus1] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-
+  const [ActionSheetRef, setActionSheetRef] = useState(null);
   const [form, setForm] = useState({
-    fullName: "",
-    email: "",
-    username: "",
+    fullName: profile.User_Name,
+    email: profile.User_Email,
+    username: profile.User_Name,
     profession: "",
     language: "",
-    dob: "",
-    company: "",
-    unitedstates: "",
-    gender: "",
-    city: "",
-    address: "",
-    postal: "",
+    dob: profile.User_DOB,
+    company: profile.User_Company,
+    unitedstates: profile.User_Country,
+    gender: profile.User_Gender,
+    city: profile.User_City,
+    address: profile.User_Address,
+    postal: profile.User_Zip,
+    imagepath:profile.User_Image_Path
   });
   const [error, setError] = useState("");
   const [loading, setloading] = useState(false);
@@ -100,24 +118,216 @@ const EditProfile = ({ navigation }) => {
     address,
     postal,
   } = form;
+
+  const updateError = (error, stateUpdate) => {
+    stateUpdate(error);
+    setTimeout(() => {
+      stateUpdate("");
+    }, 2500);
+  };
+const onOpenImage = () =>ActionSheetRef.show()
+
+ const ImageGallery = async () => {
+    setTimeout(() => {
+      ImagePicker.openPicker({
+        width: 300,
+        height: 400,
+        cropping: true,
+        includeBase64: true,
+        multiple: false,
+        compressImageQuality: 0.5
+      }).then((image) => {
+        console.log(image)
+          uploadImage(image.data)
+      })
+    }, 1000)
+  }
+
+ const ImageCamera = async () => {
+    setTimeout(() => {
+      ImagePicker.openCamera({
+        width: 300,
+        height: 400,
+        cropping: true,
+        includeBase64: true,
+        multiple: false,
+        compressImageQuality: 0.5
+      }).then((image) => {
+        console.log(image)
+        if (image.data) {
+          uploadImage(image.data)
+        }
+      })
+    }, 1000)
+  }
+
+ const uploadImage = async (base64) => {
+  
+    let data = JSON.stringify({
+      Type: 2,
+      Image_Base: "data:image/png;base64, " + base64
+    })
+    console.log(data)
+    try {
+      const res = await uploadimage(data,token)
+      console.log(res[0].Image_Path, "resssss")
+      handleOnChangeText(res[0].Image_Path, "imagepath")
+
+    } catch (error) {
+      if (error.request) {
+        console.log(error.request)
+      } else if (error.responce) {
+        console.log(error.responce)
+      } else {
+        console.log(error)
+      }
+    }
+  }
+
+  const isValidForm = () => {
+    if (!fullName) return updateError(" fullName is Required!", setError);
+
+    if (!username) return updateError(" username is Required!", setError);
+
+    return true;
+  };
+  const GetUserProfile = async () => {
+    setloading(true);
+    let data = {
+      Type: 2,
+    };
+    console.log("GetUserProfile", data);
+    await getusermasterdata(data, token)
+      .then((res) => {
+        console.log("res:GetUserProfile at edit profile ", res);
+        setloading(false);
+        dispatch(setProfile(res[0][0]));
+      })
+      .catch((error) => {
+        setloading(false);
+        if (error.response) {
+          console.log("error.response", error.response);
+        } else if (error.request) {
+          setloading(false);
+          console.log("request error", error.request);
+        } else if (error) {
+          console.log("Server Error");
+          setloading(false);
+        }
+      });
+  };
+  const editProfile = async (value) => {
+    console.log("first", form);
+    if (isValidForm()) {
+      // Keyboard.dismiss();
+      setloading(true);
+      let data = {
+        User_Name: form.username,
+        User_Email: form.email,
+        User_DOB: form.dob,
+        User_Company: form.company,
+        User_Country: form.unitedstates,
+        User_Gender: form.gender,
+        User_City: form.city,
+        User_Address: form.address,
+        User_Zip: form.postal,
+        User_IsActive: 1,
+        Type: 2,
+        User_Image_Path:form.imagepath
+      };
+
+      console.log("edit data", data);
+      await updateprofile(data, token)
+        .then((res) => {
+          console.log("res: ", res);
+          setloading(false);
+          GetUserProfile();
+        })
+        .catch((error) => {
+          setloading(false);
+          if (error.response) {
+            console.log("error.response", error.response);
+          } else if (error.request) {
+            setloading(false);
+            console.log("request error", error.request);
+          } else if (error) {
+            alert("Server Error");
+            setloading(false);
+          }
+        });
+      console.log("info", form);
+    }
+  };
+
   return (
-    <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
+    <SafeAreaView style={{ backgroundColor: "#F8F8FA", flex: 1 }}>
       <Header
         onPress={() => navigation.navigate("Setting")}
         title={"Edit Profile"}
       />
-      <ScrollView keyboardShouldPersistTaps={"always"} contentContainerStyle={{ marginHorizontal: 20 }}>
+      <ScrollView
+        keyboardShouldPersistTaps={"always"}
+        contentContainerStyle={{ backgroundColor:"#fff",borderTopEndRadius:30,borderTopStartRadius:30,paddingTop:30,marginTop:10}}
+      ><Spinner
+          visible={loading}
+          textContent={'Loading...'}
+          textStyle={styles.spinnerTextStyle}
+        />
+         <View style={{marginHorizontal: 20 ,}}>
+
+         <TouchableOpacity onPress={() =>onOpenImage()} style={{justifyContent:"center",alignItems:"center"}}>
+         <Image
+                style={{
+                  height: 100,
+                  width: 100,
+                  borderRadius: 50
+                }}
+                resizeMode="stretch"
+                source={{
+                  uri: form.imagepath
+                    ? form.imagepath
+                    : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg"}}
+              />
+            <ActionSheet
+              ref={(o) => setActionSheetRef(o)}
+              title={
+                <Text
+                  style={{ color: "#000", fontSize: 18, fontWeight: "bold" }}
+                >
+                  Profile Photo
+                </Text>
+              }
+              options={options}
+              cancelButtonIndex={0}
+              destructiveButtonIndex={4}
+              useNativeDriver={true}
+              onPress={(index) => {
+                if (index === 0) {
+                  // cancel action
+                } else if (index === 1) {
+                  ImageGallery()
+                } else if (index === 2) {
+                  ImageCamera()
+                }
+              }}
+            />
+
+        </TouchableOpacity>
         <View style={{ backgroundColor: "#FFFFFF", borderRadius: 20 }}>
           <View style={styles.textinput}>
             <InputText
               onChangeText={(value) => handleOnChangeText(value, "fullName")}
               label={"Full name*"}
               value={fullName}
+              error={error}
+              style={{ textTransform: "capitalize" }}
             />
+            {/* <Text style={{ color: "#DBBE80" }}>{error}</Text> */}
             <InputText
               onChangeText={(value) => handleOnChangeText(value, "username")}
               label={"User name*"}
               value={username}
+              style={{ textTransform: "capitalize" }}
             />
             <InputText
               onChangeText={(value) => handleOnChangeText(value, "email")}
@@ -157,7 +367,6 @@ const EditProfile = ({ navigation }) => {
                 }}
               />
             </View>
-
             <View>
               <DateTimePickerModal
                 isVisible={isDatePickerVisible}
@@ -201,7 +410,7 @@ const EditProfile = ({ navigation }) => {
                 onFocus={() => setIsFocus1(true)}
                 onBlur={() => setIsFocus1(false)}
                 onChange={(item) => {
-                  handleOnChangeText(item.value, "language");
+                  handleOnChangeText(item.value, "gender");
                   setValue1(item.value);
                   setIsFocus1(false);
                 }}
@@ -255,10 +464,12 @@ const EditProfile = ({ navigation }) => {
             placeholder="Postal/ZIP"
           /> */}
           </View>
+
           <View>
-            <Button title="Save Changes" />
+            <Button onPress={editProfile} title="Save Changes" />
           </View>
         </View>
+</View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -345,6 +556,9 @@ const styles = StyleSheet.create({
   inputSearchStyle: {
     height: 40,
     fontSize: 16,
+  },
+ spinnerTextStyle: {
+    color: '#FFF'
   },
 });
 export default EditProfile;

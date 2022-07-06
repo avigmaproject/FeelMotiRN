@@ -13,7 +13,6 @@ import {
   Dimensions,
   SafeAreaView,
 } from "react-native";
-import back from "../Assets/back.png";
 import Right from "react-native-vector-icons/Entypo";
 import Edit from "react-native-vector-icons/Feather";
 import Credit from "react-native-vector-icons/SimpleLineIcons";

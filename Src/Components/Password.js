@@ -17,74 +17,105 @@ import { TextInput } from "react-native-paper";
 import Button from "../CustomComponent/Button";
 const Password = ({ navigation }) => {
   const [secureTextEntry, setsecureTextEntry] = useState(true);
+  const [csecureTextEntry, csetsecureTextEntry] = useState(true);
+  const [osecureTextEntry, setosecureTextEntry] = useState(true);
+
   const handleSecureEntry = () => {
     setsecureTextEntry(!secureTextEntry);
+  };
+ const ChandleSecureEntry = () => {
+    csetsecureTextEntry(!csecureTextEntry);
+  };  
+const OhandleSecureEntry = () => {
+    setosecureTextEntry(!osecureTextEntry);
   };
   const handleOnChangeText = (value, fieldName) => {
     setForm({ ...form, [fieldName]: value });
   };
   const [form, setForm] = useState({
     oldPassword: "",
-
     NewPassword: "",
     confirmPassword: "",
   });
-  const { oldPassword, NewPassword, confirmPassword } = form;
+  const { oldPassword, NewPassword,confirmPassword } = form;
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f8f8f8" }}>
       <Header
         onPress={() => navigation.navigate("Setting")}
         title={"Password"}
       />
-      <ScrollView keyboardShouldPersistTaps={"always"}
-        contentContainerStyle={{
-          backgroundColor: "#ffffff",
-          borderRadius: 25,
-          marginTop: 10,
-        }}
-      >
+      <View style={{justifyContent:"space-between",flex:1,paddingBottom:20,backgroundColor:"#fff",borderRadius:30,paddingTop:10,marginTop:10}}>
         <View style={styles.textinput}>
-          <InputText label={"Old Password*"} />
-          {/* <InputText label={"New Password*"} /> */}
-          <InputText
-            onChangeText={(value) => handleOnChangeText(value, "  NewPassword")}
-            label={"New Password*"}
-            value={NewPassword}
-            secureTextEntry={secureTextEntry}
-            right={
-              <TextInput.Icon
-                forceTextInputFocus={secureTextEntry}
-                name={secureTextEntry ? "eye-off" : "eye"}
-                onPress={() => handleSecureEntry()}
-                color={"#9B9C9F"}
-              />
-            }
-          />
-          <InputText label={"Confirm Password*"} />
+        <InputText
+              onChangeText={(value) =>
+                handleOnChangeText(value, "oldPassword")
+              }
+              label={"Old Password*"}
+              value={oldPassword}
+              secureTextEntry={osecureTextEntry}
+              right={
+                <TextInput.Icon
+                  forceTextInputFocus={osecureTextEntry}
+                  name={csecureTextEntry ? "eye-off" : "eye"}
+                  onPress={() => OhandleSecureEntry()}
+                  color={"#9B9C9F"}
+                />
+              }
+            />
+            <InputText
+              onChangeText={(value) => handleOnChangeText(value, "NewPassword")}
+              label={"Password*"}
+              value={NewPassword}
+              secureTextEntry={secureTextEntry}
+              right={
+                <TextInput.Icon
+                  forceTextInputFocus={secureTextEntry}
+                  name={secureTextEntry ? "eye-off" : "eye"}
+                  onPress={() => handleSecureEntry()}
+                  color={"#9B9C9F"}
+                />
+              }
+            />
+            <InputText
+              onChangeText={(value) =>
+                handleOnChangeText(value, "confirmPassword")
+              }
+              label={"Confirm Password*"}
+              value={confirmPassword}
+              secureTextEntry={csecureTextEntry}
+              right={
+                <TextInput.Icon
+                  forceTextInputFocus={csecureTextEntry}
+                  name={csecureTextEntry ? "eye-off" : "eye"}
+                  onPress={() => ChandleSecureEntry()}
+                  color={"#9B9C9F"}
+                />
+              }
+            />
         </View>
-        <View style={styles.button}>
-          <TouchableOpacity>
+        <View style={{paddingHorizontal:10}} >
+          <TouchableOpacity style={styles.button}>
             <Text style={styles.submit}>Save Changes</Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
   textinput: {
-    width: "90%",
+    width: "100%",
     alignSelf: "center",
     marginTop: 10,
+    paddingHorizontal:10
   },
   button: {
-    width: "90%",
+    width: "100%",
     height: 60,
     backgroundColor: "#DBBE80",
-    marginTop: 205,
     borderRadius: 10,
-    marginTop: 195,
-    left: 20,
+
+
   },
   submit: {
     textAlign: "center",

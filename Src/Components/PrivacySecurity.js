@@ -23,8 +23,11 @@ const PrivacySecurity = ({ navigation }) => {
       <ScrollView
         contentContainerStyle={{
           backgroundColor: "#ffffff",
-          borderRadius: 30,
-          marginTop: 20,
+          borderTopLeftRadius: 30,
+          borderTopRightRadius: 30,
+          marginTop: 10,
+          flex:1,
+          paddingTop:10
         }}
       >
         <View style={styles.login}>

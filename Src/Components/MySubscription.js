@@ -10,13 +10,13 @@ import {
   ScrollView,
   Dimensions,
   SafeAreaView,
+  FlatList,
 } from "react-native";
 import squareprofile from "../Assets/squareprofile.png";
 import squareprofile2 from "../Assets/squareprofile2.png";
 import squareprofile3 from "../Assets/squareprofile3.png";
 import squareprofile4 from "../Assets/squareprofile4.png";
 import cash from "../Assets/cash.png";
-import back from "../Assets/back.png";
 import wallet from "../Assets/wallet.png";
 import Check from "react-native-vector-icons/Feather";
 import Cloud from "react-native-vector-icons/Feather";
@@ -24,6 +24,41 @@ import Square from "react-native-vector-icons/Feather";
 import React, { useState } from "react";
 import { TextInput } from "react-native-paper";
 import Header from "../CustomComponent/Header";
+
+const DATA = [
+  {
+    image: require("../Assets/squareprofile.png"),
+    name: "Leslie Alexander",
+    date: "May 07,2022",
+    interval: "Not Applicable",
+    ends: "Free Subscription",
+    status: "Active",
+  },
+  {
+    image: require("../Assets/squareprofile2.png"),
+    name: "Leslie Alexander",
+    date: "May 07,2022",
+    interval: "Not Applicable",
+    ends: "Free Subscription",
+    status: "Active",
+  },
+  {
+    image: require("../Assets/squareprofile3.png"),
+    name: "Leslie Alexander",
+    date: "May 07,2022",
+    interval: "Not Applicable",
+    ends: "Free Subscription",
+    status: "Active",
+  },
+  {
+    image: require("../Assets/squareprofile4.png"),
+    name: "Leslie Alexander",
+    date: "May 07,2022",
+    interval: "Not Applicable",
+    ends: "Free Subscription",
+    status: "Active",
+  },
+];
 const MySubscription = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8FA" }}>
@@ -31,202 +66,61 @@ const MySubscription = ({ navigation }) => {
         onPress={() => navigation.navigate("Setting")}
         title={"My Subscription"}
       />
-      <ScrollView keyboardShouldPersistTaps={"always"}
-        contentContainerStyle={{ backgroundColor: "#ffffff", borderRadius: 30 }}
+      <ScrollView
+        keyboardShouldPersistTaps={"always"}
+        contentContainerStyle={{ backgroundColor: "#ffffff", borderRadius: 30 ,paddingTop:10,marginTop:10}}
       >
         <View>
-          <View style={styles.box}>
-            <View style={styles.innerbox}>
-              <TouchableOpacity>
-                <Image source={squareprofile} style={styles.profile} />
-              </TouchableOpacity>
-              <View style={styles.profiletext}>
-                <Text style={styles.profiletext1}>Leslie Alexander</Text>
-                <Text style={styles.profiletext2}>May 07,2022</Text>
-              </View>
-            </View>
-            <View>
-              <Text style={styles.intrval}>
-                Interval:{" "}
-                <Text style={{fontWeight: "300",}}>
-                  Not Applicable
-                </Text>
-              </Text>
-            </View>
-            <View style={styles.boxbottom}>
-              <Text style={styles.boxbottomtext}>
-                Ends at:{" "}
-                <Text
-                  style={{
-                    fontWeight: "300",
-                  }}
-                >
-                  Free Subscription
-                </Text>
-              </Text>
-              <View style={styles.statusbox}>
-                <TouchableOpacity>
-                  <Text style={styles.status}>
-                    Status:
-                    <Text
-                      style={{
-                        fontWeight: "300",
-                      }}
-                    >
-                      Active
+          <FlatList
+            data={DATA}
+            renderItem={({ item }) => (
+              <View>
+                <View style={styles.box}>
+                  <View style={styles.innerbox}>
+                    <TouchableOpacity>
+                      <Image source={item.image} style={styles.profile} />
+                    </TouchableOpacity>
+                    <View style={styles.profiletext}>
+                      <Text style={styles.profiletext1}>{item.name}</Text>
+                      <Text style={styles.profiletext2}>{item.date}</Text>
+                    </View>
+                  </View>
+                  <View>
+                    <Text style={styles.intrval}>
+                      Interval:{" "}
+                      <Text style={{ fontWeight: "300" }}>{item.interval}</Text>
                     </Text>
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-          <View style={styles.box}>
-            <View style={styles.innerbox}>
-              <TouchableOpacity>
-                <Image source={squareprofile2} style={styles.profile} />
-              </TouchableOpacity>
-              <View style={styles.profiletext}>
-                <Text style={styles.profiletext1}>Leslie Alexander</Text>
-                <Text style={styles.profiletext2}>May 07,2022</Text>
-              </View>
-            </View>
-            <View>
-              <Text style={styles.intrval}>
-                Interval:{" "}
-                <Text
-                  style={{
-                    fontWeight: "300",
-                  }}
-                >
-                  Not Applicable
-                </Text>
-              </Text>
-            </View>
-            <View style={styles.boxbottom}>
-              <Text style={styles.boxbottomtext}>
-                Ends at:{" "}
-                <Text
-                  style={{
-                    fontWeight: "300",
-                  }}
-                >
-                  Free Subscription
-                </Text>
-              </Text>
-              <View style={styles.statusbox}>
-                <TouchableOpacity>
-                  <Text style={styles.status}>
-                    Status:
-                    <Text
-                      style={{
-                        fontWeight: "300",
-                      }}
-                    >
-                      Active
+                  </View>
+                  <View style={styles.boxbottom}>
+                    <Text style={styles.boxbottomtext}>
+                      Ends at:{" "}
+                      <Text
+                        style={{
+                          fontWeight: "300",
+                        }}
+                      >
+                        {item.ends}
+                      </Text>
                     </Text>
-                  </Text>
-                </TouchableOpacity>
+                    <View style={styles.statusbox}>
+                      <TouchableOpacity>
+                        <Text style={styles.status}>
+                          Status:
+                          <Text
+                            style={{
+                              fontWeight: "300",
+                            }}
+                          >
+                            {item.status}
+                          </Text>
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
               </View>
-            </View>
-          </View>
-          <View style={styles.box}>
-            <View style={styles.innerbox}>
-              <TouchableOpacity>
-                <Image source={squareprofile3} style={styles.profile} />
-              </TouchableOpacity>
-              <View style={styles.profiletext}>
-                <Text style={styles.profiletext1}>Leslie Alexander</Text>
-                <Text style={styles.profiletext2}>May 07,2022</Text>
-              </View>
-            </View>
-            <View>
-              <Text style={styles.intrval}>
-                Interval:{" "}
-                <Text
-                  style={{
-                    fontWeight: "300",
-                  }}
-                >
-                  Not Applicable
-                </Text>
-              </Text>
-            </View>
-            <View style={styles.boxbottom}>
-              <Text style={styles.boxbottomtext}>
-                Ends at:{" "}
-                <Text
-                  style={{
-                    fontWeight: "300",
-                  }}
-                >
-                  Free Subscription
-                </Text>
-              </Text>
-              <View style={styles.statusbox}>
-                <TouchableOpacity>
-                  <Text style={styles.status}>
-                    Status:
-                    <Text
-                      style={{
-                        fontWeight: "300",
-                      }}
-                    >
-                      Active
-                    </Text>
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-          <View style={styles.box1}>
-            <View style={styles.innerbox}>
-              <TouchableOpacity>
-                <Image source={squareprofile4} style={styles.profile} />
-              </TouchableOpacity>
-              <View style={styles.profiletext}>
-                <Text style={styles.profiletext1}>Leslie Alexander</Text>
-                <Text style={styles.profiletext2}>May 07,2022</Text>
-              </View>
-            </View>
-            <View>
-              <Text style={styles.intrval}>
-                Interval:{" "}
-                <Text
-                  style={{
-                    fontWeight: "300",
-                  }}
-                >
-                  Not Applicable
-                </Text>
-              </Text>
-            </View>
-            <View style={styles.boxbottom}>
-              <Text style={styles.boxbottomtext}>
-                Ends at:{" "}
-                <Text
-                  style={{
-                    fontWeight: "300",
-                  }}
-                >
-                  Free Subscription
-                </Text>
-              </Text>
-              <View style={styles.statusbox}>
-                <TouchableOpacity>
-                  <Text style={styles.status}>
-                    Status:
-                    <Text
-                      style={{
-                        fontWeight: "300",
-                      }}
-                    >
-                      Active
-                    </Text>
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
+            )}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -335,19 +229,6 @@ const styles = StyleSheet.create({
     color: "#27AE60",
 
     fontWeight: "600",
-  },
-  box1: {
-    width: "90%",
-    marginTop: 20,
-    height: 160,
-    marginLeft: 20,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "rgba(235, 235, 235, 0.8)",
-    borderRadius: 10,
-    elevation: 10,
-    borderRadius: 10,
-    marginBottom: 20,
   },
 });
 

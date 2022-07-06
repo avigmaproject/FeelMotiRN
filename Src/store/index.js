@@ -1,27 +1,27 @@
-import {createStore, applyMiddleware, compose} from 'redux';
-import thunk from 'redux-thunk';
-import {persistStore, persistReducer} from 'redux-persist';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createStore, applyMiddleware, compose } from "redux";
+import thunk from "redux-thunk";
+import { persistStore, persistReducer } from "redux-persist";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import reducers from './reducer'; //Import the root reducer
+import reducers from "./reducer"; //Import the root reducer
 
 // const enhancer = compose(applyMiddleware(thunk));
 
 const persistConfig = {
-  key: 'houseplat',
+  key: "feelmoti",
   storage: AsyncStorage,
 };
 
 // export default createStore(reducers, enhancer);
 const composeEnhancers =
-  typeof window === 'object' && window._REDUX_DEVTOOLS_EXTENSION_COMPOSE_
+  typeof window === "object" && window._REDUX_DEVTOOLS_EXTENSION_COMPOSE_
     ? window._REDUX_DEVTOOLS_EXTENSION_COMPOSE_({
         // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
       })
     : compose;
 
 const enhancer = composeEnhancers(
-  applyMiddleware(thunk),
+  applyMiddleware(thunk)
   // other store enhancers if any
 );
 

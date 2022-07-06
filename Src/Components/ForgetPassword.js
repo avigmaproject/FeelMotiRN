@@ -12,7 +12,6 @@ import React, { useState } from "react";
 import InputText from "../CustomComponent/InputText";
 import Header from "../CustomComponent/Header";
 import Button from "../CustomComponent/Button";
-import back from "../Assets/back.png";
 const ForgetPassword = ({ navigation }) => {
   const [ForgetPassword, setForgetPassword] = useState({
     password: "",

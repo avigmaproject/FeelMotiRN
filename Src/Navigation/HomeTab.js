@@ -29,6 +29,7 @@ export default function HomeTab() {
       <Stack.Screen name="Creator" component={Creator} />
       <Stack.Screen name="MySubscription" component={MySubscription} />
       <Stack.Screen name="Password" component={Password} />
+      <Stack.Screen name="Explore" component={Explore} />
       <Stack.Screen name="PrivacySecurity" component={PrivacySecurity} />
 
     </Stack.Navigator>

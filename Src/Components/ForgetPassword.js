@@ -48,7 +48,7 @@ const ForgetPassword = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       {/* <StatusBar backgroundColor="#ffffff" /> */}
-       <Header onPress={() => navigation.navigate('Signin')}/>
+       <Header color={true} onPress={() => navigation.navigate('Signin')}/>
       <ScrollView keyboardShouldPersistTaps={"always"} contentContainerStyle={{ flex: 1, marginHorizontal: 20 }}>
         <View>
           <View style={styles.heading}>

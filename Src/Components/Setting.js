@@ -1,199 +1,144 @@
 import React from "react";
 import {
-  View,
-  Button,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  Image,
-  Keyboard,
-  ScrollView,
-  Dimensions,
-  SafeAreaView,
-} from "react-native";
+  View,Text,StyleSheet,TouchableOpacity,Image,ScrollView,SafeAreaView,} from "react-native";
 import Right from "react-native-vector-icons/Entypo";
-import Edit from "react-native-vector-icons/Feather";
-import Credit from "react-native-vector-icons/SimpleLineIcons";
-import Star from "react-native-vector-icons/EvilIcons";
-import User from "react-native-vector-icons/Feather";
-import Lock from "react-native-vector-icons/Feather";
-import Shield from "react-native-vector-icons/Ionicons";
 import Header from "../CustomComponent/Header";
+import { useDispatch, useSelector } from "react-redux";
+import { signout } from "../store/action/auth/action";
 
 const Setting = ({ navigation }) => {
+
+const DATA = [
+  {
+    id:1,
+    title: "Account",
+    object:[{
+    title:"Edit Profile",
+    id:1,
+    onPress:() => navigation.navigate("EditProfile"),
+    image : require("../Assets/edit.png")
+    },
+    // {
+    // title:"Wallet",
+    // id:2,
+    // onPress:() => navigation.navigate("Wallet"),
+    // image : require("../Assets/wallet1.png")
+
+    // },
+    {
+    title:"Be a creator!",
+    icon:"star",
+    id:2,
+    onPress:() => navigation.navigate("Creator"),
+    image : require("../Assets/star.png")
+
+    },
+    {
+    title:"Logout",
+    icon:"logout",
+    id:3,
+    onPress:() => onLogout(),
+    image : require("../Assets/star.png")
+    },
+    ],
+  },
+{
+    id:2,
+    title: "Subscription",
+    object:[{
+    title:"My Subscription",
+    id:1,
+    onPress:() => navigation.navigate("MySubscription"),
+    image : require("../Assets/user1.png")
+    },
+    ],
+  },
+{
+    id:3,
+    title: "Privacy And Security",
+    object:[{
+    title:"Privacy And Security",
+    id:1,
+    onPress:() => navigation.navigate("PrivacySecurity"),
+    image : require("../Assets/secure.png")
+    },
+    {
+    title:"Password",
+    id:2,
+    onPress:() => navigation.navigate("Password"),
+    image : require("../Assets/lock.png")
+
+    },
+    ],
+  },
+{
+    id:4,
+    title: "Payments",
+    object:[{
+    title:"Payments",
+    id:1,
+    onPress:() => navigation.navigate("Payment"),
+    image : require("../Assets/doller.png")
+    },
+    {
+    title:"My Cards",
+    id:2,
+    onPress:() => navigation.navigate("Mycard"),
+    image : require("../Assets/wallet1.png")
+    },
+{
+    title:"Payout Method",
+    id:3,
+    onPress:() => navigation.navigate("Payout"),
+    image : require("../Assets/paymnet1.png")
+    },
+{
+    title:"Withdrawals",
+    id:4,
+    onPress:() => navigation.navigate("Withdrawals"),
+    image : require("../Assets/paymnet.png")
+    }
+    ],
+  },
+ 
+];
+  const dispatch = useDispatch();
+ const onLogout = () => {
+    dispatch(signout());
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8FA" }}>
-      <Header
-        onPress={() => navigation.navigate("Profile")}
-        search={true}
-        title={"Setting"}
-      />
+      <Header onPress={() => navigation.navigate("Profile")} search={true} title={"Setting"} />
       <ScrollView contentContainerStyle={{ marginHorizontal: 10 }}>
         <View>
-          <View style={styles.heading1}>
+          {DATA.map((item) => {
+          return(
+           <View style={styles.heading1}>
             <View style={styles.subheading2}>
-              <Text style={styles.account}>Account</Text>
+              <Text style={styles.account}>{item.title}</Text>
             </View>
-
-            <View style={styles.box}>
+            {item.object.map((item1,i,arr)=>{ 
+              return(
+            <View style={{...styles.box , borderBottomWidth:arr.length-1 === i  ? 0:1}}>
               <TouchableOpacity
-                onPress={() => navigation.navigate("EditProfile")}
-              >
+                onPress={item1.onPress} >
                 <View style={styles.boxcontent}>
-                  <Edit name={"edit"} size={24} color="#DBBE80" />
-                  <Text style={styles.edit}>Edit Profile</Text>
-                  <Right
+                 <View style={{width:"20%"}}><Image resizeMode="stretch" style={{height:25,width:25}} source={item1.image}/></View>
+                  <View style={{width:"75%",justifyContent:"center",alignItems:"flex-start"}}><Text style={styles.edit}>{item1.title}</Text></View>
+                 <View style={{width:"10%"}}><Right
                     name={"chevron-small-right"}
                     size={24}
                     color="#A0A6B1"
-                  />
+                  /></View>
                 </View>
               </TouchableOpacity>
             </View>
-            <View style={styles.box1}>
-              <TouchableOpacity onPress={() => navigation.navigate("Wallet")}>
-                <View style={styles.boxcontent1}>
-                  <Credit name={"credit-card"} size={24} color="#DBBE80" />
-                  <Text style={styles.wallet}>Wallet</Text>
-                  <Right
-                    name={"chevron-small-right"}
-                    size={24}
-                    color="#A0A6B1"
-                  />
-                </View>
-              </TouchableOpacity>
+              )
+              })}
             </View>
-            <View style={{ ...styles.box2, borderBottomWidth: 0 }}>
-              <TouchableOpacity onPress={() => navigation.navigate("Creator")}>
-                <View style={styles.boxcontent2}>
-                  <Star name={"star"} size={24} color="#DBBE80" />
-                  <Text style={styles.creator}>Be A Creator!</Text>
-                  <Right
-                    name={"chevron-small-right"}
-                    size={24}
-                    color="#A0A6B1"
-                  />
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View style={styles.heading2}>
-            <View style={styles.subheading2}>
-              <Text style={styles.account}>Subscription</Text>
-            </View>
-
-            <View style={{ ...styles.boxB, borderBottomWidth: 0 }}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("MySubscription")}
-              >
-                <View style={styles.boxcontentB}>
-                  <User name={"user-check"} size={24} color="#DBBE80" />
-                  <Text style={styles.subscription}>My Subscription</Text>
-                  <Right
-                    name={"chevron-small-right"}
-                    size={24}
-                    color="#A0A6B1"
-                  />
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View style={styles.heading2}>
-            <View style={styles.subheading2}>
-              <Text style={styles.account}>Privacy And Security </Text>
-            </View>
-
-            <View style={styles.boxB}>
-              <TouchableOpacity onPress={() => navigation.navigate("PrivacySecurity")}>
-                <View style={styles.boxcontentB}>
-                  <Shield
-                    name={"shield-checkmark-outline"}
-                    size={24}
-                    color="#DBBE80"
-                  />
-                  <Text style={styles.privacy}>Privacy And Security</Text>
-                  <Right
-                    name={"chevron-small-right"}
-                    size={24}
-                    color="#A0A6B1"
-                  />
-                </View>
-              </TouchableOpacity>
-            </View>
-            <View style={{ ...styles.boxC, borderBottomWidth: 0 }}>
-              <TouchableOpacity onPress={() => navigation.navigate("Password")}>
-                <View style={styles.boxcontentC}>
-                  <Lock name={"lock"} size={24} color="#DBBE80" />
-                  <Text style={styles.password}>Password</Text>
-                  <Right
-                    name={"chevron-small-right"}
-                    size={24}
-                    color="#A0A6B1"
-                  />
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View style={styles.heading3}>
-            <View style={styles.subheading2}>
-              <Text style={styles.account}>Payments</Text>
-            </View>
-
-            <View style={styles.box}>
-              <TouchableOpacity>
-                <View style={styles.boxcontent}>
-                  <Edit name={"edit"} size={24} color="#DBBE80" />
-                  <Text style={styles.edit}>Payments</Text>
-                  <Right
-                    name={"chevron-small-right"}
-                    size={24}
-                    color="#A0A6B1"
-                  />
-                </View>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.box1}>
-              <TouchableOpacity>
-                <View style={styles.boxcontent1}>
-                  <Credit name={"credit-card"} size={24} color="#DBBE80" />
-                  <Text style={styles.card}>My Cards</Text>
-                  <Right
-                    name={"chevron-small-right"}
-                    size={24}
-                    color="#A0A6B1"
-                  />
-                </View>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.box2}>
-              <TouchableOpacity>
-                <View style={styles.boxcontent2}>
-                  <Star name={"star"} size={24} color="#DBBE80" />
-                  <Text style={styles.payout}>Payout Method</Text>
-                  <Right
-                    name={"chevron-small-right"}
-                    size={24}
-                    color="#A0A6B1"
-                  />
-                </View>
-              </TouchableOpacity>
-            </View>
-            <View style={{ ...styles.box2, borderBottomWidth: 0 }}>
-              <TouchableOpacity>
-                <View style={styles.boxcontent2}>
-                  <Star name={"star"} size={24} color="#DBBE80" />
-                  <Text style={styles.withdraw}>Withdrawals</Text>
-                  <Right
-                    name={"chevron-small-right"}
-                    size={24}
-                    color="#A0A6B1"
-                  />
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
+          )
+          })}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -226,6 +171,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#FFF7E4",
     borderRadius: 4,
+    marginTop:10
   },
   subheading: {},
   account: {
@@ -236,21 +182,20 @@ const styles = StyleSheet.create({
   box: {
     marginTop: 10,
     height: 55,
-    width: "100%",
+    width: "90%",
     borderBottomWidth: 1,
     borderColor: "lightgray",
+marginHorizontal:20
   },
   boxcontent: {
     padding: 15,
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
   },
   edit: {
     fontWeight: "600",
     fontSize: 16,
     color: "#424242",
-    marginRight: 100,
     // backgroundColor: 'red',
   },
   box1: {

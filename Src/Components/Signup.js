@@ -92,7 +92,7 @@ const Signup = ({ navigation }) => {
         Password: form.password,
         ClientId: 2,
         Role: 3,
-        FullName: form.fullName,
+        FirstName: form.fullName,
         User_IsActive: 1,
       });
       console.log("register data", data);
@@ -129,8 +129,12 @@ const Signup = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-    <Header onPress={() => navigation.navigate('Signin')}/>
-    {/* <StatusBar backgroundColor="#ffffff" /> */}
+    <Header color={true} onPress={() => navigation.navigate('Signin')}/>
+        <Spinner
+          visible={loading}
+          textContent={'Loading...'}
+          textStyle={styles.spinnerTextStyle}
+        />
       <ScrollView
         keyboardShouldPersistTaps={"always"}
         contentContainerStyle={{ flexGrow: 1, marginHorizontal: 20 }}

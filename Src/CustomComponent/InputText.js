@@ -11,13 +11,13 @@ export default function InputText(props) {
         autoCapitalize="none"
         label={props.label}
         onChangeText={props.onChangeText}
-        outlineColor={"#EBEBEB"}
+        outlineColor={"#9b9c9f"}
         // style={{ borderColor: "red" ,borderWidth:1}}
         theme={{
           colors: {
-            primary: "#EBEBEB",
+            primary: "#9b9c9f",
             background: "#fff",
-            placeholder:"#EBEBEB"
+            placeholder:"#9b9c9f"
           },
           roundness: 5,
         }}

@@ -11,8 +11,8 @@ import {
   ScrollView,
   FlatList,
   SafeAreaView,
-Modal,
-ImageBackground
+  Modal,
+  ImageBackground
 } from "react-native";
 import moti from "../Assets/moti.png";
 import bell from "../Assets/bell.png";
@@ -24,7 +24,7 @@ import DeviceInfo from "react-native-device-info";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Foundation from "react-native-vector-icons/Foundation";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
-import { getuserpost, getusermasterdata ,createupdateuserfavorite,createupdateuserpost,uploadimage} from "../Utils/apiconfig";
+import { getuserpost, getusermasterdata ,createupdateuserfavorite,createupdateuserpost,uploadimage,createupdateuserstory,getuserstory} from "../Utils/apiconfig";
 const windowHeight = Dimensions.get("window").height;
 const windowWidth = Dimensions.get("window").width;
 import { useSelector, useDispatch } from "react-redux";
@@ -33,6 +33,7 @@ import * as Progress from 'react-native-progress';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { ActionSheetCustom as ActionSheet } from "react-native-actionsheet"
 import ImagePicker from "react-native-image-crop-picker";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const options = [
   "Cancel",
   <View>
@@ -47,7 +48,6 @@ const Home = ({ navigation }) => {
   const profile = useSelector((state) => state.profileReducer.profile);
   const dispatch = useDispatch();
   const countInterval = React.useRef(null);
-  const [text, settext] = useState("");
   const [loading, setloading] = useState(false);
   const [userpost, setuserpost] = useState([]);
   const [like, setlike] = useState(false);
@@ -55,22 +55,32 @@ const Home = ({ navigation }) => {
   const [showModal, setShowModal] = useState(false)
   const [count, setCount] = useState(0);
   const [statue, setstatue] = useState([]);
-  const [imageset, setimageset] = useState([]);
+  const [userstatus, setuserstatus] = useState([])
   const [ActionSheetRef, setActionSheetRef] = useState(null);
   const [form, setForm] = useState({
     text: "",
     document: "",
-    imagepath:""
+    imagepath:"",
+    location:""
   });
   React.useEffect(() => {
-    console.log("statue",statue)
+      GetLoaction()
       GetUserPost();
+      GetUserStory()
       GetUserProfile();
     return () => {
       GetUserPost();
       GetUserProfile();
+      GetUserStory()
+      GetLoaction()
     };
   }, []);
+  const GetLoaction = async() => {
+  const value = await AsyncStorage.getItem('addressComponent')
+    if(value !== null) {
+      handleOnChangeText(value, "location")
+    }
+  } 
   const onLoadStart = () =>{
     setloading(true)
   }
@@ -106,9 +116,7 @@ return (
 </ImageBackground>
 </Modal>)
 }
-const handleOnChangeText = (value, fieldName) => {
-    setForm({ ...form, [fieldName]: value });
-  };
+const handleOnChangeText = (value, fieldName) =>  setForm({ ...form, [fieldName]: value });
 
   const GetUserPost = async () => {
     let imageset1=[]
@@ -119,12 +127,10 @@ const handleOnChangeText = (value, fieldName) => {
     console.log("loginnnnnn", data);
     await getuserpost(data, token)
       .then((res) => {
-        console.log("res:minal ", res[0]);
+        console.log("res:GetUserPost ", res[0]);
         setloading(false);
         setuserpost(res[0]);
-       res[0].filter((item)=> imageset1.push({url:item.User_Image_Path}))
-        setimageset(imageset1)
-        console.log("imabeee",imageset)
+  
       })
       .catch((error) => {
         setloading(false);
@@ -135,6 +141,73 @@ const handleOnChangeText = (value, fieldName) => {
           console.log("request error", error.request);
         } else if (error) {
           console.log("Server Error");
+          setloading(false);
+        }
+      });
+  };
+const GetUserStory = async () => {
+    setloading(true);
+    let data = {
+      Type: 1,
+    };
+    console.log("GetUserStory", data);
+    await getuserstory(data, token)
+      .then((res) => {
+        console.log("res:GetUserStory ", res[0]);
+        setloading(false);
+          setuserstatus(res[0])
+      //  res[0].filter((item)=> imageset1.push({url:item.User_Image_Path}))
+      //   setimageset(imageset1)
+      //   console.log("imabeee",imageset)
+      })
+      .catch((error) => {
+        setloading(false);
+        if (error.response) {
+          console.log("error.response", error.response);
+        } else if (error.request) {
+          setloading(false);
+          console.log("request error", error.request);
+        } else if (error) {
+          console.log("Server Error GetUserStory");
+          setloading(false);
+        }
+      });
+  };
+ const CreateUpdateUserStory = async (imagepath,image) => {
+    console.log("CreateUpdateUserStory",imagepath,image.size,profile.User_PkeyID)
+    // return 0
+    // setloading(true);
+    let data = {
+    US_Size:image.size,
+    US_ImagePath:imagepath,
+    US_IsFirst:1,
+    US_Number:1,
+    US_UserID:profile.User_PkeyID,
+    US_IsActive:1,    
+    Type:1
+    };
+    console.log("CreateUpdateUserStory", data);
+    // return 0
+    await createupdateuserstory(data, token)
+      .then((res) => {
+        console.log("res:CreateUpdateUserStory ", res[0]);
+        setloading(false);
+        settype("")
+         setForm({
+            text: "",
+            document: "",
+            imagepath:""})
+    GetUserStory()
+      })
+      .catch((error) => {
+        setloading(false);
+        if (error.response) {
+          console.log("error.response", error.response);
+        } else if (error.request) {
+          setloading(false);
+          console.log("request error", error.request);
+        } else if (error) {
+          console.log("Server Error CreateUpdateUserStory");
           setloading(false);
         }
       });
@@ -160,52 +233,7 @@ const handleOnChangeText = (value, fieldName) => {
           setloading(false);
           console.log("request error", error.request);
         } else if (error) {
-          console.log("Server Error");
-          setloading(false);
-        }
-      });
-  };
- const CreateUpdateUserPost = async () => {
-    setloading(true);
-    let data = {
-     // "UP_PKeyID":1,
-    // "UP_ImageName":"flower",
-    // "UP_Size":2,
-    UP_ImagePath:form.imagepath,
-    UP_IsFirst:1,
-    UP_Number:1,
-    UP_UserID:profile.User_PkeyID,
-    UP_UC_PKeyID:profile.User_PkeyID,
-    UP_COLL_PKeyID:1,
-    UP_IsActive:1,
-    UP_IsDelete:0,
-    UP_Show:1,
-    UP_AddSpotlight:1,
-    UP_Closet:1,
-    UP_Product_URL:"www.google.com",
-    UP_Coll_Desc:form.text,
-    Type:1
-    };
-    console.log("CreateUpdateUserPost", data);
-    await createupdateuserpost(data, token)
-      .then((res) => {
-        console.log("res:CreateUpdateUserPost ", res);
-        setloading(false);
-          setForm({
-            text: "",
-            document: "",
-            imagepath:""})
-       GetUserPost()
-      })
-      .catch((error) => {
-        setloading(false);
-        if (error.response) {
-          console.log("error.response", error.response);
-        } else if (error.request) {
-          setloading(false);
-          console.log("request error", error.request);
-        } else if (error) {
-          console.log("Server Error");
+          console.log("Server Error GetUserPostGetUserProfile");
           setloading(false);
         }
       });
@@ -246,12 +274,13 @@ const handleOnChangeText = (value, fieldName) => {
   }
   React.useEffect(() => {
     if(count===0){
-        countInterval.current = setInterval(() => setCount((old) => old + 0.3), 3000);
+      countInterval.current = setInterval(() => setCount((old) => old + 0.3), 3000);
         return () => {
           clearInterval(countInterval); //when user exits, clear this interval.
         };}
   }, [count]);
-    const onOpenImage = () => ActionSheetRef.show()
+    
+  const onOpenImage = () =>  ActionSheetRef.show()
 
  const ImageGallery = async () => {
     setTimeout(() => {
@@ -260,11 +289,11 @@ const handleOnChangeText = (value, fieldName) => {
         height: 400,
         cropping: true,
         includeBase64: true,
-        multiple: false,
+        multiple: true,
         compressImageQuality: 0.5
       }).then((image) => {
         console.log(image)
-          uploadImage(image.data)
+          uploadImage(image.data,image)
       })
     }, 1000)
   }
@@ -276,18 +305,19 @@ const handleOnChangeText = (value, fieldName) => {
         height: 400,
         cropping: true,
         includeBase64: true,
-        multiple: false,
+        multiple: true,
         compressImageQuality: 0.5
       }).then((image) => {
         console.log(image)
         if (image.data) {
-          uploadImage(image.data)
+          uploadImage(image.data,image)
+
         }
       })
     }, 1000)
   }
 
- const uploadImage = async (base64) => {
+ const uploadImage = async (base64,image) => {
     let data = JSON.stringify({
       Type: 2,
       Image_Base: "data:image/png;base64, " + base64
@@ -296,7 +326,10 @@ const handleOnChangeText = (value, fieldName) => {
     try {
       const res = await uploadimage(data,token)
       console.log(res[0].Image_Path, "resssss")
-      handleOnChangeText(res[0].Image_Path, "imagepath")
+       handleOnChangeText(res[0].Image_Path, "imagepath")
+        console.log("resssss",form)
+        CreateUpdateUserStory(res[0].Image_Path,image)
+      
     } catch (error) {
       if (error.request) {
         console.log(error.request)
@@ -308,172 +341,23 @@ const handleOnChangeText = (value, fieldName) => {
     }
   }
 
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      <ScrollView
-        keyboardShouldPersistTaps={"always"}
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
-      <Spinner
-          visible={loading}
-          textContent={'Loading...'}
-          textStyle={styles.spinnerTextStyle}
-        />
-        <View style={{ backgroundColor: "#fff" }}>
-          <View style={styles.header}>
-            <TouchableOpacity>
-              <Image source={moti} style={styles.moti} />
-            </TouchableOpacity>
-            <View style={styles.header1}>
-              <TouchableOpacity>
-                <Image source={bell} style={styles.bell} />
-              </TouchableOpacity>
-              <View>
-                <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-                  <Image
-                     resizeMode="stretch"
-                    source={{ uri: profile.User_Image_Path ?profile.User_Image_Path 
-                        : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg",
-                       }}
-                    style={styles.profile}
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-          <View style={styles.box}>
-            <TouchableOpacity>
-              <View style={styles.buttonbox}>
-                <View style={styles.buttonboxicon}>
-                  <SimpleLineIcons
-                    name={"compass"}
-                    size={15}
-                    style={styles.buttonboxicon}
-                  />
-                </View>
-                <Text style={styles.buttontext}>Explore Posts</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={styles.buttonbox}>
-                <View style={styles.buttonboxicon}>
-                  <SimpleLineIcons
-                    name={"compass"}
-                    size={15}
-                    style={styles.buttonboxicon}
-                  />
-                </View>
-                <Text style={styles.buttontext}>Explore Creators</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.textarea}>
-            <TouchableOpacity>
-             <Image
-                resizeMode="stretch"
-                source={{ uri: profile.User_Image_Path ?profile.User_Image_Path 
-                        : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg",
-                       }}
-                style={styles.profile}
-              />
-            </TouchableOpacity>
-                <TextInput
-                  style={styles.textareatext}
-                  onChangeText={(value) => handleOnChangeText(value, "text")}
-                  value={form.text}
-                  editable
-                  multiline={true}
-                  numberOfLines={3}
-                  placeholder="write something.."
-                />
-          </View>
-          <View style={styles.iconbox}>
-            <TouchableOpacity onPress={() =>onOpenImage()}>
-              <View style={styles.icon}>
-                <FontAwesome name={"photo"} size={24} color="#DBBE80" />
-              </View>
-            </TouchableOpacity>
-            <ActionSheet
-              ref={(o) => setActionSheetRef(o)}
-              title={
-                <Text
-                  style={{ color: "#000", fontSize: 18, fontWeight: "bold" }}
-                >
-                  Profile Photo
-                </Text>
-              }
-              options={options}
-              cancelButtonIndex={0}
-              destructiveButtonIndex={4}
-              useNativeDriver={true}
-              onPress={(index) => {
-                if (index === 0) {
-                  // cancel action
-                } else if (index === 1) {
-                  ImageGallery()
-                } else if (index === 2) {
-                  ImageCamera()
-                }
-              }}
-            />
-            <TouchableOpacity>
-              <View style={styles.icon1}>
-                <FontAwesome name={"file-zip-o"} size={24} color="#DBBE80" />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={styles.icon1}>
-                <AntDesign name={"tago"} size={24} color="#DBBE80" />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={styles.icon1}>
-                <Feather name={"lock"} size={24} color="#DBBE80" />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={styles.icon1}>
-                <Foundation name={"sound"} size={24} color="#DBBE80" />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={styles.icon1}>
-                <Feather name={"smile"} size={24} color="#DBBE80" />
-              </View>
-            </TouchableOpacity>
-          </View>
-         
-          <View>
-            <TouchableOpacity onPress={()=>CreateUpdateUserPost()}>
-              <View style={styles.buttonbox1}>
-                <Text style={styles.buttontext1}>Publish</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.amount}>
-            <Text style={styles.amounttext}>5000</Text>
-          </View>
-            <FlatList
-            showsHorizontalScrollIndicator={false}
-            horizontal
-            data={userpost}
-            renderItem={({ item }) => (
-              <View style={{justifyContent:"center",alignItems:"center",marginLeft:10,height:80,width:60}}>
+const renderItem = (item) =>{
+
+return(
+<View style={{justifyContent:"center",alignItems:"center",marginLeft:10,height:80,width:60}}>
               <TouchableOpacity onPress={()=>OpenStatus(item)} style={{height:55,width:55,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"}}>
                 <Image 
                   resizeMode="stretch"
                   style={{height:50,width:50,borderRadius:50}}
-                  source={{ uri: item.UP_ImagePath }}
+                  source={{ uri: item.US_ImagePath }}
                   />
               </TouchableOpacity>
               <Text numberOfLines={1} ellipsizeMode="tail" style={styles.title}>{item.User_Name}</Text>
             </View>
-            )}
-          />
-          <FlatList
-            data={userpost}
-            renderItem={({ item }) => (
-              <View style={{ marginTop: 10 }}>
+)
+}
+const renderUserPost = (item) =>{
+return( <View style={{ marginTop: 10 }}>
                 <View style={styles.bar}>
                   <View style={styles.bar1}>
                     <TouchableOpacity>
@@ -510,7 +394,7 @@ const handleOnChangeText = (value, fieldName) => {
                 </View>
                 <View style={styles.content}>
                   <Text style={styles.content1}>
-                    {item.UP_Coll_Desc.trimStart()}
+                    {item.UP_Coll_Desc ? item.UP_Coll_Desc.trimStart():""}
                   </Text>
                   <View style={styles.icon10}>
                     <View
@@ -550,7 +434,7 @@ const handleOnChangeText = (value, fieldName) => {
                           </Text>
                         </View>
                       </View>
-                      <View style={styles.icontext}>
+                      {/* <View style={styles.icontext}>
                         <TouchableOpacity>
                           <AntDesign
                             name={"sharealt"}
@@ -558,7 +442,7 @@ const handleOnChangeText = (value, fieldName) => {
                             color="#898788"
                           />
                         </TouchableOpacity>
-                      </View>
+                      </View> */}
                     </View>
                     <View style={styles.icontext}>
                         <TouchableOpacity onPress={()=>setsave(!save)}>
@@ -572,23 +456,208 @@ const handleOnChangeText = (value, fieldName) => {
                     </View>
                   </View>
                 </View>
+              </View>)
+}
+  const LoadMoreRandomData =() =>{
+alert("load more data")
+}
+const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+  const paddingToBottom = 20;
+  return layoutMeasurement.height + contentOffset.y >=
+    contentSize.height - paddingToBottom;
+  }
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+      <Spinner
+          visible={loading}
+          textContent={'Loading...'}
+          textStyle={styles.spinnerTextStyle}
+        />
+        <View style={{ backgroundColor: "#fff" }}>
+          <View style={styles.header}>
+            <TouchableOpacity>
+              <Image source={moti} style={styles.moti} />
+            </TouchableOpacity>
+            <View style={styles.header1}>
+              <TouchableOpacity onPress={()=> navigation.navigate("Notification")}>
+                <Image source={bell} style={styles.bell} />
+              </TouchableOpacity>
+              <View>
+                <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+                  <Image
+                     resizeMode="stretch"
+                    source={{ uri: profile.User_Image_Path ?profile.User_Image_Path 
+                        : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg",
+                       }}
+                    style={styles.profile}
+                  />
+                </TouchableOpacity>
               </View>
-            )}
+            </View>
+          </View>
+            <ScrollView
+              onMomentumScrollEnd={(event) => { 
+                if (isCloseToBottom(event.nativeEvent)) {
+                  LoadMoreRandomData()}}}
+              keyboardShouldPersistTaps={"always"}
+              contentContainerStyle={{ flexGrow: 1 }}
+            >
+          {/* <View style={styles.box}>
+            <TouchableOpacity>
+              <View style={styles.buttonbox}>
+                <View style={styles.buttonboxicon}>
+                  <SimpleLineIcons
+                    name={"compass"}
+                    size={15}
+                    style={styles.buttonboxicon}
+                  />
+                </View>
+                <Text style={styles.buttontext}>Explore Posts</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <View style={styles.buttonbox}>
+                <View style={styles.buttonboxicon}>
+                  <SimpleLineIcons
+                    name={"compass"}
+                    size={15}
+                    style={styles.buttonboxicon}
+                  />
+                </View>
+                <Text style={styles.buttontext}>Explore Creators</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.textarea}>
+            <TouchableOpacity>
+             <Image
+                resizeMode="stretch"
+                source={{ uri: profile.User_Image_Path ?profile.User_Image_Path 
+                        : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg",
+                       }}
+                style={styles.profile}
+              />
+            </TouchableOpacity>
+                <TextInput
+                  style={styles.textareatext}
+                  onKeyPress={({ nativeEvent }) => {
+                    if (nativeEvent.key === 'Backspace' ) {
+                      if( inputcount <= 4999 ){  
+                        let count = inputcount + 1
+                        setinputcount(count)}
+                    }else{
+                      let count = 5000 - (form.text.length +1)
+                      setinputcount(count) }
+                  }}
+                  maxLength={5000}
+                  onChangeText={(value) => handleOnChangeText(value, "text")}
+                  value={form.text}
+                  multiline={true}
+                  numberOfLines={3}
+                  placeholder="Write something.."
+                />
+          </View>
+          <View style={styles.iconbox}>
+            <TouchableOpacity onPress={() =>onOpenImage("post")}>
+              <View style={styles.icon}>
+                <FontAwesome name={"photo"} size={24} color="#DBBE80" />
+              </View>
+            </TouchableOpacity> */}
+            <ActionSheet
+              ref={(o) => setActionSheetRef(o)}
+              title={
+                <Text
+                  style={{ color: "#000", fontSize: 18, fontWeight: "bold" }}
+                >
+                  Profile Photo
+                </Text>
+              }
+              options={options}
+              cancelButtonIndex={0}
+              destructiveButtonIndex={4}
+              useNativeDriver={true}
+              onPress={(index) => {
+                if (index === 0) {
+                  // cancel action
+                } else if (index === 1) {
+                  ImageGallery()
+                } else if (index === 2) {
+                  ImageCamera()
+                }
+              }}
+            />
+            {/* <TouchableOpacity>
+              <View style={styles.icon1}>
+                <FontAwesome name={"file-zip-o"} size={24} color="#DBBE80" />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <View style={styles.icon1}>
+                <AntDesign name={"tago"} size={24} color="#DBBE80" />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <View style={styles.icon1}>
+                <Feather name={"lock"} size={24} color="#DBBE80" />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <View style={styles.icon1}>
+                <Foundation name={"sound"} size={24} color="#DBBE80" />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              // onPress={()=>setshowkeyboard(!showkeyboard)}
+              >
+              <View style={styles.icon1}>
+                <Feather name={"smile"} size={24} color="#DBBE80" />
+              </View>
+            </TouchableOpacity>
+          </View>
+          */}
+          {/* <View>
+            <TouchableOpacity onPress={()=>CreateUpdateUserPost()}>
+              <View style={styles.buttonbox1}>
+                <Text style={styles.buttontext1}>Publish</Text>
+              </View>
+            </TouchableOpacity>
+          </View> */}
+          {/* <View style={styles.amount}>
+            <Text style={styles.amounttext}>{inputcount}</Text>
+          </View> */}
+           <View style={{flexDirection:"row",alignItems:"center",paddingHorizontal:10,}}>
+            <TouchableOpacity onPress={()=>onOpenImage()} style={{justifyContent:"center",alignItems:"center"}}><View style={{height:50,width:50,borderColor:"gray",borderWidth:1,borderStyle:"dashed",borderRadius:50,justifyContent:"center",alignItems:"center"}}><Feather name={"plus"} size={24} color="#DBBE80" /></View>
+          <Text style={{marginTop:10}}>Add story</Text></TouchableOpacity>
+          <View><FlatList
+            showsHorizontalScrollIndicator={false}
+            horizontal
+            data={userstatus}
+            renderItem={({ item }) => renderItem(item)}
+            ListFooterComponent={()=> <View style={{width:50}}/>}
+             ListEmptyComponent={()=> {
+            return(
+            <View style={{flex:1,justifyContent:"center",alignItems:"center"}}><Text>No Post Fond</Text></View>
+             )
+            }}
+          /></View>
+          </View>
+          <FlatList
+            data={userpost}
+            renderItem={({ item }) => renderUserPost(item)}
+            ListFooterComponent={()=> <View style={{width:50}}/>}
+            ListEmptyComponent={()=> {
+            return(
+            <View style={{flex:1,justifyContent:"center",alignItems:"center"}}><Text>No Post Fond</Text></View>
+             )
+            }}
           />
+          </ScrollView>
         </View>
-      </ScrollView>
       {renderModal()}
     </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
-  header: {
-    width: "90%",
-    marginTop: 5,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingTop: 10,
-  },
   header1: {
     flexDirection: "row",
   },
@@ -664,11 +733,11 @@ const styles = StyleSheet.create({
     paddingtop: 10,
     paddingHorizontal: 10,
     paddingBottom: 20,
-    shadowColor: "#DBBE80",
-    shadowOffset: { width: 5, height: 6 },
-    shadowOpacity: 0.5,
-    shadowRadius: 2,
-    elevation: 10,
+    // shadowColor: "#DBBE80",
+    // shadowOffset: { width: 5, height: 2 },
+    // shadowOpacity: 0.5,
+    // shadowRadius: 2,
+    // elevation: 10,
   },
   content1: {
     padding: 10,
@@ -711,7 +780,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     width: "90%",
     marginTop: 5,
-    marginBottom: 40,
+    marginBottom: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     paddingTop: 10,
@@ -724,7 +793,6 @@ const styles = StyleSheet.create({
     height: 45,
   },
   box: {
-    // marginLeft: 20,
     backgroundColor: "#f8f8f8f8",
     width: "100%",
     height: 140,

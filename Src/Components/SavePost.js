@@ -23,15 +23,11 @@ import DeviceInfo from "react-native-device-info";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Foundation from "react-native-vector-icons/Foundation";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { getuserpost, getusermasterdata ,createupdateuserfavorite} from "../Utils/apiconfig";
+import { getuserpost ,createupdateuserfavorite} from "../Utils/apiconfig";
 const windowHeight = Dimensions.get("window").height;
 import { useSelector, useDispatch } from "react-redux";
-import { setProfile } from "../store/action/profile/profile";
 
 const SavePost = ({ navigation }) => {
-  const dispatch = useDispatch();
-
-  const [text, onChangeText] = React.useState("write something..");
   const token = useSelector((state) => state.authReducer.token);
   const profile = useSelector((state) => state.profileReducer.profile);
   const [loading, setloading] = React.useState(false);
@@ -41,10 +37,8 @@ const SavePost = ({ navigation }) => {
 
  React.useEffect(() => {
     GetUserPost();
-    GetUserProfile();
     return () => {
       GetUserPost();
-      GetUserProfile();
     };
   }, []);
 
@@ -53,10 +47,10 @@ const SavePost = ({ navigation }) => {
     let data = {
       Type: 1,
     };
-    console.log("loginnnnnn", data);
+    console.log("GetUserPost", data);
     await getuserpost(data, token)
       .then((res) => {
-        console.log("res:minal ", res[0]);
+        console.log("res:GetUserPost ", res[0]);
         setloading(false);
         setuserpost(res[0]);
       })
@@ -68,37 +62,12 @@ const SavePost = ({ navigation }) => {
           setloading(false);
           console.log("request error", error.request);
         } else if (error) {
-          console.log("Server Error");
+          console.log("Server Error getuserpost");
           setloading(false);
         }
       });
   };
-  const GetUserProfile = async () => {
-    setloading(true);
-    let data = {
-      Type: 2,
-    };
-    console.log("GetUserProfile", data);
-    await getusermasterdata(data, token)
-      .then((res) => {
-        console.log("res:GetUserProfile ", res);
-        setloading(false);
-        setuseinfo(res[0][0]);
-        dispatch(setProfile(res[0][0]));
-      })
-      .catch((error) => {
-        setloading(false);
-        if (error.response) {
-          console.log("error.response", error.response);
-        } else if (error.request) {
-          setloading(false);
-          console.log("request error", error.request);
-        } else if (error) {
-          console.log("Server Error");
-          setloading(false);
-        }
-      });
-  };
+  
  const CreateUpdateUserFavorite = async (id) => {
         setlike(!like)
 
@@ -128,11 +97,17 @@ const SavePost = ({ navigation }) => {
         }
       });
   };
+const LoadMoreRandomData =() =>{
+alert("load more data")
+}
+ const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+const paddingToBottom = 20;
+return layoutMeasurement.height + contentOffset.y >=
+  contentSize.height - paddingToBottom;
+ }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      <ScrollView
-        keyboardShouldPersistTaps={"always"}
-        contentContainerStyle={{ flexGrow: 1 }}>
+      
         <View style={{ backgroundColor: "#fff" }}>
           <View style={styles.header}>
             <View style={{justifyContent:"center",alignItems:"center"}}>
@@ -153,13 +128,21 @@ const SavePost = ({ navigation }) => {
               <View>
                 <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
                   <Image
-                    resizeMode="contain"
+                    resizeMode="stretch"
                     source={{ uri: profile.User_Image_Path ? profile.User_Image_Path  : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg"}}
                     style={styles.profile}/>
                 </TouchableOpacity>
               </View>
             </View>
           </View>
+        <ScrollView  onMomentumScrollEnd={(event) => { 
+          if (isCloseToBottom(event.nativeEvent)) {
+            LoadMoreRandomData()
+          }
+         }
+       } 
+        keyboardShouldPersistTaps={"always"}
+        contentContainerStyle={{ flexGrow: 1 }}>
           <FlatList
             data={userpost}
             renderItem={({ item }) => (
@@ -201,7 +184,7 @@ const SavePost = ({ navigation }) => {
                 </View>
                 <View style={styles.content}>
                   <Text style={styles.content1}>
-                    {item.UP_Coll_Desc.trimStart()}
+                    {item.UP_Coll_Desc ? item.UP_Coll_Desc.trimStart():""}
                   </Text>
                   <View style={styles.icon10}>
                     <View
@@ -267,8 +250,8 @@ const SavePost = ({ navigation }) => {
               </View>
             )}
           />
-        </View>
       </ScrollView>
+        </View>
     </SafeAreaView>
   );
 };
@@ -392,7 +375,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     padding:10
-    
   },
   header1: {
     flexDirection: "row",

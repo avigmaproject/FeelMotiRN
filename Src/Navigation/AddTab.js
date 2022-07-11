@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "../Components/Home";
-import SavePost from "../Components/SavePost";
+import Addpost from "../Components/Addpost";
 import * as React from "react";
 
 const Stack = createNativeStackNavigator();
@@ -12,7 +12,7 @@ export default function AddTab() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="SavePost" component={SavePost} />
+      <Stack.Screen name="Addpost" component={Addpost} />
     </Stack.Navigator>
   );
 }

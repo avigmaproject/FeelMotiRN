@@ -18,21 +18,5 @@ export const setLoggedIn = () => {
     });
   };
 };
-export const setUserType = (user) => {
-  console.log("user at action", user);
-  return (dispatch) => {
-    dispatch({
-      type: "SET_USER_TYPE",
-      user,
-    });
-  };
-};
-export const setInitialroute = (route) => {
-  console.log("user at action", route);
-  return (dispatch) => {
-    dispatch({
-      type: "SET_INITIAL_ROUTE",
-      route,
-    });
-  };
-};
+
+

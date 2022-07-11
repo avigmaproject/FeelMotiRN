@@ -1,7 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Home from "../Components/Home";
-import Underconstruction from "../Components/Underconstruction";
 import * as React from "react";
+import Search from "../Components/Search";
 
 const Stack = createNativeStackNavigator();
 
@@ -12,7 +11,7 @@ export default function SearchTab() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="Underconstruction" component={Underconstruction} />
+      <Stack.Screen name="Search" component={Search} />
     </Stack.Navigator>
   );
 }

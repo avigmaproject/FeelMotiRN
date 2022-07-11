@@ -7,16 +7,10 @@ import {
   StyleSheet,
   FlatList,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../CustomComponent/Header";
-import profile from "../Assets/profile.png";
-import story1 from "../Assets/story1.png";
-import story2 from "../Assets/story2.png";
-import story3 from "../Assets/story3.png";
-import story4 from "../Assets/story4.png";
-import story5 from "../Assets/story5.png";
-// import ProfileTabView from "../Navigation/ProfileTabView";
+import { getuserpost, getuserstory} from "../Utils/apiconfig";
 import { useSelector, useDispatch } from "react-redux";
 
 const DATA = [
@@ -31,12 +25,6 @@ const DATA = [
   },
   {
     button: "Tip",
-  },
-  {
-    button: "Sponsor",
-  },
-  {
-    button: "Sponsor",
   },
 ];
 const DATA1 = [
@@ -66,7 +54,70 @@ const DATA1 = [
   },
 ];
 export default function Profile({ navigation }) {
+  const token = useSelector((state) => state.authReducer.token);
   const profile = useSelector((state) => state.profileReducer.profile);
+  const [loading, setloading] = useState(false);
+  const [userpost, setuserpost] = useState([]);
+
+ React.useEffect(() => {
+     GetUserPost();
+      GetUserStory()
+    return () => {
+      GetUserPost();
+      GetUserStory()
+    };
+  }, []);
+const GetUserPost = async () => {
+    setloading(true);
+    let data = {
+      Type: 2,
+    };
+    console.log("loginnnnnn", data);
+    await getuserpost(data, token)
+      .then((res) => {
+        console.log("res:GetUserPost ", res[0]);
+        setloading(false);
+        setuserpost(res[0]);
+    
+      })
+      .catch((error) => {
+        setloading(false);
+        if (error.response) {
+          console.log("error.response", error.response);
+        } else if (error.request) {
+          setloading(false);
+          console.log("request error", error.request);
+        } else if (error) {
+          console.log("Server ErrorGetUserPost");
+          setloading(false);
+        }
+      });
+  };
+ 
+const GetUserStory = async () => {
+    setloading(true);
+    let data = {
+      Type: 2,
+    };
+    console.log("GetUserStory data", data);
+    await getuserstory(data, token)
+      .then((res) => {
+        console.log("res:GetUserStory ", res[0]);
+        setloading(false);
+      })
+      .catch((error) => {
+        setloading(false);
+        if (error.response) {
+          console.log("error.response", error.response);
+        } else if (error.request) {
+          setloading(false);
+          console.log("request error", error.request);
+        } else if (error) {
+          console.log("Server Error GetUserStory");
+          setloading(false);
+        }
+      });
+  };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F5F5F5" }}>
       <Header
@@ -91,7 +142,7 @@ export default function Profile({ navigation }) {
               <View style={{ width: "20%" }}>
                 <TouchableOpacity>
                   <Image
-                    resizeMode="contain"
+                    resizeMode="stretch"
                     source={{
                       uri: profile.User_Image_Path
                         ? profile.User_Image_Path
@@ -113,12 +164,13 @@ export default function Profile({ navigation }) {
           </View>
           <FlatList
             horizontal
+            showsHorizontalScrollIndicator={false}
             data={DATA}
             renderItem={({ item }) => (
               <View>
                 <View style={styles.buttonConatainer}>
                   <TouchableOpacity>
-                    <View style={{ marginRight: 10 }}>
+                    <View style={{}}>
                       <View style={styles.box}>
                         <Text style={styles.subscribe}>{item.button}</Text>
                       </View>
@@ -130,6 +182,7 @@ export default function Profile({ navigation }) {
           />
           <FlatList
             horizontal
+            showsHorizontalScrollIndicator={false}
             data={DATA1}
             renderItem={({ item }) => (
               <View>
@@ -152,21 +205,19 @@ export default function Profile({ navigation }) {
 const styles = StyleSheet.create({
   buttonConatainer: {
     marginLeft: 10,
-    display: "flex",
     flexDirection: "row",
   },
   box: {
     marginTop: 20,
-    height: 42,
-    width: "100%",
     backgroundColor: "#DBBE80",
     borderWidth: 1,
     borderColor: "#EAE2D1",
-    borderRadius: 4,
+    borderRadius: 4 ,
+    height:40,
+    width:90,
+justifyContent:"center",alignItems:"center"
   },
   subscribe: {
-    width: "100%",
-    padding: 10,
     color: "#ffffff",
     fontSize: 14,
     fontWeight: "600",

@@ -41,14 +41,9 @@ const ResetPassword = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       {/* <StatusBar backgroundColor="#ffffff" /> */}
-      <Header onPress={() => navigation.navigate("Signin")} />
+      <Header color={true} onPress={() => navigation.navigate("Signin")} />
       <ScrollView keyboardShouldPersistTaps={"always"} contentContainerStyle={{ flexGrow: 1, marginHorizontal: 20 }}>
         <View>
-          <View style={styles.back}>
-            <TouchableOpacity onPress={() => navigation.navigate("Signin")}>
-              <Image source={back} style={styles.back1} />
-            </TouchableOpacity>
-          </View>
           <View style={styles.heading}>
             <Text style={styles.text}>Reset Password</Text>
           </View>

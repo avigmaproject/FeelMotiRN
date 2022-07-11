@@ -7,10 +7,10 @@ import {
   ScrollView,
 } from "react-native";
 import { TextInput } from "react-native-paper";
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 
 import { setLoggedIn, setToken } from "../store/action/auth/action";
-import { login } from "../Utils/apiconfig";
+import { login,requestLocationPermission } from "../Utils/apiconfig";
 import qs from "qs";
 import { useDispatch, useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,6 +19,9 @@ import Social from "../CustomComponent/Social";
 import Button from "../CustomComponent/Button";
 import Spinner from 'react-native-loading-spinner-overlay';
 
+
+
+ 
 const isValidField = (obj) => {
   return Object.values(obj).every((value) => value.trim());
 };
@@ -45,8 +48,16 @@ const Signin = ({ navigation }) => {
   const [loading, setloading] = useState(false);
   const [error, setError] = useState("");
   const [secureTextEntry, setsecureTextEntry] = useState(true);
-
   const { email, password } = userInfo;
+
+  useEffect(() => {
+  requestLocationPermission()
+
+  return () => {
+    requestLocationPermission()
+  }
+}, [])
+
   const handleOnChangeText = (value, fieldName) => {
     console.log(value, fieldName);
     setUserInfo({ ...userInfo, [fieldName]: value });
@@ -164,18 +175,19 @@ const Signin = ({ navigation }) => {
           </View>
           <View>
             <TouchableOpacity
+              style={{marginBottom:10}}
               onPress={() => navigation.navigate("ForgetPassword")}
             >
               <Text style={styles.forgot}>Forgot password?</Text>
             </TouchableOpacity>
           </View>
-          <View>
+          {/* <View>
             <TouchableOpacity
               onPress={() => navigation.navigate("ResetPassword")}
             >
               <Text style={styles.reset1}>Reset password?</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
           <View>
             <Button onPress={submitForm} title="Sign In" />
           </View>

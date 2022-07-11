@@ -1,6 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Home from "../Components/Home";
-import Underconstruction from "../Components/Underconstruction";
+import Message from "../Components/Message";
 import * as React from "react";
 
 const Stack = createNativeStackNavigator();
@@ -12,7 +11,7 @@ export default function SendTab() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="Underconstruction" component={Underconstruction} />
+      <Stack.Screen name="Message" component={Message} />
     </Stack.Navigator>
   );
 }

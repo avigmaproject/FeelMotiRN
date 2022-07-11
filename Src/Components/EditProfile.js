@@ -22,7 +22,8 @@ import { setProfile } from "../store/action/profile/profile";
 import { ActionSheetCustom as ActionSheet } from "react-native-actionsheet"
 import ImagePicker from "react-native-image-crop-picker";
 import Spinner from 'react-native-loading-spinner-overlay';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {  Snackbar } from 'react-native-paper';
 const options = [
   "Cancel",
   <View>
@@ -42,20 +43,21 @@ const EditProfile = ({ navigation }) => {
   const [isFocus1, setIsFocus1] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [ActionSheetRef, setActionSheetRef] = useState(null);
+  const [visible, setVisible] = React.useState(false);
   const [form, setForm] = useState({
-    fullName: profile.User_Name,
-    email: profile.User_Email,
-    username: profile.User_Name,
-    profession: "",
-    language: "",
-    dob: profile.User_DOB,
-    company: profile.User_Company,
-    unitedstates: profile.User_Country,
-    gender: profile.User_Gender,
-    city: profile.User_City,
-    address: profile.User_Address,
-    postal: profile.User_Zip,
-    imagepath:profile.User_Image_Path
+    fullName: profile.User_Name ?profile.User_Name:"",
+    email: profile.User_Email ? profile.User_Email:"",
+    username: profile.User_MotiID ? profile.User_MotiID:"",
+    profession: profile.User_Occupation ? profile.User_Occupation :"",
+    language: profile.User_Language ? profile.User_Language.toString():"1",
+    dob:profile.User_DOB? moment(profile.User_DOB).format("LL"):"" ,
+    company: profile.User_Company ? profile.User_Company:"",
+    unitedstates: profile.User_Country ?profile.User_Country:"",
+    gender:profile.User_Gender? profile.User_Gender.toString() :"1",
+    city: profile.User_City ? profile.User_City:"",
+    address: profile.User_Address ?  profile.User_Address:"",
+    postal: profile.User_Zip ? profile.User_Zip :"",
+    imagepath:profile.User_Image_Path ? profile.User_Image_Path :""
   });
   const [error, setError] = useState("");
   const [loading, setloading] = useState(false);
@@ -69,7 +71,20 @@ const EditProfile = ({ navigation }) => {
     { label: "Female", value: "2" },
     { label: "other", value: "3" },
   ];
+  React.useEffect(() => {
+      GetLoaction()
+  }, []);
+  const onToggleSnackBar = () => setVisible(!visible);
 
+  const onDismissSnackBar = () => setVisible(false);
+  const GetLoaction = async() => {
+    let values = await AsyncStorage.multiGet(['currentLatitude', 'currentLongitude','addressComponent'])
+    if(values !== null) {
+      handleOnChangeText(values[0][1], "latitude")
+      handleOnChangeText(values[1][1], "longitude")
+      handleOnChangeText(values[2][1], "location")
+    }
+  } 
   const handleOnChangeText = (value, fieldName) => {
     setForm({ ...form, [fieldName]: value });
   };
@@ -90,7 +105,7 @@ const EditProfile = ({ navigation }) => {
   const renderLabel = () => {
     if (value || isFocus) {
       return (
-        <Text style={[styles.label, isFocus && { color: "gray" }]}>
+        <Text style={[styles.label, isFocus && { color: "#9b9c9f" }]}>
           Language
         </Text>
       );
@@ -100,7 +115,7 @@ const EditProfile = ({ navigation }) => {
   const renderLabel1 = () => {
     if (value1 || isFocus1) {
       return (
-        <Text style={[styles.label, isFocus && { color: "gray" }]}>Gender</Text>
+        <Text style={[styles.label, isFocus && { color: "#9b9c9f" }]}>Gender</Text>
       );
     }
     return null;
@@ -117,6 +132,7 @@ const EditProfile = ({ navigation }) => {
     city,
     address,
     postal,
+    language,
   } = form;
 
   const updateError = (error, stateUpdate) => {
@@ -222,18 +238,23 @@ const onOpenImage = () =>ActionSheetRef.show()
       // Keyboard.dismiss();
       setloading(true);
       let data = {
-        User_Name: form.username,
+        User_Name: form.fullName,
         User_Email: form.email,
         User_DOB: form.dob,
         User_Company: form.company,
         User_Country: form.unitedstates,
-        User_Gender: form.gender,
+        User_Gender: parseInt(form.gender),
         User_City: form.city,
         User_Address: form.address,
         User_Zip: form.postal,
         User_IsActive: 1,
-        Type: 2,
-        User_Image_Path:form.imagepath
+        Type: 8,
+        User_Image_Path:form.imagepath,
+        User_Occupation:form.profession,
+        User_Language:parseInt(form.language),
+        User_longitude:form.longitude,
+        User_latitude:form.latitude,
+        User_MotiID:form.username,
       };
 
       console.log("edit data", data);
@@ -241,6 +262,7 @@ const onOpenImage = () =>ActionSheetRef.show()
         .then((res) => {
           console.log("res: ", res);
           setloading(false);
+          onToggleSnackBar()
           GetUserProfile();
         })
         .catch((error) => {
@@ -344,7 +366,7 @@ const onOpenImage = () =>ActionSheetRef.show()
               <Dropdown
                 style={[
                   styles.dropdown,
-                  isFocus && { borderColor: "gray", borderWidth: 1.5 },
+                  isFocus && { borderColor: "#9b9c9f", borderWidth: 1.5 },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -357,7 +379,7 @@ const onOpenImage = () =>ActionSheetRef.show()
                 valueField="value"
                 placeholder={!isFocus ? "Language" : "..."}
                 searchPlaceholder="Search..."
-                value={value}
+                value={language}
                 onFocus={() => setIsFocus(true)}
                 onBlur={() => setIsFocus(false)}
                 onChange={(item) => {
@@ -393,7 +415,7 @@ const onOpenImage = () =>ActionSheetRef.show()
               <Dropdown
                 style={[
                   styles.dropdown,
-                  isFocus1 && { borderColor: "#EBEBEB", borderWidth: 1.5 },
+                  isFocus1 && { borderColor: "#9b9c9f", borderWidth: 1.5 },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -406,7 +428,7 @@ const onOpenImage = () =>ActionSheetRef.show()
                 valueField="value"
                 placeholder={!isFocus1 ? "Gender" : "..."}
                 searchPlaceholder="Search..."
-                value={value1}
+                value={gender}
                 onFocus={() => setIsFocus1(true)}
                 onBlur={() => setIsFocus1(false)}
                 onChange={(item) => {
@@ -469,7 +491,19 @@ const onOpenImage = () =>ActionSheetRef.show()
             <Button onPress={editProfile} title="Save Changes" />
           </View>
         </View>
-</View>
+      </View>
+      <Snackbar
+        visible={visible}
+        onDismiss={onDismissSnackBar}
+        style={{backgroundColor:"#DBBE80"}}
+        action={{
+          label: 'OK',
+          onPress: () => {
+            onDismissSnackBar
+          },
+        }}>
+       Profile Updated successfully.
+      </Snackbar>
       </ScrollView>
     </SafeAreaView>
   );
@@ -499,7 +533,7 @@ const styles = StyleSheet.create({
     height: 50,
     backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#EBEBEB",
+    borderColor: "#9b9c9f",
     borderRadius: 10,
     marginVertical: 10,
     padding: 15,
@@ -524,7 +558,7 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     height: 55,
-    borderColor: "#EBEBEB",
+    borderColor: "#9b9c9f",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 8,
@@ -540,11 +574,11 @@ const styles = StyleSheet.create({
     zIndex: 999,
     paddingHorizontal: 5,
     fontSize: 12,
-    color: "gray",
+    color: "#9b9c9f",
   },
   placeholderStyle: {
     fontSize: 16,
-    color: "#EBEBEB",
+    color: "#9b9c9f",
   },
   selectedTextStyle: {
     fontSize: 16,

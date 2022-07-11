@@ -9,6 +9,11 @@ import MySubscription from "../Components/MySubscription";
 import Password from "../Components/Password";
 import Explore from "../Components/Explore";
 import PrivacySecurity from "../Components/PrivacySecurity";
+import Payout from "../Components/Payout";
+import Mycard from "../Components/Mycard";
+import Withdrawals from "../Components/Withdrawals";
+import Payment from "../Components/Payment";
+import Notification from "../Components/Notification";
 
 import * as React from "react";
 
@@ -31,7 +36,11 @@ export default function HomeTab() {
       <Stack.Screen name="Password" component={Password} />
       <Stack.Screen name="Explore" component={Explore} />
       <Stack.Screen name="PrivacySecurity" component={PrivacySecurity} />
-
+      <Stack.Screen name="Payout" component={Payout} />
+      <Stack.Screen name="Mycard" component={Mycard} />
+      <Stack.Screen name="Withdrawals" component={Withdrawals} />
+      <Stack.Screen name="Payment" component={Payment} />
+      <Stack.Screen name="Notification" component={Notification} />
     </Stack.Navigator>
   );
 }

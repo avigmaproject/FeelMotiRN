@@ -6,7 +6,7 @@ import HomeTab from "./HomeTab";
 import SearchTab from "./SearchTab";
 import SendTab from "./SendTab";
 import AddTab from "./AddTab";
-import NavigationTab from "./NavigationTab";
+import SaveTab from "./SaveTab";
 import compass from "react-native-vector-icons/SimpleLineIcons";
 import React from "react";
 import { Image } from "react-native";
@@ -31,11 +31,11 @@ export default function Main() {
             image = focused
               ? require("../Assets/searchactive.png")
               : require("../Assets/searchdeactive.png");
-          } else if (route.name === "AddTab") {
+          } else if (route.name === "SaveTab") {
             image = focused
               ? require("../Assets/activesaved.png")
               : require("../Assets/deactivesaved.png");
-          } else if (route.name === "NavigationTab") {
+          } else if (route.name === "AddTab") {
             image = focused
               ? require("../Assets/adddeactive.png")
               : require("../Assets/adddeactive.png");
@@ -55,8 +55,8 @@ export default function Main() {
       <Tab.Screen name="HomeTab" component={HomeTab} />
       <Tab.Screen name="SearchTab" component={SearchTab} />
       <Tab.Screen name="SendTab" component={SendTab} />
+      <Tab.Screen name="SaveTab" component={SaveTab} />
       <Tab.Screen name="AddTab" component={AddTab} />
-      <Tab.Screen name="NavigationTab" component={NavigationTab} />
     </Tab.Navigator>
   );
 }

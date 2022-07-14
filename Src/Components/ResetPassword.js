@@ -15,7 +15,9 @@ import InputText from "../CustomComponent/InputText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../CustomComponent/Header";
 import Button from "../CustomComponent/Button";
-const ResetPassword = ({ navigation }) => {
+import {resetpassword} from "../Utils/apiconfig"
+
+const ResetPassword = ({ navigation ,...props}) => {
   const [resetPassword, setResetPassword] = useState({
     password: "",
     confirmpassword: "",
@@ -23,7 +25,9 @@ const ResetPassword = ({ navigation }) => {
   const [secureTextEntry, setsecureTextEntry] = useState(false);
   const [csecureTextEntry, csetsecureTextEntry] = useState(false);
   const [error, setError] = useState("");
+  const [email, setemail] = useState("");
 
+console.log("navigation",navigation)
   const { password, confirmpassword } = resetPassword;
   const handleSecureEntry = () => {
     setsecureTextEntry(!secureTextEntry);
@@ -35,9 +39,97 @@ const ResetPassword = ({ navigation }) => {
     console.log(value, fieldName);
     setResetPassword({ ...resetPassword, [fieldName]: value });
   };
-  const submitForm = () => {
-    console.log("info", resetPassword);
+const updateError = (error, stateUpdate) => {
+    stateUpdate(error);
+    setTimeout(() => {
+      stateUpdate("");
+    }, 2500);
   };
+
+  React.useEffect(() => {
+    const {link} = props.route.params;
+    const spliturl = link.split('/');
+    console.log('spliturl', spliturl[4]);
+    setemail(spliturl[4])
+  }, [email])
+  
+const passwordEmpty = () => {
+    let cancel = false;
+    if (password.length === 0) {
+      cancel = true;
+    }
+    if (confirmpassword.length === 0) {
+      cancel = true;
+    }
+    if (cancel) {
+      return updateError("Fields can not be empty.", setError);
+    } else {
+      return true;
+    }
+  };
+const passwordLength = () => {
+    let cancel = false;
+    if (password.length < 8) {
+      cancel = true;
+    }
+    if (confirmpassword.length < 8 ) {
+      cancel = true;
+    }
+    if (cancel) {
+      return updateError('Password length should not be less then 8.', setError);
+      return false;
+    } else {
+      return true;
+    }
+  };
+const passwordEqual = () => {
+    let cancel = false;
+    if (password !== confirmpassword) {
+      cancel = true;
+    }
+    if (cancel) {
+      return updateError('Password and confirm password not match.', setError);
+      return false;
+    } else {
+      return true;
+    }
+  };
+const submitForm = async () => {
+    if (
+      passwordLength() &&
+      passwordEmpty() && passwordEqual()
+    ) {     
+        let data = {
+          User_Email: email,
+          Type: 5,
+          User_Password: password,
+          User_Type: 1,
+        };
+        console.log(data);
+        await resetpassword(data)
+          .then(res => {
+            console.log('res: ', JSON.stringify(res));
+            this.setState({isLoading: false});
+            this.showMessage('Password Changed Successfully');
+            setTimeout(() => {
+              this.props.navigation.navigate('SuccessScreen');
+            }, 2000);
+          })
+          .catch(error => {
+            if (error.response) {
+              this.showerrorMessage('Something went wrong!!!');
+              console.log('responce_error', error.response);
+              this.setState({isLoading: false});
+            } else if (error.request) {
+              this.showerrorMessage('Something went wrong!!!');
+              this.setState({isLoading: false});
+              console.log('request error', error.request);
+            }
+          });
+      
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       {/* <StatusBar backgroundColor="#ffffff" /> */}
@@ -61,6 +153,7 @@ const ResetPassword = ({ navigation }) => {
                   color={"#9B9C9F"}
                 />
               }
+              error={error}
             />
             <InputText
               onChangeText={(value) =>

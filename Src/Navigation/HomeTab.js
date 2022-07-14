@@ -14,6 +14,7 @@ import Mycard from "../Components/Mycard";
 import Withdrawals from "../Components/Withdrawals";
 import Payment from "../Components/Payment";
 import Notification from "../Components/Notification";
+import WebViewPage from "../Components/WebViewPage";
 
 import * as React from "react";
 
@@ -41,6 +42,8 @@ export default function HomeTab() {
       <Stack.Screen name="Withdrawals" component={Withdrawals} />
       <Stack.Screen name="Payment" component={Payment} />
       <Stack.Screen name="Notification" component={Notification} />
+      <Stack.Screen name="WebViewPage" component={WebViewPage} />
+
     </Stack.Navigator>
   );
 }

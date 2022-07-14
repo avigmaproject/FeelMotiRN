@@ -7,13 +7,16 @@ import SearchTab from "./SearchTab";
 import SendTab from "./SendTab";
 import AddTab from "./AddTab";
 import SaveTab from "./SaveTab";
-import compass from "react-native-vector-icons/SimpleLineIcons";
+import { setMenu } from "../store/action/profile/profile";
 import React from "react";
-import { Image } from "react-native";
-import Ionic from "react-native-vector-icons/Ionicons";
+import { Image ,View,Text} from "react-native";
+import { useSelector, useDispatch } from "react-redux";
 const Tab = createBottomTabNavigator();
 
 export default function Main() {
+  const dispatch = useDispatch();
+  const showmenu = useSelector((state) => state.profileReducer.showmenu);
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -56,7 +59,14 @@ export default function Main() {
       <Tab.Screen name="SearchTab" component={SearchTab} />
       <Tab.Screen name="SendTab" component={SendTab} />
       <Tab.Screen name="SaveTab" component={SaveTab} />
-      <Tab.Screen name="AddTab" component={AddTab} />
+      <Tab.Screen name="AddTab" component={AddTab} 
+        listeners={({ navigation, route }) => ({
+          tabPress: async (e) => {
+              e.preventDefault();
+              dispatch(setMenu(!showmenu));
+          },
+        })}
+      />
     </Tab.Navigator>
   );
 }

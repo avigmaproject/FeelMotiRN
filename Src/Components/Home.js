@@ -23,17 +23,21 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import DeviceInfo from "react-native-device-info";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Foundation from "react-native-vector-icons/Foundation";
-import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
-import { getuserpost, getusermasterdata ,createupdateuserfavorite,createupdateuserpost,uploadimage,createupdateuserstory,getuserstory} from "../Utils/apiconfig";
+import { getuserpost, getusermasterdata ,createupdateuserfavorite,requestLocationPermission,uploadimage,getuserstory} from "../Utils/apiconfig";
 const windowHeight = Dimensions.get("window").height;
 const windowWidth = Dimensions.get("window").width;
 import { useSelector, useDispatch } from "react-redux";
-import { setProfile } from "../store/action/profile/profile";
+import { setProfile ,setMenu} from "../store/action/profile/profile";
 import * as Progress from 'react-native-progress';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { ActionSheetCustom as ActionSheet } from "react-native-actionsheet"
 import ImagePicker from "react-native-image-crop-picker";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import TrackPlayer from 'react-native-track-player';
+import Menu from "../CustomComponent/Menu"
+import { useFocusEffect } from "@react-navigation/native";
+import RNFetchBlob from 'rn-fetch-blob'
+
 const options = [
   "Cancel",
   <View>
@@ -46,6 +50,7 @@ const options = [
 const Home = ({ navigation }) => {
   const token = useSelector((state) => state.authReducer.token);
   const profile = useSelector((state) => state.profileReducer.profile);
+  const showmenu = useSelector((state) => state.profileReducer.showmenu);
   const dispatch = useDispatch();
   const countInterval = React.useRef(null);
   const [loading, setloading] = useState(false);
@@ -56,6 +61,7 @@ const Home = ({ navigation }) => {
   const [count, setCount] = useState(0);
   const [statue, setstatue] = useState([]);
   const [userstatus, setuserstatus] = useState([])
+  const [showshare, setshowshare] = useState(false)
   const [ActionSheetRef, setActionSheetRef] = useState(null);
   const [form, setForm] = useState({
     text: "",
@@ -68,13 +74,24 @@ const Home = ({ navigation }) => {
       GetUserPost();
       GetUserStory()
       GetUserProfile();
+      IntilaizeSetup()
+
     return () => {
       GetUserPost();
       GetUserProfile();
       GetUserStory()
       GetLoaction()
+      IntilaizeSetup()
+   dispatch(setMenu(!showmenu));
     };
   }, []);
+ useFocusEffect(
+    React.useCallback(() => {
+      GetUserPost();
+      GetUserStory()
+      return () => console.log("close");
+    }, [])
+  );
   const GetLoaction = async() => {
   const value = await AsyncStorage.getItem('addressComponent')
     if(value !== null) {
@@ -119,10 +136,11 @@ return (
 const handleOnChangeText = (value, fieldName) =>  setForm({ ...form, [fieldName]: value });
 
   const GetUserPost = async () => {
-    let imageset1=[]
     setloading(true);
     let data = {
-      Type: 1,
+     PageNumber:1,
+    NoofRows:1,    
+    Type:1
     };
     console.log("loginnnnnn", data);
     await getuserpost(data, token)
@@ -148,7 +166,9 @@ const handleOnChangeText = (value, fieldName) =>  setForm({ ...form, [fieldName]
 const GetUserStory = async () => {
     setloading(true);
     let data = {
-      Type: 1,
+        PageNumber:1,
+    NoofRows:1,    
+    Type:1
     };
     console.log("GetUserStory", data);
     await getuserstory(data, token)
@@ -173,57 +193,20 @@ const GetUserStory = async () => {
         }
       });
   };
- const CreateUpdateUserStory = async (imagepath,image) => {
-    console.log("CreateUpdateUserStory",imagepath,image.size,profile.User_PkeyID)
-    // return 0
-    // setloading(true);
-    let data = {
-    US_Size:image.size,
-    US_ImagePath:imagepath,
-    US_IsFirst:1,
-    US_Number:1,
-    US_UserID:profile.User_PkeyID,
-    US_IsActive:1,    
-    Type:1
-    };
-    console.log("CreateUpdateUserStory", data);
-    // return 0
-    await createupdateuserstory(data, token)
-      .then((res) => {
-        console.log("res:CreateUpdateUserStory ", res[0]);
-        setloading(false);
-        settype("")
-         setForm({
-            text: "",
-            document: "",
-            imagepath:""})
-    GetUserStory()
-      })
-      .catch((error) => {
-        setloading(false);
-        if (error.response) {
-          console.log("error.response", error.response);
-        } else if (error.request) {
-          setloading(false);
-          console.log("request error", error.request);
-        } else if (error) {
-          console.log("Server Error CreateUpdateUserStory");
-          setloading(false);
-        }
-      });
-  };
+ 
   const GetUserProfile = async () => {
     setloading(true);
     let data = {
       Type: 2,
     };
-    console.log("GetUserProfile", data);
+    console.log("GetUserProfile*****", data);
     await getusermasterdata(data, token)
       .then((res) => {
         console.log("res:GetUserProfile ", res);
         setloading(false);
         // setuseinfo(res[0][0]);
         dispatch(setProfile(res[0][0]));
+        requestLocationPermission()
       })
       .catch((error) => {
         setloading(false);
@@ -340,18 +323,93 @@ const GetUserStory = async () => {
       }
     }
   }
+ const IntilaizeSetup = async() =>{
+      console.log("**play intialize**")
+        await TrackPlayer.setupPlayer();
+    }
+const PlayTrack = async (url) => {
+    // await TrackPlayer.reset();
+  console.log(typeof url)
+    const track3 = {
+      url: "http://apifeelmoti.ikaart.org//UploadDocuments/637932503293946244_0.mp3",
+      //url: "http://soundbible.com/mp3/Tyrannosaurus%20Rex%20Roar-SoundBible.com-807702404.mp3", // Load media from the file system
+      // title: 'Ice Age',
+      // artist: 'deadmau5',
+      // Load artwork from the file system:
+      artwork: 'file:///storage/sdcard0/Downloads/cover.png',
+      // duration: 411
+    };
+    console.log(track3);
+    await TrackPlayer.add(track3);
+    await TrackPlayer.play();
+  };
+// const WebViewPage = (url) =>{
+// navigation.navigate("WebViewPage",{url})
+// }
+const WebViewPage = (url) => {
+    console.log(url)
+    setloading(true);
+    let FilePath =url
+    const { dirs } = RNFetchBlob.fs
+    if (Platform.OS === 'android') {
+      RNFetchBlob.config({
+        fileCache: true,
+        addAndroidDownloads: {
+          useDownloadManager: true,
+          notification: true,
+          path: `${dirs.DownloadDir}/test.pdf`,
+          description: 'Downloading..'
+        }
+      })
+        .fetch('GET', FilePath, {})
+        .then((res) => {
+          console.log('The file saved to ', res.data)
+    setloading(false);
+        })
+        .catch((e) => {
+          console.log(e)
+        })
+    } else {
+      const configfb = {
+        fileCache: true,
+        useDownloadManager: true,
+        notification: true,
+        mediaScannable: true,
+        path: `${dirs.DocumentDir}/${FilePath}.pdf`
+      }
+      const configOptions = Platform.select({
+        ios: {
+          fileCache: configfb.fileCache,
+          path: configfb.path
+        }
+      })
+      RNFetchBlob.config(configOptions)
+        .fetch('GET', FilePath, {})
+        .then((res) => {
+        setloading(true);
+          RNFetchBlob.ios.openDocument(res.data)
+        })
+        .catch((e) => {
+          console.log('The file saved to ERROR', e.message)
+        })
+    }
+    setloading(true);
+  }
 
 const renderItem = (item) =>{
 
 return(
 <View style={{justifyContent:"center",alignItems:"center",marginLeft:10,height:80,width:60}}>
-              <TouchableOpacity onPress={()=>OpenStatus(item)} style={{height:55,width:55,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"}}>
-                <Image 
+             
+                  {item.US_Doc_Type === "Image" && ( <TouchableOpacity onPress={()=>OpenStatus(item)} style={{height:55,width:55,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"}}><Image 
                   resizeMode="stretch"
                   style={{height:50,width:50,borderRadius:50}}
                   source={{ uri: item.US_ImagePath }}
-                  />
-              </TouchableOpacity>
+                  /></TouchableOpacity>)}
+                  {item.US_Doc_Type === "Document" && (<TouchableOpacity onPress={()=>WebViewPage(item.US_ImagePath)} style={{height:55,width:55,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"}}><AntDesign name={"filetext1"} size={30} color="#DBBE80" /></TouchableOpacity>)}
+                  {item.US_Doc_Type === "Audio" && (<TouchableOpacity onPress={()=>PlayTrack(item.US_ImagePath)} style={{height:55,width:55,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"}} ><AntDesign name={"sound"} size={30} color="#DBBE80" /></TouchableOpacity>)}
+                
+            
               <Text numberOfLines={1} ellipsizeMode="tail" style={styles.title}>{item.User_Name}</Text>
             </View>
 )
@@ -373,8 +431,13 @@ return( <View style={{ marginTop: 10 }}>
                       </TouchableOpacity>
                     </View>
                   </View>
+                  {showshare && (
+                <View 
+                  style={{padding:10,position:"absolute",
+                    right:32,top:20, borderWidth:1,borderColor:"#DBBE80"}}>
+                <Text style={{color:"#DBBE80"}}>Share</Text></View>)}
                   <View style={styles.dot}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={()=>setshowshare(!showshare)}>
                       <Entypo
                         name={"dots-three-vertical"}
                         size={24}
@@ -384,13 +447,14 @@ return( <View style={{ marginTop: 10 }}>
                   </View>
                 </View>
                 <View style={styles.image}>
-                  <TouchableOpacity>
-                    <Image
+                  {item.UP_Doc_Type === "Image" && ( <TouchableOpacity><Image
                       resizeMode="stretch"
                       source={{ uri: item.UP_ImagePath }}
                       style={styles.image1}
-                    />
-                  </TouchableOpacity>
+                    /></TouchableOpacity>)}
+                  {item.UP_Doc_Type === "Document" && (<TouchableOpacity style={{...styles.image1,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"filetext1"} size={200} color="#DBBE80" /><Text>{form.text}</Text></TouchableOpacity>)}
+                  {item.UP_Doc_Type === "Audio" && (<TouchableOpacity onPress={()=>PlayTrack(item.UP_ImagePath)} style={{...styles.image1,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"sound"} size={100} color="#DBBE80" /><Text style={{marginTop:10}}>{form.text}</Text></TouchableOpacity>)}
+                  
                 </View>
                 <View style={styles.content}>
                   <Text style={styles.content1}>
@@ -402,7 +466,7 @@ return( <View style={{ marginTop: 10 }}>
                         flexDirection: "row",
                         alignItems: "center",
                         justifyContent:"space-between",
-                        width: "50%",
+                        width: "40%",
                          paddingtop: 10,
                         paddingHorizontal: 10,
 
@@ -459,7 +523,7 @@ return( <View style={{ marginTop: 10 }}>
               </View>)
 }
   const LoadMoreRandomData =() =>{
-alert("load more data")
+// alert("load more data")
 }
 const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
   const paddingToBottom = 20;
@@ -473,6 +537,7 @@ const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
           textContent={'Loading...'}
           textStyle={styles.spinnerTextStyle}
         />
+      {showmenu && (<Menu navigation={navigation}/>)}
         <View style={{ backgroundColor: "#fff" }}>
           <View style={styles.header}>
             <TouchableOpacity>
@@ -500,7 +565,7 @@ const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
                 if (isCloseToBottom(event.nativeEvent)) {
                   LoadMoreRandomData()}}}
               keyboardShouldPersistTaps={"always"}
-              contentContainerStyle={{ flexGrow: 1 }}
+              contentContainerStyle={{ flexGrow: 1,paddingBottom:100 }}
             >
           {/* <View style={styles.box}>
             <TouchableOpacity>
@@ -634,17 +699,12 @@ const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
             data={userstatus}
             renderItem={({ item }) => renderItem(item)}
             ListFooterComponent={()=> <View style={{width:50}}/>}
-             ListEmptyComponent={()=> {
-            return(
-            <View style={{flex:1,justifyContent:"center",alignItems:"center"}}><Text>No Post Fond</Text></View>
-             )
-            }}
           /></View>
           </View>
           <FlatList
             data={userpost}
             renderItem={({ item }) => renderUserPost(item)}
-            ListFooterComponent={()=> <View style={{width:50}}/>}
+            ListFooterComponent={()=> <View style={{width:150}}/>}
             ListEmptyComponent={()=> {
             return(
             <View style={{flex:1,justifyContent:"center",alignItems:"center"}}><Text>No Post Fond</Text></View>

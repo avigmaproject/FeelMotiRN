@@ -6,6 +6,7 @@ export default function InputText(props) {
   return (
     <View style={{ marginTop: 10 }}>
       <TextInput
+        {...props}
         mode="outlined"
         value={props.value}
         autoCapitalize="none"

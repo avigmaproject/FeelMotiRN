@@ -1,3 +1,4 @@
+
 import {
   View,
   Text,
@@ -19,7 +20,7 @@ import DeviceInfo from "react-native-device-info";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Foundation from "react-native-vector-icons/Foundation";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
-import { createupdateuserpost,uploaddocumnet,uploadimage} from "../Utils/apiconfig";
+import { createupdateuserpost,uploaddocumnet,createupdateuserstory} from "../Utils/apiconfig";
 const windowHeight = Dimensions.get("window").height;
 const windowWidth = Dimensions.get("window").width;
 import { useSelector, useDispatch } from "react-redux";
@@ -41,7 +42,7 @@ const options = [
   </View>
 ]
 
-export default function Addpost({navigation}) {
+export default function AddStory({navigation}) {
   const token = useSelector((state) => state.authReducer.token);
   const profile = useSelector((state) => state.profileReducer.profile);
   const dispatch = useDispatch();
@@ -51,14 +52,7 @@ export default function Addpost({navigation}) {
   const [userpostdata, setuserpostdata] = useState([])
   const [ActionSheetRef, setActionSheetRef] = useState(null);
   const [type, settype] = useState("Text")
-
-  // const [imageurl, setimageurl] = useState( [
-  //       "https://source.unsplash.com/1024x768/?nature",
-  //       "https://source.unsplash.com/1024x768/?water",
-  //       "https://source.unsplash.com/1024x768/?girl",
-  //       "https://source.unsplash.com/1024x768/?tree", // Network image
-  //     ])
-const [imageurl, setimageurl] = useState([])
+  const [imageurl, setimageurl] = useState([])
   const [form, setForm] = useState({
     text: "",
     location:"",
@@ -78,7 +72,7 @@ const handleError = (err) => {
 const OpenDocumentPicker = () => {
 settype("Document")
  DocumentPicker.pickMultiple({
-  type: [DocumentPicker.types.csv,DocumentPicker.types.xls,DocumentPicker.types.xlsx,DocumentPicker.types.pptx,DocumentPicker.types.ppt,DocumentPicker.types.pdf,DocumentPicker.types.zip,DocumentPicker.types.plainText],
+  type: [DocumentPicker.types.csv,DocumentPicker.types.xls,DocumentPicker.types.xlsx,DocumentPicker.types.pptx,DocumentPicker.types.ppt,DocumentPicker.types.pdf,DocumentPicker.types.docx,DocumentPicker.types.doc,DocumentPicker.types.plainText],
   allowMultiSelection:true,
 }).then((item)=>{
 console.log(item)
@@ -167,7 +161,7 @@ const uploadDocumnet = async (data,i) => {
     }
       console.log(postdata)
       userpostdata.push(postdata)
-      setuserpostdata(userpostdata)
+      setuserpostdata([...userpostdata ,postdata ])
       imageurl.push(res.Data[0].url)
       setimageurl(imageurl)
     } catch (error) {
@@ -180,42 +174,28 @@ const uploadDocumnet = async (data,i) => {
       }
     }
   }
-const Validation = () =>{
-let validation = false
- if(form.text.length > 0){
-validation = true
-  }
-return validation
-}
-const CreateUpdateUserPost = async () => {
- let values = await AsyncStorage.multiGet(['currentLatitude', 'currentLongitude','addressComponent'])
+const CreateUpdateUserStory = async () => {
  console.log(userpostdata.length > 0)
 // return 0
-  if(values !== null && Validation()) {
-      console.log(values[0][1],values[1][1],values[2][1])
+  if(userpostdata.length > 0 && userpostdata[0].UI_File_Path) {
     setloading(true);
     let data = {
-    UP_ImageName:userpostdata.length > 0 ? userpostdata[0].UI_File_Name : "",
-    UP_ImagePath:userpostdata.length > 0 ? userpostdata[0].UI_File_Path : "",
-    UP_UserID:profile.User_PkeyID,
-    UP_UC_PKeyID:profile.User_PkeyID,
-    UP_Product_URL:"",
-    UP_Coll_Desc:form.text,
-    UP_Doc_Type:type,
-    UP_Location:values[2][1],
-    UP_latitude:values[0][1],
-    UP_longitude:values[1][1],
-    Type:1,
-    User_Image_Post_DTO:userpostdata.length > 0  ? JSON.stringify(userpostdata) : []
+  US_ImageName:userpostdata.length > 0 ? userpostdata[0].UI_File_Name : "",
+    US_ImagePath:userpostdata.length > 0 ? userpostdata[0].UI_File_Path : "",
+    US_IsActive:1,
+    US_Product_URL:"",
+    US_Doc_Type:type,
+    User_Image_Post_DTO:userpostdata.length > 0  ? JSON.stringify(userpostdata) : [],
+    Type:1,    
     };
    console.log("==============================")
-   console.log("CreateUpdateUserPost", data);
+   console.log("CreateUpdateUserStory", data);
    console.log("==============================")
 
 // return 0
-    await createupdateuserpost(data, token)
+    await createupdateuserstory(data, token)
       .then((res) => {
-        console.log("res:CreateUpdateUserPost ", res);
+        console.log("res:CreateUpdateUserStory ", res);
         setloading(false);
         setuserpostdata([])
         setimageurl([])
@@ -237,7 +217,7 @@ const CreateUpdateUserPost = async () => {
         }
       });
   }else{
-alert("Enter some text")}
+alert("Select atlest on image")}
   };
 
     useEffect(() => {
@@ -268,7 +248,7 @@ const PlayTrack = async () => {
   };
   return (
     <SafeAreaView  style={{flex:1}}>
-    <ScrollView style={{flex:1}}>
+    <ScrollView style={{flex:1,marginHorizontal:10}}>
          <View style={styles.box}>
             <TouchableOpacity>
               <View style={styles.buttonbox}>
@@ -305,7 +285,15 @@ const PlayTrack = async () => {
                 style={styles.profile}
               />
             </TouchableOpacity>
-                <TextInput
+                {imageurl.length > 0 && type === "Image" && <View><SliderBox
+                images={imageurl}
+                sliderBoxHeight={200}
+                
+                onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
+                /><Text>{form.text}</Text></View>}
+            {imageurl.length > 0 && type === "Document" && <TouchableOpacity style={{width:"100%",height:200,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"filetext1"} size={100} color="#DBBE80" /><Text>{form.text}</Text></TouchableOpacity>}
+            {imageurl.length > 0 && type === "Audio" && <TouchableOpacity onPress={()=>PlayTrack()} style={{width:"100%",paddingVertical:40,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"sound"} size={100} color="#DBBE80" /><Text style={{marginTop:10}}>{form.text}</Text></TouchableOpacity>}
+                {/* <TextInput
                   style={styles.textareatext}
                   onKeyPress={({ nativeEvent }) => {
                     if (nativeEvent.key === 'Backspace' ) {
@@ -322,7 +310,7 @@ const PlayTrack = async () => {
                   multiline={true}
                   numberOfLines={3}
                   placeholder="Write something.."
-                />
+                /> */}
           </View>
           <View style={styles.iconbox}>
             <TouchableOpacity onPress={() =>onOpenImage()}>
@@ -373,7 +361,7 @@ const PlayTrack = async () => {
           </View>
          
           <View>
-            <TouchableOpacity onPress={()=>CreateUpdateUserPost()}>
+            <TouchableOpacity onPress={()=>CreateUpdateUserStory()}>
               <View style={styles.buttonbox1}>
                 <Text style={styles.buttontext1}>Publish</Text>
               </View>
@@ -382,59 +370,16 @@ const PlayTrack = async () => {
           <View style={styles.amount}>
             <Text style={styles.amounttext}>{inputcount}</Text>
           </View>
-    {imageurl.length > 0 && type === "Image" && <View><SliderBox
-      images={imageurl}
-      sliderBoxHeight={200}
-      onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
-    /><Text>{form.text}</Text></View>}
-  {imageurl.length > 0 && type === "Document" && <TouchableOpacity style={{width:"100%",height:200,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"filetext1"} size={100} color="#DBBE80" /><Text>{form.text}</Text></TouchableOpacity>}
-  {imageurl.length > 0 && type === "Audio" && <TouchableOpacity onPress={()=>PlayTrack()} style={{width:"100%",paddingVertical:40,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"sound"} size={100} color="#DBBE80" /><Text style={{marginTop:10}}>{form.text}</Text></TouchableOpacity>}
+   
 </ScrollView>
     </SafeAreaView>
   )
 }
 const styles = StyleSheet.create({
-  header1: {
-    flexDirection: "row",
-  },
-  moti: {
-    width: 90,
-    height: 45,
-  },
-  bell: {
-    margin: 15,
-    marginRight: 25,
-    // backgroundColor: "red",
-    width: 25,
-    height: 25,
-  },
   profile: {
-    // marginHorizontal: 10,
-
     height: 50,
     width: 50,
     borderRadius: 50,
-  },
-  bar: {
-    padding: 5,
-    marginTop: 20,
-    marginLeft: 5,
-    width: "100%",
-    height: 50,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 10,
-  },
-  bar1: {
-    flexDirection: "row",
-  },
-  user: {
-    height: 50,
-    width: 50,
-    borderRadius: 50,
-  },
-  text: {
-    marginLeft: 10,
   },
   text1: {
     fontSize: 20,
@@ -442,102 +387,10 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     textTransform: "capitalize",
   },
-  text2: {
-    fontSize: 15,
-    height: 16,
-    color: "#A6A6A6",
-    fontWeight: "400",
-    textTransform: "capitalize",
-  },
-  image: {
-    width: "100%",
-    // backgroundColor: "green",
-  },
-  image1: {
-    height: DeviceInfo.hasNotch ? windowHeight - 350 : windowHeight - 250,
-    width: "100%",
-  },
-  dot: {
-    marginRight: 20,
-    justifyContent: "flex-end",
-    width: 15,
-    height: 30,
-  },
-  content: {
-    width: "100%",
-    backgroundColor: "#FFFFFF",
-    paddingtop: 10,
-    paddingHorizontal: 10,
-    paddingBottom: 20,
-    // shadowColor: "#DBBE80",
-    // shadowOffset: { width: 5, height: 2 },
-    // shadowOpacity: 0.5,
-    // shadowRadius: 2,
-    // elevation: 10,
-  },
-  content1: {
-    padding: 10,
-    fontWeight: "400",
-    fontSize: 14,
-    color: "#9B9C9F",
-    lineHeight: 22,
-  },
-  like: {
-    marginLeft: 20,
-    height: 25,
-  },
-  liketext: {
-    marginLeft: 10,
-    fontWeight: "400",
-    fontSize: 14,
-    color: "#231F20",
-  },
-  icon10: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems:"center"
-  },
-  icontext: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  commenttext: {
-    marginLeft: 10,
-    fontWeight: "400",
-    fontSize: 14,
-    color: "#231F20",
-  },
-  share: {
-    marginRight: 50,
-    // backgroundColor: 'purple',
-  },
-  header: {
-    marginLeft: 20,
-    width: "90%",
-    marginTop: 5,
-    marginBottom: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingTop: 10,
-  },
-  header1: {
-    flexDirection: "row",
-  },
-  moti: {
-    width: 90,
-    height: 45,
-  },
-  box: {
-    // marginLeft: 20,
-    backgroundColor: "#f8f8f8f8",
-    width: "100%",
-    height: 140,
-  },
+ 
   buttonbox: {
-    marginLeft: 20,
     marginTop: 20,
-    width: "90%",
+    width: "100%",
     height: 40,
     backgroundColor: "#DBBE80",
     borderRadius: 20,
@@ -560,15 +413,12 @@ const styles = StyleSheet.create({
   },
   textarea: {
     display: "flex",
-    flexDirection: "row",
-    marginLeft: 20,
     marginTop: 20,
     marginBottom: 90,
-    width: "90%",
+    width: "100%",
    
   },
   textareatext: {
-    marginLeft: 20,
     textAlignVertical: "top",
     width: "80%",
     height: 70,
@@ -578,15 +428,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginBottom: 15,
     width: "90%",
-    marginLeft: 20,
   },
   icon: {
     marginLeft: 15,
   },
   buttonbox1: {
-    marginLeft: 20,
     marginTop: 15,
-    width: "90%",
+    width: "100%",
     height: 40,
     backgroundColor: "#DBBE80",
     borderRadius: 20,
@@ -595,7 +443,6 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     textAlign: "center",
-    marginLeft: 10,
     marginTop: 9,
     fontSize: 16,
     color: "#FFFFFF",
@@ -605,68 +452,25 @@ const styles = StyleSheet.create({
   },
   amount: {
     marginTop: 15,
-    marginLeft: 20,
-    marginRight: 10,
-    width: "90%",
+    width: "95%",
     marginBottom: 15,
   },
   amounttext: {
     textAlign: "right",
   },
-  space: {
-    backgroundColor: "#f8f8f8f8",
-    height: 20,
-  },
-  profilearea: {
-    display: "flex",
-    flexDirection: "row",
-    marginLeft: 20,
-    marginTop: 20,
-    marginBottom: 20,
-    height: 50,
-    width: "90%",
-  },
-  historybox: {
-    display: "flex",
-    flexDirection: "row",
-  },
-  textareatext1: {
-    marginLeft: 20,
-    marginTop: 0,
-    color: "#DBBE80",
-    fontSize: 20,
-  },
-  months: {
-    marginLeft: 20,
-    fontSize: 12,
-    fontWeight: "300",
-  },
-  lock: {
-    marginLeft: 3,
-    fontWeight: "100",
-  },
-  icon2: { marginTop: 7, marginLeft: 5 },
-
   text: {
     marginTop: 7,
     marginLeft: 5,
     fontSize: 12,
     fontWeight: "300",
   },
-  icon3: {
-    marginLeft: 45,
-  },
-  body: {
-    marginLeft: 20,
-  },
- title: {
-    marginTop: 2,
-    color: "#424242",
-    fontSize: 14,
-    fontWeight: "bold",
-    textTransform: "capitalize",
-  }, 
   spinnerTextStyle: {
     color: '#FFF'
+  },
+ box: {
+    // marginLeft: 20,
+    backgroundColor: "#f8f8f8f8",
+    width: "100%",
+    height: 140,
   },
 });

@@ -43,7 +43,9 @@ const EditProfile = ({ navigation }) => {
   const [isFocus1, setIsFocus1] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [ActionSheetRef, setActionSheetRef] = useState(null);
-  const [visible, setVisible] = React.useState(false);
+  const [visible, setVisible] = useState(false);
+  const [color, setcolor] = useState("green")
+  const [message, setmessage] = useState("Profile Updated successfully.")
   const [form, setForm] = useState({
     fullName: profile.User_Name ?profile.User_Name:"",
     email: profile.User_Email ? profile.User_Email:"",
@@ -188,13 +190,25 @@ const onOpenImage = () =>ActionSheetRef.show()
       const res = await uploadimage(data,token)
       console.log(res[0].Image_Path, "resssss")
       handleOnChangeText(res[0].Image_Path, "imagepath")
+      setmessage("Image send successfully. Save data.") 
+      setcolor("green")
+      onToggleSnackBar()
 
     } catch (error) {
       if (error.request) {
+        setmessage("Request Error") 
+        setcolor("red")
+         onToggleSnackBar()
         console.log(error.request)
       } else if (error.responce) {
+        setmessage("Responce Error") 
+        setcolor("red")
+         onToggleSnackBar()
         console.log(error.responce)
       } else {
+        setmessage("Somthing went wrong....") 
+        setcolor("red")
+         onToggleSnackBar()
         console.log(error)
       }
     }
@@ -221,15 +235,22 @@ const onOpenImage = () =>ActionSheetRef.show()
       })
       .catch((error) => {
         setloading(false);
-        if (error.response) {
-          console.log("error.response", error.response);
-        } else if (error.request) {
-          setloading(false);
-          console.log("request error", error.request);
-        } else if (error) {
-          console.log("Server Error");
-          setloading(false);
-        }
+        if (error.request) {
+        setmessage("Request Error") 
+        setcolor("red")
+         onToggleSnackBar()
+        console.log(error.request)
+      } else if (error.responce) {
+        setmessage("Responce Error") 
+        setcolor("red")
+         onToggleSnackBar()
+        console.log(error.responce)
+      } else {
+        setmessage("Somthing went wrong....") 
+        setcolor("red")
+         onToggleSnackBar()
+        console.log(error)
+      }
       });
   };
   const editProfile = async (value) => {
@@ -260,9 +281,13 @@ const onOpenImage = () =>ActionSheetRef.show()
       console.log("edit data", data);
       await updateprofile(data, token)
         .then((res) => {
+
           console.log("res: ", res);
           setloading(false);
+          setmessage("Profile saved successfully.") 
+          setcolor("green")
           onToggleSnackBar()
+         
           GetUserProfile();
         })
         .catch((error) => {
@@ -354,7 +379,8 @@ const onOpenImage = () =>ActionSheetRef.show()
             <InputText
               onChangeText={(value) => handleOnChangeText(value, "email")}
               label={"Email address"}
-              value={email}
+              value={email} 
+              editable={true}
             />
             <InputText
               onChangeText={(value) => handleOnChangeText(value, "profession")}
@@ -373,7 +399,7 @@ const onOpenImage = () =>ActionSheetRef.show()
                 inputSearchStyle={styles.inputSearchStyle}
                 iconStyle={styles.iconStyle}
                 data={data}
-                search
+                // search
                 maxHeight={300}
                 labelField="label"
                 valueField="value"
@@ -422,7 +448,7 @@ const onOpenImage = () =>ActionSheetRef.show()
                 inputSearchStyle={styles.inputSearchStyle}
                 iconStyle={styles.iconStyle}
                 data={data1}
-                search
+                // search
                 maxHeight={300}
                 labelField="label"
                 valueField="value"
@@ -495,15 +521,13 @@ const onOpenImage = () =>ActionSheetRef.show()
       <Snackbar
         visible={visible}
         onDismiss={onDismissSnackBar}
-        style={{backgroundColor:"#DBBE80"}}
+        style={{backgroundColor:color}}
         action={{
           label: 'OK',
           onPress: () => {
             onDismissSnackBar
           },
-        }}>
-       Profile Updated successfully.
-      </Snackbar>
+        }}>{message}</Snackbar>
       </ScrollView>
     </SafeAreaView>
   );

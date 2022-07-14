@@ -94,10 +94,12 @@ export const uploadimage = async (data, access_token) => {
     });
 };
 export const uploaddocumnet = async (data, access_token) => {
+console.log("uploaddocumnetapi config",data, access_token)
   return axios(API.STORE_DOCUMENT_API, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      Accept: "application/json",
+      "Content-Type": "multipart/form-data",
       Authorization: "Bearer " + access_token,
     },
     data,

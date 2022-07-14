@@ -11,6 +11,12 @@ const reducer = (state = initialState, action) => {
         profile: action.profile,
       };
     }
+  case "SET_MENU": {
+      return {
+        ...state,
+        showmenu: action.showmenu,
+      };
+    }
     default: {
       return state;
     }

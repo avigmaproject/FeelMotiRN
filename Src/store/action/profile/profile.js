@@ -3,3 +3,9 @@ export const setProfile = (profile) => {
     dispatch({ type: "SET_PROFILE", profile });
   };
 };
+export const setMenu = (showmenu) => {
+  return (dispatch) => {
+    dispatch({ type: "SET_MENU", showmenu });
+  };
+};
+ 

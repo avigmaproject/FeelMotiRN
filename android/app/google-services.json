@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "732119657974",
+    "project_id": "feelmoti-39281",
+    "storage_bucket": "feelmoti-39281.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732119657974:android:d55d94c0d4389e9a0b6bd7",
+        "android_client_info": {
+          "package_name": "com.feelmoti"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "732119657974-r0hs80vck760vttlq66dpksvhn8n3vgb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.feelmoti",
+            "certificate_hash": "fb0182b90efcb6cf5e6907043c8b85fae47e7506"
+          }
+        },
+        {
+          "client_id": "732119657974-6fes5oorgkss8mho0mrv45kaiqtdck75.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFvSlisNSgRxgreqBE8Lel_0RO8yI4oyc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "732119657974-6fes5oorgkss8mho0mrv45kaiqtdck75.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "732119657974-q40cn6mq3v7ngec8tuc4n6sa2niud0at.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.Feelmoti",
+                "app_store_id": "1634422569"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

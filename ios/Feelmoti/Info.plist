@@ -26,6 +26,8 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
 			<key>localhost</key>
@@ -34,35 +36,19 @@
 				<true/>
 			</dict>
 		</dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
 	</dict>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIRequiredDeviceCapabilities</key>
-	<array>
-		<string>armv7</string>
-	</array>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
 	<key>NSCameraUsageDescription</key>
 	<string>$(PRODUCT_NAME)requires access to your camera to upload your profile photo.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>$(PRODUCT_NAME)requires access to your camera to upload your profile photo.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>$(PRODUCT_NAME) requires access to your camera to upload your profile photo.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>FeelMoti Turning on location services allows us to locate your location to upload post location.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>FeelMoti Turning on location services allows us to locate your location to upload post location.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>FeelMoti Turning on location services allows us to locate your location to upload post location.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>$(PRODUCT_NAME)requires access to your camera to upload your profile photo.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>$(PRODUCT_NAME) requires access to your camera to upload your profile photo.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -82,5 +68,19 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
 	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
 </dict>
 </plist>

@@ -1,9 +1,10 @@
 export const initialState = {
   profile: [],
+  pagecount:1,
+  showmenu:false
 };
 
 const reducer = (state = initialState, action) => {
-  console.log("===========>", action.profile);
   switch (action.type) {
     case "SET_PROFILE": {
       return {
@@ -15,6 +16,12 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         showmenu: action.showmenu,
+      };
+    }
+    case "SET_PAGECOUNT": {
+      return {
+        ...state,
+        pagecount: action.pagecount,
       };
     }
     default: {

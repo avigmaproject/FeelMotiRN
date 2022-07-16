@@ -9,8 +9,8 @@ console.log(`${props.route.params.url}`)
   return (
     <View>
       <WebView 
-        style={{width:"100%",height:"100%"}}
-          source={{  uri: `${props.route.params.url}`}} 
+        style={{width:100,height:100}}
+          source={{  uri: "http://apifeelmoti.ikaart.org//UploadDocuments/637934963226839019_0.MOV"}} 
     />
     </View>
   )

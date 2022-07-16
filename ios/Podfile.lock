@@ -446,6 +446,8 @@ PODS:
   - RNScreens (3.13.1):
     - React-Core
     - React-RCTImage
+  - RNShare (7.6.6):
+    - React-Core
   - RNVectorIcons (9.1.0):
     - React-Core
   - SDWebImage (5.11.1):
@@ -531,6 +533,7 @@ DEPENDENCIES:
   - "RNFBDynamicLinks (from `../node_modules/@react-native-firebase/dynamic-links`)"
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNShare (from `../node_modules/react-native-share`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -656,6 +659,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-crop-picker"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNShare:
+    :path: "../node_modules/react-native-share"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   Yoga:
@@ -729,6 +734,7 @@ SPEC CHECKSUMS:
   RNFBDynamicLinks: 2434510762fc77614d2f4044427c0b0ea38db413
   RNImageCropPicker: ffbba608264885c241cbf3a8f78eb7aeeb978241
   RNScreens: 40a2cb40a02a609938137a1e0acfbf8fc9eebf19
+  RNShare: d56424e3926cbc239db1cc1c168adcb051aad50b
   RNVectorIcons: 7923e585eaeb139b9f4531d25a125a1500162a0b
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: f93010f3f6c031e2f8fb3081ca4ee6966c539815
@@ -738,6 +744,6 @@ SPEC CHECKSUMS:
   Yoga: 99652481fcd320aefa4a7ef90095b95acd181952
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: fe64e412d455e89f671a456374a5151ee7e802be
+PODFILE CHECKSUM: d3bf49ea2675915984572900189c8771cca88129
 
 COCOAPODS: 1.11.3

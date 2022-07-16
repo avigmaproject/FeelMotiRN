@@ -2,36 +2,29 @@
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
   TouchableOpacity,
   Image,
-  Dimensions,
   ScrollView,
   SafeAreaView,
+StatusBar,
 } from "react-native";
-import moti from "../Assets/moti.png";
-import bell from "../Assets/bell.png";
 import React, { useState ,useEffect} from "react";
-import Entypo from "react-native-vector-icons/Entypo";
 import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import DeviceInfo from "react-native-device-info";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Foundation from "react-native-vector-icons/Foundation";
-import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
-import { createupdateuserpost,uploaddocumnet,createupdateuserstory} from "../Utils/apiconfig";
-const windowHeight = Dimensions.get("window").height;
-const windowWidth = Dimensions.get("window").width;
+import Entypo from "react-native-vector-icons/Entypo";
+import { uploaddocumnet,createupdateuserstory} from "../Utils/apiconfig";
 import { useSelector, useDispatch } from "react-redux";
-import Spinner from 'react-native-loading-spinner-overlay';
 import { ActionSheetCustom as ActionSheet } from "react-native-actionsheet"
 import ImagePicker from "react-native-image-crop-picker";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import DocumentPicker, {isInProgress} from 'react-native-document-picker'
 import { SliderBox } from "react-native-image-slider-box";
 import TrackPlayer from 'react-native-track-player';
 import { useFocusEffect } from "@react-navigation/native";
+import Spinner from 'react-native-loading-spinner-overlay';
+import {  Snackbar } from 'react-native-paper';
 const options = [
   "Cancel",
   <View>
@@ -52,6 +45,10 @@ export default function AddStory({navigation}) {
   const [userpostdata, setuserpostdata] = useState([])
   const [ActionSheetRef, setActionSheetRef] = useState(null);
   const [type, settype] = useState("Text")
+  const [lodingtext, setlodingtext] = useState("")
+  const [visible, setVisible] = useState(false);
+  const [color, setcolor] = useState("green")
+  const [message, setmessage] = useState("")
   const [imageurl, setimageurl] = useState([])
   const [form, setForm] = useState({
     text: "",
@@ -59,7 +56,11 @@ export default function AddStory({navigation}) {
     longitude:0,
     latitude:0,
   });
-const handleError = (err) => {
+
+  const onToggleSnackBar = () => setVisible(!visible);
+  const onDismissSnackBar = () => setVisible(false);
+
+  const handleError = (err) => {
     if (DocumentPicker.isCancel(err)) {
       console.warn('cancelled')
       // User cancelled the picker, exit any dialogs or menus and move on
@@ -116,16 +117,37 @@ const ImageGallery = async () => {
             type:image[i].mime,
             uri:image[i].sourceURL,
           }
-            
             const formData = new FormData()
             formData.append('file', imagedata);
             console.log(formData)
-            uploadDocumnet(formData , i)
+            uploadDocumnet(formData)
         }
         }
       })
     }, 1000)
   }
+const selectVideo = async () => {
+ settype("Video")
+      ImagePicker.openPicker({
+      mediaType: "video",
+      multiple: true,
+    }).then((video) => {
+for(let i = 0;i< video.length ; i++){
+          const videodata ={
+            fileCopyUri: null,
+            name: video[i].filename,
+            size: video[i].size,
+            type:video[i].mime,
+            uri:video[i].sourceURL,
+          }
+           const formData = new FormData()
+      formData.append('file', videodata);
+      console.log(formData)
+      uploadDocumnet(formData) 
+        }
+     
+    });
+    }
 
  const ImageCamera = async () => {
     settype("Image")
@@ -136,7 +158,7 @@ const ImageGallery = async () => {
         cropping: true,
         includeBase64: true,
         multiple: true,
-        compressImageQuality: 0.5
+        compressImageQuality: 0.5,
       }).then((image) => {
         console.log(image)
        const formData = new FormData()
@@ -147,9 +169,11 @@ const ImageGallery = async () => {
     }, 1000)
   }
 const onOpenImage = () => ActionSheetRef.show()
-const handleOnChangeText = (value, fieldName) =>  setForm({ ...form, [fieldName]: value });
-const uploadDocumnet = async (data,i) => {
-    console.log("chekkk data",data, i)
+// const handleOnChangeText = (value, fieldName) =>  setForm({ ...form, [fieldName]: value });
+const uploadDocumnet = async (data) => {
+    setloading(true)
+    setlodingtext("Uploading multimedia file.....")
+    console.log("chekkk data",data)
     try {
       const res = await uploaddocumnet(data,token)
       console.log("uploadDocumnet ===>",res.Data[0])
@@ -164,15 +188,32 @@ const uploadDocumnet = async (data,i) => {
       setuserpostdata([...userpostdata ,postdata ])
       imageurl.push(res.Data[0].url)
       setimageurl(imageurl)
+     
+      setlodingtext("Uploaded file.")
+      setloading(false)
     } catch (error) {
       if (error.request) {
-        console.log(error.request)
-      } else if (error.responce) {
-        console.log(error.responce)
-      } else {
-        console.log(error)
-      }
+                setmessage("Request Error") 
+                setcolor("red")
+                onToggleSnackBar()
+                console.log(error.request)
+              } else if (error.responce) {
+                setmessage("Responce Error") 
+                setcolor("red")
+                onToggleSnackBar()
+                console.log(error.responce)
+              } else {
+                setmessage("Somthing went wrong....") 
+                setcolor("red")
+                onToggleSnackBar()
+                console.log(error)
+              }
     }
+ImagePicker.clean().then(() => {
+  console.log('removed all tmp images from tmp directory');
+}).catch(e => {
+  alert(e);
+});
   }
 const CreateUpdateUserStory = async () => {
  console.log(userpostdata.length > 0)
@@ -203,38 +244,48 @@ const CreateUpdateUserStory = async () => {
             text: "",
             location:""
           })
+           onToggleSnackBar()
+          setmessage("Story uploaded successfully.") 
+          setcolor("green")
       })
       .catch((error) => {
         setloading(false);
-        if (error.response) {
-          console.log("error.response", error.response);
-        } else if (error.request) {
-          setloading(false);
-          console.log("request error", error.request);
-        } else if (error) {
-          console.log("Server Error");
-          setloading(false);
-        }
+         if (error.request) {
+                setmessage("Request Error") 
+                setcolor("red")
+                onToggleSnackBar()
+                console.log(error.request)
+              } else if (error.responce) {
+                setmessage("Responce Error") 
+                setcolor("red")
+                onToggleSnackBar()
+                console.log(error.responce)
+              } else {
+                setmessage("Somthing went wrong....") 
+                setcolor("red")
+                onToggleSnackBar()
+                console.log(error)
+              }
       });
-  }else{
-alert("Select atlest on image")}
+     }else{
+    setmessage("Select atleast one media file....") 
+    setcolor("red")
+    onToggleSnackBar()
+  }
   };
-
-    useEffect(() => {
+    const IntilaizeSetup = async() => await TrackPlayer.setupPlayer()
+    const ResetSetup = async() =>await TrackPlayer.reset();
+  useEffect(() => {
     IntilaizeSetup()
-      console.log("imageurl",imageurl,userpostdata)
-    }, [userpostdata,imageurl,TrackPlayer])
-    const printimage = () =>{
-    console.log("userpostdata,imageurl",userpostdata,imageurl)
+    return () => {
+      ResetSetup()
     }
-    const IntilaizeSetup = async() =>{
-        await TrackPlayer.setupPlayer();
-    }
-const PlayTrack = async () => {
-    // await TrackPlayer.reset();
+  }, [])
   
+    const PlayTrack = async () => {  
+    console.log(imageurl[0].url)
     const track3 = {
-      url: "http://apifeelmoti.ikaart.org//UploadDocuments/637932503293946244_0.mp3",
+      url: imageurl[0].url,//"http://apifeelmoti.ikaart.org//UploadDocuments/637932503293946244_0.mp3",
       //url: "http://soundbible.com/mp3/Tyrannosaurus%20Rex%20Roar-SoundBible.com-807702404.mp3", // Load media from the file system
       // title: 'Ice Age',
       // artist: 'deadmau5',
@@ -247,9 +298,12 @@ const PlayTrack = async () => {
     await TrackPlayer.play();
   };
   return (
-    <SafeAreaView  style={{flex:1}}>
+   <SafeAreaView  style={{flex:1,backgroundColor:"#fff"}}>
+   <StatusBar backgroundColor={"#FFFFFF" } />
+
     <ScrollView style={{flex:1,marginHorizontal:10}}>
-         <View style={styles.box}>
+      <Spinner visible={loading} textContent={lodingtext} />
+         {/* <View style={styles.box}>
             <TouchableOpacity>
               <View style={styles.buttonbox}>
                 <View style={styles.buttonboxicon}>
@@ -274,51 +328,80 @@ const PlayTrack = async () => {
                 <Text style={styles.buttontext}>Explore Creators</Text>
               </View>
             </TouchableOpacity>
-          </View>
-          <View style={styles.textarea}>
+          </View> */}
+          <View style={{marginVertical:20,flexDirection:"row",justifyContent:"center",alignItems:"center",}}><Text style={{color:"#DBBE80",fontWeight:"bold",fontSize:30}}>Create Story</Text>
+        <Entypo
+          onPress={()=>navigation.navigate("Home")}
+          name={"cross"}
+          size={35}
+          color="#424242"
+          style={{ position:"absolute",right:10,}}
+        /></View>
+        <View style={{backgroundColor:"#fff",shadowColor: "#000",
+            shadowOffset: { width: 5, height: 3 }, 
+            shadowOpacity: 0.1, shadowRadius: 2, 
+            elevation: 10,}}>
+        <View style={styles.textarea}>
             <TouchableOpacity>
              <Image
                 resizeMode="stretch"
-                source={{ uri: profile.User_Image_Path ?profile.User_Image_Path 
+                source={{ uri: profile.User_Image_Path ? profile.User_Image_Path 
                         : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg",
                        }}
                 style={styles.profile}
               />
             </TouchableOpacity>
-                {imageurl.length > 0 && type === "Image" && <View><SliderBox
-                images={imageurl}
-                sliderBoxHeight={200}
-                
-                onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
-                /><Text>{form.text}</Text></View>}
-            {imageurl.length > 0 && type === "Document" && <TouchableOpacity style={{width:"100%",height:200,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"filetext1"} size={100} color="#DBBE80" /><Text>{form.text}</Text></TouchableOpacity>}
-            {imageurl.length > 0 && type === "Audio" && <TouchableOpacity onPress={()=>PlayTrack()} style={{width:"100%",paddingVertical:40,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"sound"} size={100} color="#DBBE80" /><Text style={{marginTop:10}}>{form.text}</Text></TouchableOpacity>}
-                {/* <TextInput
-                  style={styles.textareatext}
-                  onKeyPress={({ nativeEvent }) => {
-                    if (nativeEvent.key === 'Backspace' ) {
-                      if( inputcount <= 4999 ){  
-                        let count = inputcount + 1
-                        setinputcount(count)}
-                    }else{
-                      let count = 5000 - (form.text.length +1)
-                      setinputcount(count) }
-                  }}
-                  maxLength={5000}
-                  onChangeText={(value) => handleOnChangeText(value, "text")}
-                  value={form.text}
-                  multiline={true}
-                  numberOfLines={3}
-                  placeholder="Write something.."
-                /> */}
+            <View style={{marginLeft:20}}><Text style={{color:"#DBBE80",fontWeight:"bold",fontSize:20}}>{profile.User_Name}</Text></View>
+          </View>
+          <View style={{marginVertical:20}}>
+          {imageurl.length < 0 &&(<View style={{alignSelf:"center", marginVertical:20,borderWidth:1,borderColor:"#DBBE80",borderRadius:100,height:120,width:120,alignItems:"center",justifyContent:'center'}}><Text style={{color:"#DBBE80",fontWeight:"bold",fontSize:20,alignSelf:"center",textAlign:"center"}}>Preview Story</Text></View>)}
+          {imageurl.length > 0 && type === "Image" && <View>
+          <SliderBox
+          images={imageurl}
+          sliderBoxHeight={300}
+          onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
+          resizeMode="stretch"
+        /><Text>{form.text}</Text></View>}
+        {imageurl.length > 0 && type === "Document" && <TouchableOpacity style={{width:"100%",height:200,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"filetext1"} size={100} color="#DBBE80" /><Text>{form.text}</Text></TouchableOpacity>}
+        {imageurl.length > 0 && type === "Audio" && <TouchableOpacity onPress={()=>PlayTrack(imageurl[0])} style={{width:"100%",paddingVertical:40,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"sound"} size={100} color="#DBBE80" /><Text style={{marginTop:10}}>{form.text}</Text></TouchableOpacity>}
           </View>
           <View style={styles.iconbox}>
-            <TouchableOpacity onPress={() =>onOpenImage()}>
-              <View style={styles.icon}>
-                <FontAwesome name={"photo"} size={24} color="#DBBE80" />
+            <Text style={{color:"#DBBE80",fontWeight:"bold"}}>Add to Your story</Text>
+              <TouchableOpacity onPress={()=>OpenDocumentPicker()}>
+              <View>
+                <AntDesign name={"filetext1"} size={24} color="#DBBE80" />
               </View>
             </TouchableOpacity>
-            <ActionSheet
+            <TouchableOpacity onPress={() =>onOpenImage()}>
+              <View>
+                <Feather name={"image"} size={24} color="#DBBE80" />
+              </View>
+            </TouchableOpacity> 
+            <TouchableOpacity onPress={()=>selectVideo()}>
+              <View>
+                <Feather name={"video"} size={24} color="#DBBE80" />
+              </View>
+            </TouchableOpacity>
+          <TouchableOpacity onPress={()=>OpenMusicPicker()}>
+              <View>
+                <Feather name={"mic"} size={24} color="#DBBE80" />
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <TouchableOpacity onPress={()=>CreateUpdateUserStory()}>
+              <View style={styles.buttonbox1}>
+                <Text style={styles.buttontext1}>Publish</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.amount}>
+            <Text style={styles.amounttext}>{inputcount}</Text>
+          </View>
+
+        </View>
+      </ScrollView>
+        <ActionSheet
               ref={(o) => setActionSheetRef(o)}
               title={
                 <Text
@@ -341,37 +424,11 @@ const PlayTrack = async () => {
                 }
               }}
             />
-            <TouchableOpacity onPress={()=>OpenDocumentPicker()}>
-              <View style={styles.icon1}>
-                <FontAwesome name={"file-zip-o"} size={24} color="#DBBE80" />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={()=>OpenMusicPicker()}>
-              <View style={styles.icon1}>
-                <Foundation name={"sound"} size={24} color="#DBBE80" />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              // onPress={()=>setshowkeyboard(!showkeyboard)}
-              >
-              <View style={styles.icon1}>
-                <Feather name={"smile"} size={24} color="#DBBE80" />
-              </View>
-            </TouchableOpacity>
-          </View>
-         
-          <View>
-            <TouchableOpacity onPress={()=>CreateUpdateUserStory()}>
-              <View style={styles.buttonbox1}>
-                <Text style={styles.buttontext1}>Publish</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.amount}>
-            <Text style={styles.amounttext}>{inputcount}</Text>
-          </View>
-   
-</ScrollView>
+      <Snackbar
+        visible={visible}
+        onDismiss={onDismissSnackBar}
+        style={{backgroundColor:color}}
+        action={{label: 'OK',onPress: () => {onDismissSnackBar}}}>{message}</Snackbar>
     </SafeAreaView>
   )
 }
@@ -413,9 +470,10 @@ const styles = StyleSheet.create({
   },
   textarea: {
     display: "flex",
+    flexDirection: "row",
     marginTop: 20,
-    marginBottom: 90,
     width: "100%",
+    alignItems:"center"
    
   },
   textareatext: {
@@ -426,8 +484,13 @@ const styles = StyleSheet.create({
   iconbox: {
     display: "flex",
     flexDirection: "row",
-    marginBottom: 15,
-    width: "90%",
+    width: "100%",
+    padding:10,
+    justifyContent:"space-between",
+    alignItems:"center",
+    borderWidth:1,
+    borderColor:"#DBBE80",
+    borderRadius:10
   },
   icon: {
     marginLeft: 15,

@@ -34,7 +34,11 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>FirebaseDynamicLinksCustomDomains</key>
+	<array>
+		<string>https://feelmoti.page.link</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -62,10 +66,6 @@
 	<string>$(PRODUCT_NAME)requires access to your camera to upload your profile photo.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>$(PRODUCT_NAME) requires access to your camera to upload your profile photo.</string>
-	<key>FirebaseDynamicLinksCustomDomains</key>
-	<array>
-		<string>https://feelmoti.page.link</string>
-	</array>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

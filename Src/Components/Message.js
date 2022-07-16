@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   Image,
-  Keyboard,
+  StatusBar,
   ScrollView,
   SafeAreaView,
   TextInput,
@@ -84,7 +84,8 @@ return layoutMeasurement.height + contentOffset.y >=
  }
 const Message = () => {
   return (
-    <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
+   <SafeAreaView  style={{flex:1,backgroundColor:"#fff"}}>
+   <StatusBar backgroundColor={"#FFFFFF" } />
       <ScrollView  onMomentumScrollEnd={(event) => { 
           if (isCloseToBottom(event.nativeEvent)) {
             LoadMoreRandomData()

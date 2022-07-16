@@ -16,19 +16,27 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../CustomComponent/Header";
 import Button from "../CustomComponent/Button";
 import {resetpassword} from "../Utils/apiconfig"
+import Spinner from 'react-native-loading-spinner-overlay';
+import {  Snackbar } from 'react-native-paper';
 
 const ResetPassword = ({ navigation ,...props}) => {
   const [resetPassword, setResetPassword] = useState({
     password: "",
     confirmpassword: "",
   });
-  const [secureTextEntry, setsecureTextEntry] = useState(false);
-  const [csecureTextEntry, csetsecureTextEntry] = useState(false);
+  const [secureTextEntry, setsecureTextEntry] = useState(true);
+  const [csecureTextEntry, csetsecureTextEntry] = useState(true);
   const [error, setError] = useState("");
   const [email, setemail] = useState("");
-
-console.log("navigation",navigation)
+  const [loading, setloading] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [color, setcolor] = useState("green")
+  const [message, setmessage] = useState("")
   const { password, confirmpassword } = resetPassword;
+
+  const onToggleSnackBar = () => setVisible(!visible);
+  const onDismissSnackBar = () => setVisible(false);
+
   const handleSecureEntry = () => {
     setsecureTextEntry(!secureTextEntry);
   };
@@ -88,13 +96,14 @@ const passwordEqual = () => {
       cancel = true;
     }
     if (cancel) {
-      return updateError('Password and confirm password not match.', setError);
+      return updateError('Password and confirm password does not match.', setError);
       return false;
     } else {
       return true;
     }
   };
 const submitForm = async () => {
+    setloading(true); 
     if (
       passwordLength() &&
       passwordEmpty() && passwordEqual()
@@ -108,23 +117,31 @@ const submitForm = async () => {
         console.log(data);
         await resetpassword(data)
           .then(res => {
-            console.log('res: ', JSON.stringify(res));
-            this.setState({isLoading: false});
-            this.showMessage('Password Changed Successfully');
-            setTimeout(() => {
-              this.props.navigation.navigate('SuccessScreen');
-            }, 2000);
+           setloading(false); 
+           console.log('res: ', JSON.stringify(res));
+           onToggleSnackBar()
+           setmessage("Your password has been changed successfully. Use your new password to login.") 
+           setcolor("green")
+           navigation.navigate("Signin")
+
           })
           .catch(error => {
-            if (error.response) {
-              this.showerrorMessage('Something went wrong!!!');
-              console.log('responce_error', error.response);
-              this.setState({isLoading: false});
-            } else if (error.request) {
-              this.showerrorMessage('Something went wrong!!!');
-              this.setState({isLoading: false});
-              console.log('request error', error.request);
-            }
+            if (error.request) {
+                setmessage("Request Error") 
+                setcolor("red")
+                onToggleSnackBar()
+                console.log(error.request)
+              } else if (error.responce) {
+                setmessage("Responce Error") 
+                setcolor("red")
+                onToggleSnackBar()
+                console.log(error.responce)
+              } else {
+                setmessage("Somthing went wrong....") 
+                setcolor("red")
+                onToggleSnackBar()
+                console.log(error)
+              }
           });
       
     }
@@ -132,7 +149,11 @@ const submitForm = async () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      {/* <StatusBar backgroundColor="#ffffff" /> */}
+      <StatusBar backgroundColor="#ffffff" />
+      <Spinner
+          visible={loading}
+          textContent={'Loading...'}
+        />
       <Header color={true} onPress={() => navigation.navigate("Signin")} />
       <ScrollView keyboardShouldPersistTaps={"always"} contentContainerStyle={{ flexGrow: 1, marginHorizontal: 20 }}>
         <View>
@@ -172,27 +193,21 @@ const submitForm = async () => {
               }
               error={error}
             />
-            {/* <TextInput
-            value={password}
-            style={styles.input}
-            autoCapitalize="none"
-            label="Password"
-            theme={{colors: {primary: '#9B9C9F'}}}
-            onChangeText={value => handleOnChangeText(value, 'password')}
-          />
-          <TextInput
-            value={confirmpassword}
-            style={styles.input}
-            autoCapitalize="none"
-            label="confirm password"
-            theme={{colors: {primary: '#9B9C9F'}}}
-            onChangeText={value => handleOnChangeText(value, 'confirmpassword')}
-          /> */}
           </View>
           <View>
             <Button onPress={() => submitForm()} title="Submit" />
           </View>
         </View>
+        <Snackbar
+          visible={visible}
+          onDismiss={onDismissSnackBar}
+          style={{backgroundColor:color}}
+          action={{
+            label: 'OK',
+            onPress: () => {
+              onDismissSnackBar
+            },
+          }}>{message}</Snackbar>
       </ScrollView>
     </SafeAreaView>
   );

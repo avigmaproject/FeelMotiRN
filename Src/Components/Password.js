@@ -8,7 +8,7 @@ import {
   Image,
   Keyboard,
   ScrollView,
-  Dimensions,
+  StatusBar,
   SafeAreaView,
 } from "react-native";
 import Header from "../CustomComponent/Header";
@@ -40,6 +40,7 @@ const OhandleSecureEntry = () => {
   const { oldPassword, NewPassword,confirmPassword } = form;
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f8f8f8" }}>
+   <StatusBar backgroundColor={"#f8f8f8" } />
       <Header
         onPress={() => navigation.navigate("Setting")}
         title={"Password"}

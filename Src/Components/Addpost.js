@@ -8,6 +8,7 @@ import {
   Dimensions,
   ScrollView,
   SafeAreaView,
+StatusBar,
 } from "react-native";
 import moti from "../Assets/moti.png";
 import bell from "../Assets/bell.png";
@@ -17,8 +18,8 @@ import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import DeviceInfo from "react-native-device-info";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import Foundation from "react-native-vector-icons/Foundation";
-import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import { createupdateuserpost,uploaddocumnet,uploadimage} from "../Utils/apiconfig";
 const windowHeight = Dimensions.get("window").height;
 const windowWidth = Dimensions.get("window").width;
@@ -31,6 +32,7 @@ import DocumentPicker, {isInProgress} from 'react-native-document-picker'
 import { SliderBox } from "react-native-image-slider-box";
 import TrackPlayer from 'react-native-track-player';
 import { useFocusEffect } from "@react-navigation/native";
+import {  Snackbar } from 'react-native-paper';
 const options = [
   "Cancel",
   <View>
@@ -44,28 +46,27 @@ const options = [
 export default function Addpost({navigation}) {
   const token = useSelector((state) => state.authReducer.token);
   const profile = useSelector((state) => state.profileReducer.profile);
+  console.log(profile)
   const dispatch = useDispatch();
   const [loading, setloading] = useState(false);
   const [inputcount, setinputcount] = useState(5000)
-  const [showkeyboard, setshowkeyboard] = useState(false)
   const [userpostdata, setuserpostdata] = useState([])
   const [ActionSheetRef, setActionSheetRef] = useState(null);
   const [type, settype] = useState("Text")
-
-  // const [imageurl, setimageurl] = useState( [
-  //       "https://source.unsplash.com/1024x768/?nature",
-  //       "https://source.unsplash.com/1024x768/?water",
-  //       "https://source.unsplash.com/1024x768/?girl",
-  //       "https://source.unsplash.com/1024x768/?tree", // Network image
-  //     ])
-const [imageurl, setimageurl] = useState([])
+  const [lodingtext, setlodingtext] = useState("")
+  const [visible, setVisible] = useState(false);
+  const [color, setcolor] = useState("green")
+  const [message, setmessage] = useState("")
+  const [imageurl, setimageurl] = useState([])
   const [form, setForm] = useState({
     text: "",
     location:"",
     longitude:0,
     latitude:0,
   });
-const handleError = (err) => {
+  const onToggleSnackBar = () => setVisible(!visible);
+  const onDismissSnackBar = () => setVisible(false);
+  const handleError = (err) => {
     if (DocumentPicker.isCancel(err)) {
       console.warn('cancelled')
       // User cancelled the picker, exit any dialogs or menus and move on
@@ -101,6 +102,29 @@ settype("Audio")
       uploadDocumnet(formData)  
 }).catch(handleError)
 }
+const selectVideo = async () => {
+ settype("Video")
+      ImagePicker.openPicker({
+      mediaType: "video",
+      multiple: true,
+    }).then((video) => {
+for(let i = 0;i< video.length ; i++){
+          const videodata ={
+            fileCopyUri: null,
+            name: video[i].filename,
+            size: video[i].size,
+            type:video[i].mime,
+            uri:video[i].sourceURL,
+          }
+           const formData = new FormData()
+      formData.append('file', videodata);
+      console.log(formData)
+      uploadDocumnet(formData) 
+        }
+     
+    });
+    }
+
 const ImageGallery = async () => {
     settype("Image")
     setTimeout(() => {
@@ -170,15 +194,32 @@ const uploadDocumnet = async (data,i) => {
       setuserpostdata(userpostdata)
       imageurl.push(res.Data[0].url)
       setimageurl(imageurl)
+      setlodingtext("Uploaded file.")
+      setloading(false)
     } catch (error) {
       if (error.request) {
-        console.log(error.request)
-      } else if (error.responce) {
-        console.log(error.responce)
-      } else {
-        console.log(error)
-      }
-    }
+                setmessage("Request Error") 
+                setcolor("red")
+                onToggleSnackBar()
+                console.log(error.request)
+              } else if (error.responce) {
+                setmessage("Responce Error") 
+                setcolor("red")
+                onToggleSnackBar()
+                console.log(error.responce)
+              } else {
+                setmessage("Somthing went wrong....") 
+                setcolor("red")
+                onToggleSnackBar()
+                console.log(error)
+              }
+
+ImagePicker.clean().then(() => {
+  console.log('removed all tmp images from tmp directory');
+}).catch(e => {
+  alert(e);
+});
+  }
   }
 const Validation = () =>{
 let validation = false
@@ -223,36 +264,46 @@ const CreateUpdateUserPost = async () => {
             text: "",
             location:""
           })
+      onToggleSnackBar()
+          setmessage("Post uploaded successfully.") 
+          setcolor("green")
       })
       .catch((error) => {
         setloading(false);
-        if (error.response) {
-          console.log("error.response", error.response);
-        } else if (error.request) {
-          setloading(false);
-          console.log("request error", error.request);
-        } else if (error) {
-          console.log("Server Error");
-          setloading(false);
-        }
+         if (error.request) {
+                setmessage("Request Error") 
+                setcolor("red")
+                onToggleSnackBar()
+                console.log(error.request)
+              } else if (error.responce) {
+                setmessage("Responce Error") 
+                setcolor("red")
+                onToggleSnackBar()
+                console.log(error.responce)
+              } else {
+                setmessage("Somthing went wrong....") 
+                setcolor("red")
+                onToggleSnackBar()
+                console.log(error)
+              }
       });
-  }else{
-alert("Enter some text")}
+     }else{
+    setmessage("Select atleast one media file or enter some text....") 
+    setcolor("red")
+    onToggleSnackBar()
+  }
   };
 
-    useEffect(() => {
+   const IntilaizeSetup = async() => await TrackPlayer.setupPlayer()
+    const ResetSetup = async() =>await TrackPlayer.reset();
+  useEffect(() => {
     IntilaizeSetup()
-      console.log("imageurl",imageurl,userpostdata)
-    }, [userpostdata,imageurl,TrackPlayer])
-    const printimage = () =>{
-    console.log("userpostdata,imageurl",userpostdata,imageurl)
+    return () => {
+      ResetSetup()
     }
-    const IntilaizeSetup = async() =>{
-        await TrackPlayer.setupPlayer();
-    }
-const PlayTrack = async () => {
-    // await TrackPlayer.reset();
+  }, [])
   
+const PlayTrack = async () => {  
     const track3 = {
       url: "http://apifeelmoti.ikaart.org//UploadDocuments/637932503293946244_0.mp3",
       //url: "http://soundbible.com/mp3/Tyrannosaurus%20Rex%20Roar-SoundBible.com-807702404.mp3", // Load media from the file system
@@ -267,9 +318,12 @@ const PlayTrack = async () => {
     await TrackPlayer.play();
   };
   return (
-    <SafeAreaView  style={{flex:1}}>
-    <ScrollView style={{flex:1}}>
-         <View style={styles.box}>
+  <SafeAreaView  style={{flex:1,backgroundColor:"#fff"}}>
+   <StatusBar backgroundColor={"#FFFFFF" } />
+
+    <ScrollView style={{flex:1,marginHorizontal:10}}>
+      <Spinner visible={loading} textContent={lodingtext} />
+         {/* <View style={styles.box}>
             <TouchableOpacity>
               <View style={styles.buttonbox}>
                 <View style={styles.buttonboxicon}>
@@ -294,18 +348,41 @@ const PlayTrack = async () => {
                 <Text style={styles.buttontext}>Explore Creators</Text>
               </View>
             </TouchableOpacity>
-          </View>
-          <View style={styles.textarea}>
+          </View> */}
+          <View style={{marginVertical:20,flexDirection:"row",justifyContent:"center",alignItems:"center",}}><Text style={{color:"#DBBE80",fontWeight:"bold",fontSize:30}}>Create Post</Text>
+        <Entypo
+          onPress={()=>navigation.navigate("Home")}
+          name={"cross"}
+          size={35}
+          color="#424242"
+          style={{ position:"absolute",right:10,}}
+        /></View>
+        <View style={{backgroundColor:"#fff",shadowColor: "#000",
+            shadowOffset: { width: 5, height: 3 }, 
+            shadowOpacity: 0.1, shadowRadius: 2, 
+            elevation: 10,}}>
+        <View style={styles.textarea}>
             <TouchableOpacity>
              <Image
                 resizeMode="stretch"
-                source={{ uri: profile.User_Image_Path ?profile.User_Image_Path 
+                source={{ uri: profile.User_Image_Path ? profile.User_Image_Path 
                         : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg",
                        }}
                 style={styles.profile}
               />
             </TouchableOpacity>
-                <TextInput
+            <View style={{marginLeft:20}}><Text style={{color:"#DBBE80",fontWeight:"bold",fontSize:20}}>{profile.User_Name}</Text></View>
+          </View>
+          <View style={{width:"100%",
+            shadowColor: "#DBBE80",
+            shadowOffset: { width: 1, height: 1 }, 
+            shadowOpacity: 0.5, shadowRadius: 2, 
+            elevation: 10,
+            justifyContent:"center",
+            alignItems:"center", 
+
+            }}>
+          <TextInput
                   style={styles.textareatext}
                   onKeyPress={({ nativeEvent }) => {
                     if (nativeEvent.key === 'Backspace' ) {
@@ -321,16 +398,55 @@ const PlayTrack = async () => {
                   value={form.text}
                   multiline={true}
                   numberOfLines={3}
-                  placeholder="Write something.."
+                  placeholder={`Whats on your mind, ${profile.User_Name}??`}
                 />
           </View>
           <View style={styles.iconbox}>
-            <TouchableOpacity onPress={() =>onOpenImage()}>
-              <View style={styles.icon}>
-                <FontAwesome name={"photo"} size={24} color="#DBBE80" />
+            <Text style={{color:"#DBBE80",fontWeight:"bold"}}>Add to Your Post</Text>
+             
+            <TouchableOpacity onPress={()=>OpenDocumentPicker()}>
+              <View>
+                <AntDesign name={"filetext1"} size={24} color="#DBBE80" />
               </View>
             </TouchableOpacity>
-            <ActionSheet
+            <TouchableOpacity onPress={() =>onOpenImage()}>
+              <View>
+                <Feather name={"image"} size={24} color="#DBBE80" />
+              </View>
+            </TouchableOpacity> 
+            <TouchableOpacity onPress={()=>selectVideo()}>
+              <View>
+                <Feather name={"video"} size={24} color="#DBBE80" />
+              </View>
+            </TouchableOpacity>
+          <TouchableOpacity onPress={()=>OpenMusicPicker()}>
+              <View>
+                <Feather name={"mic"} size={24} color="#DBBE80" />
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <TouchableOpacity onPress={()=>CreateUpdateUserPost()}>
+              <View style={styles.buttonbox1}>
+                <Text style={styles.buttontext1}>Publish</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.amount}>
+            <Text style={styles.amounttext}>{inputcount}</Text>
+          </View>
+
+        </View>
+        {imageurl.length > 0 && type === "Image" && <View>
+          <SliderBox
+          images={imageurl}
+          sliderBoxHeight={200}
+          onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
+        /><Text>{form.text}</Text></View>}
+        {imageurl.length > 0 && type === "Document" && <TouchableOpacity style={{width:"100%",height:200,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"filetext1"} size={100} color="#DBBE80" /><Text>{form.text}</Text></TouchableOpacity>}
+        {imageurl.length > 0 && type === "Audio" && <TouchableOpacity onPress={()=>PlayTrack()} style={{width:"100%",paddingVertical:40,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"sound"} size={100} color="#DBBE80" /><Text style={{marginTop:10}}>{form.text}</Text></TouchableOpacity>}
+      </ScrollView>
+        <ActionSheet
               ref={(o) => setActionSheetRef(o)}
               title={
                 <Text
@@ -353,50 +469,16 @@ const PlayTrack = async () => {
                 }
               }}
             />
-            <TouchableOpacity onPress={()=>OpenDocumentPicker()}>
-              <View style={styles.icon1}>
-                <FontAwesome name={"file-zip-o"} size={24} color="#DBBE80" />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={()=>OpenMusicPicker()}>
-              <View style={styles.icon1}>
-                <Foundation name={"sound"} size={24} color="#DBBE80" />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              // onPress={()=>setshowkeyboard(!showkeyboard)}
-              >
-              <View style={styles.icon1}>
-                <Feather name={"smile"} size={24} color="#DBBE80" />
-              </View>
-            </TouchableOpacity>
-          </View>
-         
-          <View>
-            <TouchableOpacity onPress={()=>CreateUpdateUserPost()}>
-              <View style={styles.buttonbox1}>
-                <Text style={styles.buttontext1}>Publish</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.amount}>
-            <Text style={styles.amounttext}>{inputcount}</Text>
-          </View>
-    {imageurl.length > 0 && type === "Image" && <View><SliderBox
-      images={imageurl}
-      sliderBoxHeight={200}
-      onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
-    /><Text>{form.text}</Text></View>}
-  {imageurl.length > 0 && type === "Document" && <TouchableOpacity style={{width:"100%",height:200,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"filetext1"} size={100} color="#DBBE80" /><Text>{form.text}</Text></TouchableOpacity>}
-  {imageurl.length > 0 && type === "Audio" && <TouchableOpacity onPress={()=>PlayTrack()} style={{width:"100%",paddingVertical:40,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"sound"} size={100} color="#DBBE80" /><Text style={{marginTop:10}}>{form.text}</Text></TouchableOpacity>}
-</ScrollView>
+      <Snackbar
+        visible={visible}
+        onDismiss={onDismissSnackBar}
+        style={{backgroundColor:color}}
+        action={{label: 'OK',onPress: () => {onDismissSnackBar}}}>{message}</Snackbar>
     </SafeAreaView>
   )
 }
 const styles = StyleSheet.create({
-  header1: {
-    flexDirection: "row",
-  },
+ 
   moti: {
     width: 90,
     height: 45,
@@ -418,7 +500,6 @@ const styles = StyleSheet.create({
   bar: {
     padding: 5,
     marginTop: 20,
-    marginLeft: 5,
     width: "100%",
     height: 50,
     flexDirection: "row",
@@ -482,16 +563,6 @@ const styles = StyleSheet.create({
     color: "#9B9C9F",
     lineHeight: 22,
   },
-  like: {
-    marginLeft: 20,
-    height: 25,
-  },
-  liketext: {
-    marginLeft: 10,
-    fontWeight: "400",
-    fontSize: 14,
-    color: "#231F20",
-  },
   icon10: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -502,107 +573,87 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  commenttext: {
-    marginLeft: 10,
-    fontWeight: "400",
-    fontSize: 14,
-    color: "#231F20",
-  },
-  share: {
-    marginRight: 50,
-    // backgroundColor: 'purple',
-  },
-  header: {
-    marginLeft: 20,
-    width: "90%",
-    marginTop: 5,
-    marginBottom: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingTop: 10,
-  },
-  header1: {
-    flexDirection: "row",
-  },
   moti: {
     width: 90,
     height: 45,
   },
-  box: {
-    // marginLeft: 20,
-    backgroundColor: "#f8f8f8f8",
-    width: "100%",
-    height: 140,
-  },
-  buttonbox: {
-    marginLeft: 20,
-    marginTop: 20,
-    width: "90%",
-    height: 40,
-    backgroundColor: "#DBBE80",
-    borderRadius: 20,
-    display: "flex",
-    flexDirection: "row",
-  },
-  buttonboxicon: {
-    marginTop: 6,
-    marginLeft: 60,
-    color: "#FFFFFF",
-  },
-  buttontext: {
-    display: "flex",
-    justifyContent: "center",
-    textAlign: "center",
-    marginLeft: 10,
-    marginTop: 9,
-    fontSize: 16,
-    color: "#FFFFFF",
-  },
+  // box: {
+  //   // marginLeft: 20,
+  //   backgroundColor: "#f8f8f8f8",
+  //   width: "100%",
+  //   height: 140,
+  // },
+  // buttonbox: {
+  //   marginLeft: 20,
+  //   marginTop: 20,
+  //   width: "90%",
+  //   height: 40,
+  //   backgroundColor: "#DBBE80",
+  //   borderRadius: 20,
+  //   display: "flex",
+  //   flexDirection: "row",
+  // },
+  // buttonboxicon: {
+  //   marginTop: 6,
+  //   marginLeft: 60,
+  //   color: "#FFFFFF",
+  // },
+  // buttontext: {
+  //   display: "flex",
+  //   justifyContent: "center",
+  //   textAlign: "center",
+  //   marginLeft: 10,
+  //   marginTop: 9,
+  //   fontSize: 16,
+  //   color: "#FFFFFF",
+  // },
   textarea: {
     display: "flex",
     flexDirection: "row",
-    marginLeft: 20,
     marginTop: 20,
-    marginBottom: 90,
-    width: "90%",
+    width: "100%",
+    alignItems:"center"
+    
    
   },
   textareatext: {
-    marginLeft: 20,
-    textAlignVertical: "top",
-    width: "80%",
-    height: 70,
+  backgroundColor:"#fff",
+  textAlignVertical: "top",
+  width: "99%",
+  height: 100,
+  marginVertical:10,  
+  paddingTop:10,
+  paddingLeft:20
+
   },
   iconbox: {
     display: "flex",
     flexDirection: "row",
-    marginBottom: 15,
-    width: "90%",
-    marginLeft: 20,
+    width: "100%",
+    padding:10,
+    justifyContent:"space-between",
+    alignItems:"center",
+    borderWidth:1,
+    borderColor:"#DBBE80",
+    borderRadius:10
+
   },
-  icon: {
-    marginLeft: 15,
-  },
+ 
   buttonbox1: {
-    marginLeft: 20,
     marginTop: 15,
-    width: "90%",
-    height: 40,
+    width: "100%",
+    height: 45,
     backgroundColor: "#DBBE80",
     borderRadius: 20,
+    justifyContent:"center",
+    alignItems:"center"
   },
   buttontext1: {
-    display: "flex",
-    justifyContent: "center",
-    textAlign: "center",
-    marginLeft: 10,
-    marginTop: 9,
-    fontSize: 16,
+    fontSize: 20,
     color: "#FFFFFF",
+    fontWeight:"bold"
   },
-  icon1: {
-    marginLeft: 30,
-  },
+ 
   amount: {
     marginTop: 15,
     marginLeft: 20,
@@ -613,60 +664,10 @@ const styles = StyleSheet.create({
   amounttext: {
     textAlign: "right",
   },
-  space: {
-    backgroundColor: "#f8f8f8f8",
-    height: 20,
-  },
-  profilearea: {
-    display: "flex",
-    flexDirection: "row",
-    marginLeft: 20,
-    marginTop: 20,
-    marginBottom: 20,
-    height: 50,
-    width: "90%",
-  },
-  historybox: {
-    display: "flex",
-    flexDirection: "row",
-  },
-  textareatext1: {
-    marginLeft: 20,
-    marginTop: 0,
-    color: "#DBBE80",
-    fontSize: 20,
-  },
-  months: {
-    marginLeft: 20,
-    fontSize: 12,
-    fontWeight: "300",
-  },
-  lock: {
-    marginLeft: 3,
-    fontWeight: "100",
-  },
-  icon2: { marginTop: 7, marginLeft: 5 },
-
   text: {
     marginTop: 7,
     marginLeft: 5,
     fontSize: 12,
     fontWeight: "300",
-  },
-  icon3: {
-    marginLeft: 45,
-  },
-  body: {
-    marginLeft: 20,
-  },
- title: {
-    marginTop: 2,
-    color: "#424242",
-    fontSize: 14,
-    fontWeight: "bold",
-    textTransform: "capitalize",
-  }, 
-  spinnerTextStyle: {
-    color: '#FFF'
   },
 });

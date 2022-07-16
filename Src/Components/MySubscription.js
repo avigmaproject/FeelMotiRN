@@ -1,28 +1,16 @@
 import {
   View,
-  Button,
   Text,
   StyleSheet,
   TouchableOpacity,
   Alert,
   Image,
-  Keyboard,
   ScrollView,
-  Dimensions,
+  StatusBar,
   SafeAreaView,
   FlatList,
 } from "react-native";
-import squareprofile from "../Assets/squareprofile.png";
-import squareprofile2 from "../Assets/squareprofile2.png";
-import squareprofile3 from "../Assets/squareprofile3.png";
-import squareprofile4 from "../Assets/squareprofile4.png";
-import cash from "../Assets/cash.png";
-import wallet from "../Assets/wallet.png";
-import Check from "react-native-vector-icons/Feather";
-import Cloud from "react-native-vector-icons/Feather";
-import Square from "react-native-vector-icons/Feather";
 import React, { useState } from "react";
-import { TextInput } from "react-native-paper";
 import Header from "../CustomComponent/Header";
 
 const DATA = [
@@ -62,6 +50,7 @@ const DATA = [
 const MySubscription = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8FA" }}>
+   <StatusBar backgroundColor={"#f8f8f8" } />
       <Header
         onPress={() => navigation.navigate("Setting")}
         title={"My Subscription"}

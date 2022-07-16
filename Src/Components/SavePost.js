@@ -1,7 +1,7 @@
 
 import {
   View,
-  Button,
+  StatusBar,
   Text,
   TextInput,
   StyleSheet,
@@ -13,7 +13,6 @@ import {
   FlatList,
   SafeAreaView,
 } from "react-native";
-import moti from "../Assets/moti.png";
 import bell from "../Assets/bell.png";
 import React from "react";
 import Entypo from "react-native-vector-icons/Entypo";
@@ -21,11 +20,11 @@ import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import DeviceInfo from "react-native-device-info";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import Foundation from "react-native-vector-icons/Foundation";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { getuserpost ,createupdateuserfavorite} from "../Utils/apiconfig";
+import { getuserfavorite ,createupdateuserfavorite} from "../Utils/apiconfig";
 const windowHeight = Dimensions.get("window").height;
 import { useSelector, useDispatch } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
 
 const SavePost = ({ navigation }) => {
   const token = useSelector((state) => state.authReducer.token);
@@ -34,23 +33,29 @@ const SavePost = ({ navigation }) => {
   const [userpost, setuserpost] = React.useState([]);
   const [like, setlike] = React.useState(false);
   const [save, setsave] = React.useState(false);
+  const [showshare, setshowshare] =  React.useState(false)
 
  React.useEffect(() => {
-    GetUserPost();
+    GetUserFavorite();
     return () => {
-      GetUserPost();
+      GetUserFavorite();
     };
   }, []);
-
-  const GetUserPost = async () => {
+ useFocusEffect(
+    React.useCallback(() => {
+      GetUserFavorite();
+      return () => console.log("close");
+    }, [])
+  );
+  const GetUserFavorite = async () => {
     setloading(true);
     let data = {
-      Type: 1,
+      Type: 3,
     };
-    console.log("GetUserPost", data);
-    await getuserpost(data, token)
+    console.log("GetUserFavorite", data);
+    await getuserfavorite(data, token)
       .then((res) => {
-        console.log("res:GetUserPost ", res[0]);
+        console.log("res:GetUserFavorite ", res[0]);
         setloading(false);
         setuserpost(res[0]);
       })
@@ -100,14 +105,149 @@ const SavePost = ({ navigation }) => {
 const LoadMoreRandomData =() =>{
 alert("load more data")
 }
+const renderUserPost = (item) =>{
+return( <View style={{ marginTop: 10 }}>
+                <View style={styles.bar}>
+                  <View style={styles.bar1}>
+                    <TouchableOpacity>
+                      <Image
+                        source={{ uri: item.User_Image_Path ? item.User_Image_Path  : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg"}}
+                        style={styles.user}
+                      />
+                    </TouchableOpacity>
+                    <View style={styles.text}>
+                      <TouchableOpacity>
+                        <Text style={styles.text1}>{item.User_Name}</Text>
+                        <Text style={styles.text2}>{item.UP_Location}</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  {showshare && (
+                <View 
+                  style={{padding:10,position:"absolute",
+                    right:32,top:20, borderWidth:1,borderColor:"#DBBE80"}}>
+                <Text style={{color:"#DBBE80"}}>Share</Text></View>)}
+                  <View style={styles.dot}>
+                    <TouchableOpacity onPress={()=>setshowshare(!showshare)}>
+                      <Entypo
+                        name={"dots-three-vertical"}
+                        size={24}
+                        color="#BDBEC1"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <View style={styles.image}>
+                  <TouchableOpacity><Image
+                      resizeMode="stretch"
+                      source={{ uri: item.UP_ImagePath }}
+                      style={styles.image1}
+                    /></TouchableOpacity>
+                  {item.UP_Doc_Type === "Image" && ( <TouchableOpacity><Image
+                      resizeMode="stretch"
+                      source={{ uri: item.UP_ImagePath }}
+                      style={styles.image1}
+                    /></TouchableOpacity>)}
+                  {item.UP_Doc_Type === "Document" && (<TouchableOpacity style={{...styles.image1,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"filetext1"} size={200} color="#DBBE80" /><Text>{form.text}</Text></TouchableOpacity>)}
+                  {item.UP_Doc_Type === "Audio" && (<TouchableOpacity onPress={()=>PlayTrack(item.UP_ImagePath)} style={{...styles.image1,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"sound"} size={100} color="#DBBE80" /><Text style={{marginTop:10}}>{form.text}</Text></TouchableOpacity>)}
+                  {item.UP_Doc_Type === "Video" && (<TouchableOpacity style={{width:"100%",height:DeviceInfo.hasNotch ? windowHeight - 350 : windowHeight - 250,justifyContent:"center",alignItems:"center",justifyContent:"center",alignItems:"center"}} >
+                {/* <FontAwesome5 name={"file-video"} size={100} color="#DBBE80" /> */}
+                  {/* <VideoPlayer
+                    video={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }}
+                    videoWidth={1600}
+                    videoHeight={900}
+                    thumbnail={{ uri: 'https://i.picsum.photos/id/866/1600/900.jpg' }}
+                    /> */}
+                <WebView 
+                      mediaPlaybackRequiresUserAction={true}
+                      allowsInlineMediaPlayback={true}
+                      allowsFullscreenVideo={false}
+                      shouldStartLoad={"No"}
+                      style={{width:windowWidth,height: DeviceInfo.hasNotch ? windowHeight - 350 : windowHeight - 250}}
+                        // source={{  uri: "http://apifeelmoti.ikaart.org//UploadDocuments/637934963226839019_0.MOV"}} 
+                       source={{
+                        html: `
+                        <video width="100%" height="100%" style="background-color:pink}" controls>
+                            <source src="${"http://apifeelmoti.ikaart.org//UploadDocuments/637934963226839019_0.MOV"}" type="video/mp4">
+                        </video>`,}}
+                  />
+
+                </TouchableOpacity>)}
+                </View>
+                <View style={styles.content}>
+                  <Text style={styles.content1}>
+                    {item.UP_Coll_Desc ? item.UP_Coll_Desc.trimStart():""}
+                  </Text>
+                  <View style={styles.icon10}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent:"space-between",
+                        width: "40%",
+                         paddingtop: 10,
+                        paddingHorizontal: 10,
+
+                      }}
+                    >
+                      <View style={styles.icontext}>
+                        <TouchableOpacity onPress={()=>CreateUpdateUserFavorite(item.UP_PKeyID)}>
+                          <AntDesign
+                            name={like ? "heart" : "hearto"}
+                            size={22}
+                            color={like ? "red" : "#807C7D"}
+                          />
+                        </TouchableOpacity>
+                        <View>
+                          <Text style={styles.liketext}>22k</Text>
+                        </View>
+                      </View>
+                      <View style={styles.icontext}>
+                        <TouchableOpacity>
+                          <Feather
+                            name={"message-circle"}
+                            size={24}
+                            color="#807C7D"
+                          />
+                        </TouchableOpacity>
+                        <View>
+                          <Text style={styles.commenttext}>
+                            {item.commentCount}{22}
+                          </Text>
+                        </View>
+                      </View>
+                      {/* <View style={styles.icontext}>
+                        <TouchableOpacity>
+                          <AntDesign
+                            name={"sharealt"}
+                            size={24}
+                            color="#898788"
+                          />
+                        </TouchableOpacity>
+                      </View> */}
+                    </View>
+                    <View style={styles.icontext}>
+                        <TouchableOpacity onPress={()=>CreateUpdateUserFavorite(item.UP_PKeyID)}>
+                        <FontAwesome
+                          name={save ? "bookmark" : "bookmark-o"}
+                          size={24}
+                          color={"#898788"}
+                          style={{marginRight:10}}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </View>)
+}
  const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
 const paddingToBottom = 20;
 return layoutMeasurement.height + contentOffset.y >=
   contentSize.height - paddingToBottom;
  }
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      
+  <SafeAreaView  style={{flex:1,backgroundColor:"#fff"}}>
+   <StatusBar backgroundColor={"#FFFFFF" } />
         <View style={{ backgroundColor: "#fff" }}>
           <View style={styles.header}>
             <View style={{justifyContent:"center",alignItems:"center"}}>
@@ -145,110 +285,7 @@ return layoutMeasurement.height + contentOffset.y >=
         contentContainerStyle={{ flexGrow: 1 }}>
           <FlatList
             data={userpost}
-            renderItem={({ item }) => (
-              <View style={{marginTop:20}}>
-                <View style={styles.bar}>
-                  <View style={styles.bar1}>
-                    <TouchableOpacity>
-                      <Image
-                        source={{ uri: item.User_Image_Path ? item.User_Image_Path  : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg"}}
-                        style={styles.user}
-                      />
-                    </TouchableOpacity>
-                    <View style={styles.text}>
-                      <TouchableOpacity>
-                        <Text style={styles.text1}>{item.User_Name}</Text>
-                        <Text style={styles.text2}>{item.UP_Location}</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-
-                  <View style={styles.dot}>
-                    <TouchableOpacity>
-                      <Entypo
-                        name={"dots-three-vertical"}
-                        size={24}
-                        color="#BDBEC1"
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                <View style={styles.image}>
-                  <TouchableOpacity>
-                    <Image
-                      resizeMode="stretch"
-                      source={{ uri: item.UP_ImagePath }}
-                      style={styles.image1}
-                    />
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.content}>
-                  <Text style={styles.content1}>
-                    {item.UP_Coll_Desc ? item.UP_Coll_Desc.trimStart():""}
-                  </Text>
-                  <View style={styles.icon10}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent:"space-between",
-                        width: "50%",
-                         paddingtop: 10,
-                        paddingHorizontal: 10,
-
-                      }}
-                    >
-                      <View style={styles.icontext}>
-                        <TouchableOpacity onPress={()=>CreateUpdateUserFavorite(item.UP_PKeyID)}>
-                          <AntDesign
-                            name={like ? "heart" : "hearto"}
-                            size={22}
-                            color={like ? "red" : "#807C7D"}
-                          />
-                        </TouchableOpacity>
-                        <View>
-                          <Text style={styles.liketext}>22k</Text>
-                        </View>
-                      </View>
-                      <View style={styles.icontext}>
-                        <TouchableOpacity>
-                          <Feather
-                            name={"message-circle"}
-                            size={24}
-                            color="#807C7D"
-                          />
-                        </TouchableOpacity>
-                        <View>
-                          <Text style={styles.commenttext}>
-                            {item.commentCount}{22}
-                          </Text>
-                        </View>
-                      </View>
-                      <View style={styles.icontext}>
-                        <TouchableOpacity>
-                          <AntDesign
-                            name={"sharealt"}
-                            size={24}
-                            color="#898788"
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                    <View style={styles.icontext}>
-                        <TouchableOpacity onPress={()=>setsave(!save)}>
-                        <FontAwesome
-                          name={save ? "bookmark" : "bookmark-o"}
-                          size={24}
-                          color={"#898788"}
-                          style={{marginRight:10}}
-
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            )}
+             renderItem={({ item }) => renderUserPost(item)}
           />
       </ScrollView>
         </View>
@@ -327,11 +364,11 @@ const styles = StyleSheet.create({
     paddingtop: 10,
     paddingHorizontal: 10,
     paddingBottom: 20,
-    shadowColor: "#DBBE80",
-    shadowOffset: { width: 5, height: 6 },
-    shadowOpacity: 0.5,
-    shadowRadius: 2,
-    elevation: 10,
+    // shadowColor: "#DBBE80",
+    // shadowOffset: { width: 5, height: 6 },
+    // shadowOpacity: 0.5,
+    // shadowRadius: 2,
+    // elevation: 10,
   },
   content1: {
     padding: 10,

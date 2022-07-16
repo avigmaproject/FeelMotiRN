@@ -12,6 +12,7 @@ import {
   Dimensions,
   SafeAreaView,
   TextInput,
+StatusBar,
 } from "react-native";
 import moti from "../Assets/moti.png";
 
@@ -28,7 +29,8 @@ import profile from "../Assets/profile.png";
 const Explore = ({ navigation }) => {
   const [text, onChangeText] = React.useState("Useless Text");
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+   <SafeAreaView  style={{flex:1,backgroundColor:"#fff"}}>
+   <StatusBar backgroundColor={"#FFFFFF" } />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.header}>
           <TouchableOpacity>

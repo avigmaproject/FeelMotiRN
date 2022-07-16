@@ -1,6 +1,5 @@
 import React from "react";
-import {
-  View,Text,StyleSheet,TouchableOpacity,Image,ScrollView,SafeAreaView,} from "react-native";
+import {View,Text,StyleSheet,TouchableOpacity,Image,ScrollView,SafeAreaView,StatusBar} from "react-native";
 import Right from "react-native-vector-icons/Entypo";
 import Header from "../CustomComponent/Header";
 import { useDispatch, useSelector } from "react-redux";
@@ -109,6 +108,8 @@ const DATA = [
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8FA" }}>
+       <StatusBar backgroundColor={"#F8F8FA" } />
+
       <Header onPress={() => navigation.navigate("Profile")} search={true} title={"Setting"} />
       <ScrollView contentContainerStyle={{ marginHorizontal: 10 }}>
         <View>

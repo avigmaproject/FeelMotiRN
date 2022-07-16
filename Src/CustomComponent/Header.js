@@ -3,15 +3,14 @@ import React from "react";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Feather from "react-native-vector-icons/Feather";
 import Search from "react-native-vector-icons/AntDesign";
-
 export default function Header(props) {
   return (
-    <View style={{ flexDirection: "row", backgroundColor: props.color?   "#ffff": "#F8F8FA" }}>
+    <View style={{ flexDirection: "row", backgroundColor: props.color?   "#ffff": "#F8F8FA",marginBottom:10 }}>
       <View style={{ width: "15%" }}>
         <MaterialCommunityIcons
           onPress={props.onPress}
-          name={"keyboard-backspace"}
-          size={40}
+          name={"arrow-left"}
+          size={30}
           color="#424242"
           style={{ marginLeft: 10 }}
         />

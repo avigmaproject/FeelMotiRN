@@ -12,7 +12,8 @@ import {
   FlatList,
   SafeAreaView,
   Modal,
-  ImageBackground
+  ImageBackground,
+StatusBar
 } from "react-native";
 import moti from "../Assets/moti.png";
 import bell from "../Assets/bell.png";
@@ -22,22 +23,24 @@ import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import DeviceInfo from "react-native-device-info";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import Foundation from "react-native-vector-icons/Foundation";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { getuserpost, getusermasterdata ,createupdateuserfavorite,requestLocationPermission,uploadimage,getuserstory} from "../Utils/apiconfig";
 const windowHeight = Dimensions.get("window").height;
 const windowWidth = Dimensions.get("window").width;
 import { useSelector, useDispatch } from "react-redux";
-import { setProfile ,setMenu} from "../store/action/profile/profile";
+import { setProfile ,setMenu,setPagecount} from "../store/action/profile/profile";
 import * as Progress from 'react-native-progress';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { ActionSheetCustom as ActionSheet } from "react-native-actionsheet"
 import ImagePicker from "react-native-image-crop-picker";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import TrackPlayer from 'react-native-track-player';
+import TrackPlayer ,{State}from 'react-native-track-player';
 import Menu from "../CustomComponent/Menu"
 import { useFocusEffect } from "@react-navigation/native";
 import RNFetchBlob from 'rn-fetch-blob'
-
+import { WebView } from 'react-native-webview';
+import Share from 'react-native-share';
+import { SliderBox } from "react-native-image-slider-box";
 const options = [
   "Cancel",
   <View>
@@ -48,10 +51,14 @@ const options = [
   </View>
 ]
 const Home = ({ navigation }) => {
+  TrackPlayer.updateOptions({
+      stopWithApp: true
+  });
+  const dispatch = useDispatch();
   const token = useSelector((state) => state.authReducer.token);
   const profile = useSelector((state) => state.profileReducer.profile);
   const showmenu = useSelector((state) => state.profileReducer.showmenu);
-  const dispatch = useDispatch();
+  const pagecount = useSelector((state) => state.profileReducer.pagecount);
   const countInterval = React.useRef(null);
   const [loading, setloading] = useState(false);
   const [userpost, setuserpost] = useState([]);
@@ -61,6 +68,8 @@ const Home = ({ navigation }) => {
   const [count, setCount] = useState(0);
   const [statue, setstatue] = useState([]);
   const [userstatus, setuserstatus] = useState([])
+  const [id, setid] = useState(0)
+
   const [showshare, setshowshare] = useState(false)
   const [ActionSheetRef, setActionSheetRef] = useState(null);
   const [form, setForm] = useState({
@@ -70,30 +79,34 @@ const Home = ({ navigation }) => {
     location:""
   });
   React.useEffect(() => {
+      setid(0)
+      requestLocationPermission()
+      dispatch(setPagecount(1));
       GetLoaction()
-      GetUserPost();
+      GetUserPost(pagecount);
       GetUserStory()
       GetUserProfile();
       IntilaizeSetup()
+      dispatch(setMenu(false));
 
     return () => {
-      GetUserPost();
       GetUserProfile();
       GetUserStory()
       GetLoaction()
       IntilaizeSetup()
-   dispatch(setMenu(!showmenu));
+      dispatch(setMenu(false));
     };
   }, []);
  useFocusEffect(
     React.useCallback(() => {
-      GetUserPost();
+      GetUserPost(pagecount);
       GetUserStory()
       return () => console.log("close");
     }, [])
   );
   const GetLoaction = async() => {
   const value = await AsyncStorage.getItem('addressComponent')
+    console.log(value)
     if(value !== null) {
       handleOnChangeText(value, "location")
     }
@@ -107,11 +120,13 @@ const Home = ({ navigation }) => {
     setShowModal(false) 
     }, 3000)
   }
+ 
+
 const renderModal = () =>{
 return (
  <Modal transparent={true} visible={showModal}>
   <ImageBackground defaultSource={require("../Assets/default.png")} onLoadEnd={()=>onLoadEnd()} onLoadStart={()=>onLoadStart()}
-          source={{uri:statue.UP_ImagePath
+          source={{uri:statue.US_ImagePath
     // "https://img.traveltriangle.com/blog/wp-content/uploads/2020/01/places-to-visit-in-Bangalore-in-June1.jpg"
       }} style={{height:"100%",width:"100%"}}>
      <SafeAreaView>
@@ -135,14 +150,15 @@ return (
 }
 const handleOnChangeText = (value, fieldName) =>  setForm({ ...form, [fieldName]: value });
 
-  const GetUserPost = async () => {
+  const GetUserPost = async (count) => {
+console.log(count)
     setloading(true);
     let data = {
-     PageNumber:1,
-    NoofRows:1,    
+    PageNumber:count,
+    NoofRows:100,    
     Type:1
     };
-    console.log("loginnnnnn", data);
+    console.log("GetUserPost data", data);
     await getuserpost(data, token)
       .then((res) => {
         console.log("res:GetUserPost ", res[0]);
@@ -166,8 +182,8 @@ const handleOnChangeText = (value, fieldName) =>  setForm({ ...form, [fieldName]
 const GetUserStory = async () => {
     setloading(true);
     let data = {
-        PageNumber:1,
-    NoofRows:1,    
+    PageNumber:1,
+    NoofRows:100,     
     Type:1
     };
     console.log("GetUserStory", data);
@@ -176,9 +192,6 @@ const GetUserStory = async () => {
         console.log("res:GetUserStory ", res[0]);
         setloading(false);
           setuserstatus(res[0])
-      //  res[0].filter((item)=> imageset1.push({url:item.User_Image_Path}))
-      //   setimageset(imageset1)
-      //   console.log("imabeee",imageset)
       })
       .catch((error) => {
         setloading(false);
@@ -222,20 +235,20 @@ const GetUserStory = async () => {
       });
   };
  const CreateUpdateUserFavorite = async (id) => {
-        setlike(!like)
 
-  return 0 
+  // return 0 
     setloading(true);
     let data = {
     UF_User_PkeyID:profile.User_PkeyID,
     UF_UP_PKeyID:id,
+    Type:1
     };
     console.log("CreateUpdateUserFavorite", data);
     await createupdateuserfavorite(data, token)
       .then((res) => {
-        console.log("res:CreateUpdateUserFavorite ", res);
+        console.log("res:CreateUpdateUserFavoritedata ", res);
         setloading(false);
-        setlike(!like)
+        // setlike(!like)
       })
       .catch((error) => {
         setloading(false);
@@ -323,13 +336,17 @@ const GetUserStory = async () => {
       }
     }
   }
- const IntilaizeSetup = async() =>{
-      console.log("**play intialize**")
-        await TrackPlayer.setupPlayer();
+
+ const IntilaizeSetup = async() => await TrackPlayer.setupPlayer()
+ const ResetSetup = async() =>await TrackPlayer.reset();
+ React.useEffect(() => {
+    IntilaizeSetup()
+    return () => {
+      ResetSetup()
     }
+  }, [])
+  
 const PlayTrack = async (url) => {
-    // await TrackPlayer.reset();
-  console.log(typeof url)
     const track3 = {
       url: "http://apifeelmoti.ikaart.org//UploadDocuments/637932503293946244_0.mp3",
       //url: "http://soundbible.com/mp3/Tyrannosaurus%20Rex%20Roar-SoundBible.com-807702404.mp3", // Load media from the file system
@@ -343,9 +360,9 @@ const PlayTrack = async (url) => {
     await TrackPlayer.add(track3);
     await TrackPlayer.play();
   };
-// const WebViewPage = (url) =>{
-// navigation.navigate("WebViewPage",{url})
-// }
+const WebViewPage1 = (url) =>{
+navigation.navigate("WebViewPage",{url})
+}
 const WebViewPage = (url) => {
     console.log(url)
     setloading(true);
@@ -401,19 +418,41 @@ const renderItem = (item) =>{
 return(
 <View style={{justifyContent:"center",alignItems:"center",marginLeft:10,height:80,width:60}}>
              
-                  {item.US_Doc_Type === "Image" && ( <TouchableOpacity onPress={()=>OpenStatus(item)} style={{height:55,width:55,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"}}><Image 
+                  {item.US_Doc_Type === "Image" && ( <TouchableOpacity onPress={()=>OpenStatus(item)} style={{height:55,width:55,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"}}>
+                    
+                    <Image 
                   resizeMode="stretch"
                   style={{height:50,width:50,borderRadius:50}}
                   source={{ uri: item.US_ImagePath }}
-                  /></TouchableOpacity>)}
+                  />
+                </TouchableOpacity>)}
                   {item.US_Doc_Type === "Document" && (<TouchableOpacity onPress={()=>WebViewPage(item.US_ImagePath)} style={{height:55,width:55,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"}}><AntDesign name={"filetext1"} size={30} color="#DBBE80" /></TouchableOpacity>)}
                   {item.US_Doc_Type === "Audio" && (<TouchableOpacity onPress={()=>PlayTrack(item.US_ImagePath)} style={{height:55,width:55,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"}} ><AntDesign name={"sound"} size={30} color="#DBBE80" /></TouchableOpacity>)}
-                
-            
+                  {item.US_Doc_Type === "Video" && (<TouchableOpacity style={{height:55,width:55,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"}} >
+                  <FontAwesome5 name={"file-video"} size={30} color="#DBBE80" />
+                  </TouchableOpacity>)}
+
+         
               <Text numberOfLines={1} ellipsizeMode="tail" style={styles.title}>{item.User_Name}</Text>
             </View>
 )
 }
+const ShowShareButton = (item) => {
+console.log(item)
+setid(item.UP_PKeyID)
+setshowshare(!showshare)
+}
+const ShareOpen = async (item) => {
+    try {
+      await Share.open({
+
+        url: `Post Image : - ${item.UP_ImagePath}`,
+        message: `User name : - ${item.User_Name}`
+      })
+    } catch (err) {
+      console.log(err)
+    }
+  }
 const renderUserPost = (item) =>{
 return( <View style={{ marginTop: 10 }}>
                 <View style={styles.bar}>
@@ -431,13 +470,13 @@ return( <View style={{ marginTop: 10 }}>
                       </TouchableOpacity>
                     </View>
                   </View>
-                  {showshare && (
-                <View 
+                  {item.UP_PKeyID === id &&(
+                <TouchableOpacity onPress={()=> ShareOpen(item)} 
                   style={{padding:10,position:"absolute",
                     right:32,top:20, borderWidth:1,borderColor:"#DBBE80"}}>
-                <Text style={{color:"#DBBE80"}}>Share</Text></View>)}
+                <Text style={{color:"#DBBE80"}}>Share</Text></TouchableOpacity>)}
                   <View style={styles.dot}>
-                    <TouchableOpacity onPress={()=>setshowshare(!showshare)}>
+                    <TouchableOpacity onPress={()=>ShowShareButton(item)}>
                       <Entypo
                         name={"dots-three-vertical"}
                         size={24}
@@ -454,7 +493,28 @@ return( <View style={{ marginTop: 10 }}>
                     /></TouchableOpacity>)}
                   {item.UP_Doc_Type === "Document" && (<TouchableOpacity style={{...styles.image1,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"filetext1"} size={200} color="#DBBE80" /><Text>{form.text}</Text></TouchableOpacity>)}
                   {item.UP_Doc_Type === "Audio" && (<TouchableOpacity onPress={()=>PlayTrack(item.UP_ImagePath)} style={{...styles.image1,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"sound"} size={100} color="#DBBE80" /><Text style={{marginTop:10}}>{form.text}</Text></TouchableOpacity>)}
-                  
+                  {item.UP_Doc_Type === "Video" && (<TouchableOpacity style={{width:"100%",height:DeviceInfo.hasNotch ? windowHeight - 350 : windowHeight - 250,justifyContent:"center",alignItems:"center",justifyContent:"center",alignItems:"center"}} >
+                {/* <FontAwesome5 name={"file-video"} size={100} color="#DBBE80" /> */}
+                  {/* <VideoPlayer
+                    video={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }}
+                    videoWidth={1600}
+                    videoHeight={900}
+                    thumbnail={{ uri: 'https://i.picsum.photos/id/866/1600/900.jpg' }}
+                    /> */}
+                <WebView 
+                      mediaPlaybackRequiresUserAction={true}
+                      allowsInlineMediaPlayback={true}
+                      allowsFullscreenVideo={false}
+                      shouldStartLoad={"No"}
+                      style={{width:windowWidth,height: DeviceInfo.hasNotch ? windowHeight - 350 : windowHeight - 250}}
+                        // source={{  uri: "http://apifeelmoti.ikaart.org//UploadDocuments/637934963226839019_0.MOV"}} 
+                       source={{
+                        html: `
+                        <video width="100%" height="100%" style="background-color:pink}" controls>
+                            <source src="${"http://apifeelmoti.ikaart.org//UploadDocuments/637934963226839019_0.MOV"}" type="video/mp4">
+                        </video>`,}}
+                  />
+                </TouchableOpacity>)}
                 </View>
                 <View style={styles.content}>
                   <Text style={styles.content1}>
@@ -498,18 +558,9 @@ return( <View style={{ marginTop: 10 }}>
                           </Text>
                         </View>
                       </View>
-                      {/* <View style={styles.icontext}>
-                        <TouchableOpacity>
-                          <AntDesign
-                            name={"sharealt"}
-                            size={24}
-                            color="#898788"
-                          />
-                        </TouchableOpacity>
-                      </View> */}
                     </View>
                     <View style={styles.icontext}>
-                        <TouchableOpacity onPress={()=>setsave(!save)}>
+                        <TouchableOpacity onPress={()=>CreateUpdateUserFavorite(item.UP_PKeyID)}>
                         <FontAwesome
                           name={save ? "bookmark" : "bookmark-o"}
                           size={24}
@@ -523,6 +574,14 @@ return( <View style={{ marginTop: 10 }}>
               </View>)
 }
   const LoadMoreRandomData =() =>{
+    if(userpost.length === 0 ){
+console.log("im at ooooo post")
+    dispatch(setPagecount(1));
+      GetUserPost(1)
+    }else{
+    dispatch(setPagecount(pagecount+1));
+      GetUserPost(pagecount)
+    }
 // alert("load more data")
 }
 const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
@@ -532,6 +591,7 @@ const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
   }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+      <StatusBar backgroundColor={"#FFFFFF" } />
       <Spinner
           visible={loading}
           textContent={'Loading...'}
@@ -567,67 +627,6 @@ const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
               keyboardShouldPersistTaps={"always"}
               contentContainerStyle={{ flexGrow: 1,paddingBottom:100 }}
             >
-          {/* <View style={styles.box}>
-            <TouchableOpacity>
-              <View style={styles.buttonbox}>
-                <View style={styles.buttonboxicon}>
-                  <SimpleLineIcons
-                    name={"compass"}
-                    size={15}
-                    style={styles.buttonboxicon}
-                  />
-                </View>
-                <Text style={styles.buttontext}>Explore Posts</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={styles.buttonbox}>
-                <View style={styles.buttonboxicon}>
-                  <SimpleLineIcons
-                    name={"compass"}
-                    size={15}
-                    style={styles.buttonboxicon}
-                  />
-                </View>
-                <Text style={styles.buttontext}>Explore Creators</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.textarea}>
-            <TouchableOpacity>
-             <Image
-                resizeMode="stretch"
-                source={{ uri: profile.User_Image_Path ?profile.User_Image_Path 
-                        : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg",
-                       }}
-                style={styles.profile}
-              />
-            </TouchableOpacity>
-                <TextInput
-                  style={styles.textareatext}
-                  onKeyPress={({ nativeEvent }) => {
-                    if (nativeEvent.key === 'Backspace' ) {
-                      if( inputcount <= 4999 ){  
-                        let count = inputcount + 1
-                        setinputcount(count)}
-                    }else{
-                      let count = 5000 - (form.text.length +1)
-                      setinputcount(count) }
-                  }}
-                  maxLength={5000}
-                  onChangeText={(value) => handleOnChangeText(value, "text")}
-                  value={form.text}
-                  multiline={true}
-                  numberOfLines={3}
-                  placeholder="Write something.."
-                />
-          </View>
-          <View style={styles.iconbox}>
-            <TouchableOpacity onPress={() =>onOpenImage("post")}>
-              <View style={styles.icon}>
-                <FontAwesome name={"photo"} size={24} color="#DBBE80" />
-              </View>
-            </TouchableOpacity> */}
             <ActionSheet
               ref={(o) => setActionSheetRef(o)}
               title={
@@ -651,47 +650,8 @@ const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
                 }
               }}
             />
-            {/* <TouchableOpacity>
-              <View style={styles.icon1}>
-                <FontAwesome name={"file-zip-o"} size={24} color="#DBBE80" />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={styles.icon1}>
-                <AntDesign name={"tago"} size={24} color="#DBBE80" />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={styles.icon1}>
-                <Feather name={"lock"} size={24} color="#DBBE80" />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={styles.icon1}>
-                <Foundation name={"sound"} size={24} color="#DBBE80" />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              // onPress={()=>setshowkeyboard(!showkeyboard)}
-              >
-              <View style={styles.icon1}>
-                <Feather name={"smile"} size={24} color="#DBBE80" />
-              </View>
-            </TouchableOpacity>
-          </View>
-          */}
-          {/* <View>
-            <TouchableOpacity onPress={()=>CreateUpdateUserPost()}>
-              <View style={styles.buttonbox1}>
-                <Text style={styles.buttontext1}>Publish</Text>
-              </View>
-            </TouchableOpacity>
-          </View> */}
-          {/* <View style={styles.amount}>
-            <Text style={styles.amounttext}>{inputcount}</Text>
-          </View> */}
            <View style={{flexDirection:"row",alignItems:"center",paddingHorizontal:10,}}>
-            <TouchableOpacity onPress={()=>onOpenImage()} style={{justifyContent:"center",alignItems:"center"}}><View style={{height:50,width:50,borderColor:"gray",borderWidth:1,borderStyle:"dashed",borderRadius:50,justifyContent:"center",alignItems:"center"}}><Feather name={"plus"} size={24} color="#DBBE80" /></View>
+            <TouchableOpacity onPress={()=>  navigation.navigate("AddTab",{screen:"AddStory"})} style={{justifyContent:"center",alignItems:"center"}}><View style={{height:50,width:50,borderColor:"gray",borderWidth:1,borderStyle:"dashed",borderRadius:50,justifyContent:"center",alignItems:"center"}}><Feather name={"plus"} size={24} color="#DBBE80" /></View>
           <Text style={{marginTop:10}}>Add story</Text></TouchableOpacity>
           <View><FlatList
             showsHorizontalScrollIndicator={false}
@@ -740,17 +700,17 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   bar: {
-    padding: 5,
-    marginTop: 20,
-    marginLeft: 5,
+    paddingLeft: 5,
     width: "100%",
-    height: 50,
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 10,
+    alignItems:"center",
+    
   },
   bar1: {
     flexDirection: "row",
+    width:"90%",
+    alignItems:"center",
   },
   user: {
     height: 50,
@@ -758,7 +718,9 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   text: {
-    marginLeft: 10,
+    paddingLeft: 20,
+    fontSize: 12,
+    fontWeight: "300",
   },
   text1: {
     fontSize: 20,
@@ -970,12 +932,7 @@ const styles = StyleSheet.create({
   },
   icon2: { marginTop: 7, marginLeft: 5 },
 
-  text: {
-    marginTop: 7,
-    marginLeft: 5,
-    fontSize: 12,
-    fontWeight: "300",
-  },
+
   icon3: {
     marginLeft: 45,
   },

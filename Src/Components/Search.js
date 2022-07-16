@@ -1,7 +1,7 @@
 import React from "react";
 import {
   View,
-  Button,
+  StatusBar,
   Text,
   StyleSheet,
   TouchableOpacity,
@@ -81,7 +81,8 @@ return layoutMeasurement.height + contentOffset.y >=
   contentSize.height - paddingToBottom;
  }
   return (
-    <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
+ <SafeAreaView  style={{flex:1,backgroundColor:"#fff"}}>
+   <StatusBar backgroundColor={"#FFFFFF" } />
       <ScrollView
         onMomentumScrollEnd={(event) => { 
           if (isCloseToBottom(event.nativeEvent)) {

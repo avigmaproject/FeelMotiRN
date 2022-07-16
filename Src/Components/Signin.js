@@ -77,11 +77,11 @@ const Signin = ({ navigation }) => {
     return true;
   };
 
-  const submitForm = async (value) => {
+  const submitForm = async () => {
+      setloading(true);
     console.log("first", userInfo);
     if (isValidForm()) {
       // Keyboard.dismiss();
-      setloading(true);
       let data = qs.stringify({
         grant_type: "password",
         username: userInfo.email,
@@ -119,7 +119,8 @@ const Signin = ({ navigation }) => {
           }
         });
       console.log("info", userInfo);
-    }
+    }            
+    setloading(false);
   };
   const onClickFB = () => {
     alert("onClickFB");
@@ -132,7 +133,7 @@ const Signin = ({ navigation }) => {
   };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      {/* <StatusBar backgroundColor="#ffffff" /> */}
+      <StatusBar backgroundColor="#ffffff" />
  <Spinner
           visible={loading}
           textContent={'Loading...'}
@@ -189,7 +190,7 @@ const Signin = ({ navigation }) => {
             </TouchableOpacity>
           </View> */}
           <View>
-            <Button onPress={submitForm} title="Sign In" />
+            <Button onPress={()=>submitForm()} title="Sign In" />
           </View>
           {/* <View style={styles.bar_container}>
           <View style={styles.bar} />

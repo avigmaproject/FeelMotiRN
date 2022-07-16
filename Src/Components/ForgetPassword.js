@@ -15,17 +15,18 @@ import Button from "../CustomComponent/Button";
 import dynamicLinks from '@react-native-firebase/dynamic-links';
 import {forgotpassword} from "../Utils/apiconfig"
 import Spinner from 'react-native-loading-spinner-overlay';
+import {  Snackbar } from 'react-native-paper';
 
 const ForgetPassword = ({ navigation }) => {
   const [email, setemail] = useState("")
   const [error, setError] = useState("");
   const [device, setdevice] = useState(0)
   const [loading, setloading] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [color, setcolor] = useState("green")
+  const [message, setmessage] = useState("")
 
-
- 
-
-generateLink = async () => {
+  const generateLink = async () => {
     const link = await dynamicLinks().buildShortLink({
       link: `https://feelmoti.page.link/forgetpassword/${email}`,
       domainUriPrefix: 'https://feelmoti.page.link',
@@ -54,14 +55,15 @@ React.useEffect(() => {
     }
 
   return () => {
-    console.log("tetorf")
+    console.log("unmount")
   }
 },[])
+  const onToggleSnackBar = () => setVisible(!visible);
+  const onDismissSnackBar = () => setVisible(false);
 
  const submitForm = async () => {
   const link =   await generateLink();
-      console.log(email, 'email');
-      console.log(link, 'link');
+      setloading(true);
       if (isValidForm()) {
         let data = {
           EmailID: email,
@@ -74,22 +76,37 @@ React.useEffect(() => {
           .then(res => {
             console.log('res: ', JSON.stringify(res));
             console.log('res:123', res[0].UserCode);
+            onToggleSnackBar()
+
             if (res[0].UserCode === 'Sucesss') {
               console.log('successs');
-              alert(
-                'Link sent successfully. Please check your registered email.',
-              );
+              setmessage("Link sent successfully. Please check your registered email.") 
+            setcolor("green")
             }
             if (res[0].UserCode === 'Error') {
-              alert('Please check your email.');
+            setmessage("This email is not register with us.") 
+            setcolor("green")
             }
+            setloading(false);
+           
           })
           .catch(error => {
-            if (error.response) {
-              console.log('responce_error', error.response);
-            } else if (error.request) {
-              console.log('request error', error.request);
-            }
+             if (error.request) {
+                setmessage("Request Error") 
+                setcolor("red")
+                onToggleSnackBar()
+                console.log(error.request)
+              } else if (error.responce) {
+                setmessage("Responce Error") 
+                setcolor("red")
+                onToggleSnackBar()
+                console.log(error.responce)
+              } else {
+                setmessage("Somthing went wrong....") 
+                setcolor("red")
+                onToggleSnackBar()
+                console.log(error)
+              }
           });
       } 
     
@@ -111,7 +128,8 @@ React.useEffect(() => {
     return true;
   };
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+    <SafeAreaView  style={{flex:1,backgroundColor:"#fff"}}>
+      <StatusBar backgroundColor={"#FFFFFF" } />
       {/* <StatusBar backgroundColor="#ffffff" /> */}
        <Header color={true} onPress={() => navigation.navigate('Signin')}/>
       <ScrollView keyboardShouldPersistTaps={"always"} contentContainerStyle={{ flex: 1, marginHorizontal: 20 }}>
@@ -135,6 +153,16 @@ React.useEffect(() => {
             <Button onPress={() => submitForm()} title="Submit" />
           </View>
         </View>
+        <Snackbar
+        visible={visible}
+        onDismiss={onDismissSnackBar}
+        style={{backgroundColor:color}}
+        action={{
+          label: 'OK',
+          onPress: () => {
+            onDismissSnackBar
+          },
+        }}>{message}</Snackbar>
       </ScrollView>
     </SafeAreaView>
   );

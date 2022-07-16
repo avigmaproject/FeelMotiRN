@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Dimensions,
+  StatusBar,
   SafeAreaView,
 } from "react-native";
 import InputText from "../CustomComponent/InputText";
@@ -62,6 +62,7 @@ const EditProfile = ({ navigation }) => {
     imagepath:profile.User_Image_Path ? profile.User_Image_Path :""
   });
   const [error, setError] = useState("");
+  const [errorfirstname, setErrorFirst] = useState("");
   const [loading, setloading] = useState(false);
   const data = [
     { label: "English", value: "1" },
@@ -215,9 +216,9 @@ const onOpenImage = () =>ActionSheetRef.show()
   }
 
   const isValidForm = () => {
-    if (!fullName) return updateError(" fullName is Required!", setError);
+    if (!fullName) return updateError("Full Name is Required!", setErrorFirst);
 
-    if (!username) return updateError(" username is Required!", setError);
+    if (!username) return updateError("Username is Required!", setError);
 
     return true;
   };
@@ -308,6 +309,8 @@ const onOpenImage = () =>ActionSheetRef.show()
 
   return (
     <SafeAreaView style={{ backgroundColor: "#F8F8FA", flex: 1 }}>
+      <StatusBar backgroundColor={"#FFFFFF" } />
+
       <Header
         onPress={() => navigation.navigate("Setting")}
         title={"Edit Profile"}
@@ -366,8 +369,9 @@ const onOpenImage = () =>ActionSheetRef.show()
               onChangeText={(value) => handleOnChangeText(value, "fullName")}
               label={"Full name*"}
               value={fullName}
-              error={error}
               style={{ textTransform: "capitalize" }}
+              error={errorfirstname}
+
             />
             {/* <Text style={{ color: "#DBBE80" }}>{error}</Text> */}
             <InputText
@@ -375,6 +379,7 @@ const onOpenImage = () =>ActionSheetRef.show()
               label={"User name*"}
               value={username}
               style={{ textTransform: "capitalize" }}
+              error={error}
             />
             <InputText
               onChangeText={(value) => handleOnChangeText(value, "email")}
@@ -498,21 +503,14 @@ const onOpenImage = () =>ActionSheetRef.show()
               label={"Postal/ZIP"}
               value={postal}
             />
-            {/* 
-          <TextInput
-            style={styles.input}
-            autoCapitalize="none"
-            label="Address"
-            placeholder="Address"
-          />
-          <TextInput
-            style={styles.input}
-            autoCapitalize="none"
-            label="Postal/ZIP"
-            placeholder="Postal/ZIP"
-          /> */}
           </View>
-
+      {/* <View style={{marginVertical:10}}>
+        {error ? <Text  style={{
+          color: "#DBBE80",
+          fontSize: 20,
+          width: "90%",
+        }}>{error}</Text> : null}
+      </View> */}
           <View>
             <Button onPress={editProfile} title="Save Changes" />
           </View>

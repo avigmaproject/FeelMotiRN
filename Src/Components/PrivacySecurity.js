@@ -1,7 +1,6 @@
 import React from "react";
 import {
   View,
-  Button,
   Text,
   StyleSheet,
   TouchableOpacity,
@@ -9,13 +8,14 @@ import {
   Image,
   Keyboard,
   ScrollView,
-  Dimensions,
+  StatusBar,
   SafeAreaView,
 } from "react-native";
 import Header from "../CustomComponent/Header";
 const PrivacySecurity = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8FA" }}>
+   <StatusBar backgroundColor={"#F8F8FA" } />
       <Header
         onPress={() => navigation.navigate("Setting")}
         title={"Privacy And Security"}

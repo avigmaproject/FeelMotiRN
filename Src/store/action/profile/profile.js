@@ -9,3 +9,9 @@ export const setMenu = (showmenu) => {
   };
 };
  
+export const setPagecount = (pagecount) => {
+  return (dispatch) => {
+    dispatch({ type: "SET_PAGECOUNT", pagecount });
+  };
+};
+ 

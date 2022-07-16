@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   Image,
-  Keyboard,
+  StatusBar,
   ScrollView,
   SafeAreaView,
 } from "react-native";
@@ -19,6 +19,7 @@ import InputText from "../CustomComponent/InputText";
 const ForgetPassword = ({ navigation }) => {
   return (
     <SafeAreaView style={{  backgroundColor: "#F8F8FA", flex: 1 }}>
+     <StatusBar backgroundColor={"#FFFFFF" } />
       <Header onPress={() => navigation.navigate("Setting")} title={"Wallet"} />
       <ScrollView keyboardShouldPersistTaps={"always"} contentContainerStyle={{ marginHorizontal: 20 ,}}>
         <View>

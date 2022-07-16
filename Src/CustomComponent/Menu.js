@@ -15,7 +15,7 @@ export default function Menu({navigation}) {
   navigation.navigate("AddTab",{screen:"AddStory"})} 
 
   return (
-    <View style={{position:"absolute",backgroundColor:"rgba(219,190,128,0.2)",bottom:0,zIndex:1,right:10,borderRadius:10,height:"10%",width:"30%",paddingHorizontal:10,borderColor:"rgba(0,0,0,0.1)",borderWidth:2}}>
+    <View style={{position:"absolute",backgroundColor:"#fff",bottom:0,zIndex:1,right:10,borderRadius:10,height:"13%",width:"35%",paddingHorizontal:10,borderColor:"rgba(0,0,0,0.1)",borderWidth:2}}>
         <TouchableOpacity onPress={()=> CallPost()  }          style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",height:"50%",width:"100%",}}>
            <Text>Post</Text>
              <MaterialCommunityIcons

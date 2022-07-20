@@ -5,7 +5,7 @@ import {
   Text,
   StyleSheet,
   TextInput,
-  TouchableOpacity,
+  StatusBar,
   Alert,
   Image,
 } from 'react-native';
@@ -44,6 +44,8 @@ React.useEffect(() => {
 }, [])
   return (
     <View style={styles.container}>
+          <StatusBar barStyle="dark-content" backgroundColor="#DBBE80" />
+
     <Animatable.View animation="fadeInDownBig" easing="ease-out" >
       <Animatable.View animation="pulse" >
         <Image source={home} />

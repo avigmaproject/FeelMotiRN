@@ -1,6 +1,6 @@
 export const initialState = {
   profile: [],
-  pagecount:1,
+  pagecount:10,
   showmenu:false
 };
 

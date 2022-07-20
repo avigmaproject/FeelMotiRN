@@ -19,7 +19,7 @@ import {  Snackbar } from 'react-native-paper';
 
 const ForgetPassword = ({ navigation }) => {
   const [email, setemail] = useState("")
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
   const [device, setdevice] = useState(0)
   const [loading, setloading] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -63,7 +63,6 @@ React.useEffect(() => {
 
  const submitForm = async () => {
   const link =   await generateLink();
-      setloading(true);
       if (isValidForm()) {
         let data = {
           EmailID: email,
@@ -71,6 +70,8 @@ React.useEffect(() => {
           Email_Url: link,
           Device: device,
         };
+      setloading(true);
+
         console.log(data);
         await forgotpassword(data)
           .then(res => {
@@ -129,7 +130,7 @@ React.useEffect(() => {
   };
   return (
     <SafeAreaView  style={{flex:1,backgroundColor:"#fff"}}>
-      <StatusBar backgroundColor={"#FFFFFF" } />
+      <StatusBar barStyle="dark-content" backgroundColor={"#FFFFFF" } />
       {/* <StatusBar backgroundColor="#ffffff" /> */}
        <Header color={true} onPress={() => navigation.navigate('Signin')}/>
       <ScrollView keyboardShouldPersistTaps={"always"} contentContainerStyle={{ flex: 1, marginHorizontal: 20 }}>

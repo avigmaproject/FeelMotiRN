@@ -9,6 +9,7 @@ import {
   ScrollView,
   SafeAreaView,
 StatusBar,
+Platform,
 } from "react-native";
 import moti from "../Assets/moti.png";
 import bell from "../Assets/bell.png";
@@ -33,6 +34,8 @@ import { SliderBox } from "react-native-image-slider-box";
 import TrackPlayer from 'react-native-track-player';
 import { useFocusEffect } from "@react-navigation/native";
 import {  Snackbar } from 'react-native-paper';
+import { WebView } from 'react-native-webview';
+
 const options = [
   "Cancel",
   <View>
@@ -46,7 +49,6 @@ const options = [
 export default function Addpost({navigation}) {
   const token = useSelector((state) => state.authReducer.token);
   const profile = useSelector((state) => state.profileReducer.profile);
-  console.log(profile)
   const dispatch = useDispatch();
   const [loading, setloading] = useState(false);
   const [inputcount, setinputcount] = useState(5000)
@@ -79,7 +81,7 @@ export default function Addpost({navigation}) {
 const OpenDocumentPicker = () => {
 settype("Document")
  DocumentPicker.pickMultiple({
-  type: [DocumentPicker.types.csv,DocumentPicker.types.xls,DocumentPicker.types.xlsx,DocumentPicker.types.pptx,DocumentPicker.types.ppt,DocumentPicker.types.pdf,DocumentPicker.types.zip,DocumentPicker.types.plainText],
+  type: [DocumentPicker.types.csv,DocumentPicker.types.xls,DocumentPicker.types.xlsx,DocumentPicker.types.pptx,DocumentPicker.types.ppt,DocumentPicker.types.pdf,DocumentPicker.types.docx,DocumentPicker.types.doc,DocumentPicker.types.plainText],
   allowMultiSelection:true,
 }).then((item)=>{
 console.log(item)
@@ -108,13 +110,14 @@ const selectVideo = async () => {
       mediaType: "video",
       multiple: true,
     }).then((video) => {
+    console.log("videovideo",video)
 for(let i = 0;i< video.length ; i++){
           const videodata ={
             fileCopyUri: null,
-            name: video[i].filename,
+            name:Platform.OS ===  "ios" ? video[i].filename : video[i].modificationDate,
             size: video[i].size,
             type:video[i].mime,
-            uri:video[i].sourceURL,
+            uri:Platform.OS ===  "ios" ? video[i].sourceURL : video[i].path,
           }
            const formData = new FormData()
       formData.append('file', videodata);
@@ -141,16 +144,15 @@ const ImageGallery = async () => {
       for(let i = 0;i< image.length ; i++){
           const imagedata ={
             fileCopyUri: null,
-            name: image[i].filename,
+            name:Platform.OS ===  "ios" ? image[i].filename : image[i].modificationDate,
             size: image[i].size,
             type:image[i].mime,
-            uri:image[i].sourceURL,
+            uri:Platform.OS ===  "ios" ? image[i].sourceURL : image[i].path,
           }
-            
             const formData = new FormData()
             formData.append('file', imagedata);
             console.log(formData)
-            uploadDocumnet(formData , i)
+            uploadDocumnet(formData)
         }
         }
       })
@@ -169,20 +171,33 @@ const ImageGallery = async () => {
         compressImageQuality: 0.5
       }).then((image) => {
         console.log(image)
-       const formData = new FormData()
-      formData.append('file', image[0]);
-      console.log(formData)
-      uploadDocumnet(formData)  
+      for(let i = 0;i< image.length ; i++){
+          const imagedata ={
+            fileCopyUri: null,
+            name:Platform.OS ===  "ios" ? image[i].filename : image[i].modificationDate,
+            size: image[i].size,
+            type:image[i].mime,
+            uri:Platform.OS ===  "ios" ? image[i].sourceURL : image[i].path,
+          }
+            const formData = new FormData()
+            formData.append('file', imagedata);
+            console.log(formData)
+            uploadDocumnet(formData)
+        } 
       })
     }, 1000)
   }
 const onOpenImage = () => ActionSheetRef.show()
 const handleOnChangeText = (value, fieldName) =>  setForm({ ...form, [fieldName]: value });
-const uploadDocumnet = async (data,i) => {
-    console.log("chekkk data",data, i)
+const uploadDocumnet = async (data) => {
+    setimageurl([])
+    // console.log("uploadDocumnetuploadDocumnet==",data)
+    setloading(true)
+    setlodingtext("Uploading multimedia file.....")
     try {
       const res = await uploaddocumnet(data,token)
       console.log("uploadDocumnet ===>",res.Data[0])
+      console.log(res)
       const postdata = {
         UI_Name :res.Data[0].name,
         UI_File_Name: res.Data[0].name,
@@ -213,6 +228,7 @@ const uploadDocumnet = async (data,i) => {
                 onToggleSnackBar()
                 console.log(error)
               }
+      setloading(false)
 
 ImagePicker.clean().then(() => {
   console.log('removed all tmp images from tmp directory');
@@ -317,38 +333,13 @@ const PlayTrack = async () => {
     await TrackPlayer.add(track3);
     await TrackPlayer.play();
   };
+console.log("imageurl",imageurl[0])
   return (
   <SafeAreaView  style={{flex:1,backgroundColor:"#fff"}}>
-   <StatusBar backgroundColor={"#FFFFFF" } />
+   <StatusBar barStyle="dark-content" backgroundColor={"#FFFFFF" } />
 
     <ScrollView style={{flex:1,marginHorizontal:10}}>
       <Spinner visible={loading} textContent={lodingtext} />
-         {/* <View style={styles.box}>
-            <TouchableOpacity>
-              <View style={styles.buttonbox}>
-                <View style={styles.buttonboxicon}>
-                  <SimpleLineIcons
-                    name={"compass"}
-                    size={15}
-                    style={styles.buttonboxicon}
-                  />
-                </View>
-                <Text style={styles.buttontext}>Explore Posts</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View style={styles.buttonbox}>
-                <View style={styles.buttonboxicon}>
-                  <SimpleLineIcons
-                    name={"compass"}
-                    size={15}
-                    style={styles.buttonboxicon}
-                  />
-                </View>
-                <Text style={styles.buttontext}>Explore Creators</Text>
-              </View>
-            </TouchableOpacity>
-          </View> */}
           <View style={{marginVertical:20,flexDirection:"row",justifyContent:"center",alignItems:"center",}}><Text style={{color:"#DBBE80",fontWeight:"bold",fontSize:30}}>Create Post</Text>
         <Entypo
           onPress={()=>navigation.navigate("Home")}
@@ -439,12 +430,28 @@ const PlayTrack = async () => {
         </View>
         {imageurl.length > 0 && type === "Image" && <View>
           <SliderBox
+          resizeMode="stretch"
           images={imageurl}
-          sliderBoxHeight={200}
+          sliderBoxHeight={150}
           onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
         /><Text>{form.text}</Text></View>}
         {imageurl.length > 0 && type === "Document" && <TouchableOpacity style={{width:"100%",height:200,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"filetext1"} size={100} color="#DBBE80" /><Text>{form.text}</Text></TouchableOpacity>}
         {imageurl.length > 0 && type === "Audio" && <TouchableOpacity onPress={()=>PlayTrack()} style={{width:"100%",paddingVertical:40,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"sound"} size={100} color="#DBBE80" /><Text style={{marginTop:10}}>{form.text}</Text></TouchableOpacity>}
+        {imageurl.length > 0 && type === "Video" && <TouchableOpacity onPress={()=>PlayTrack()} style={{width:"100%",paddingVertical:40,justifyContent:"center",alignItems:"center"}} >
+              <WebView 
+                      mediaPlaybackRequiresUserAction={true}
+                      allowsInlineMediaPlayback={true}
+                      allowsFullscreenVideo={false}
+                      shouldStartLoad={"No"}
+                      style={{width:windowWidth,height: DeviceInfo.hasNotch ? windowHeight - 350 : windowHeight - 250}}
+                        // source={{  uri: "http://apifeelmoti.ikaart.org//UploadDocuments/637934963226839019_0.MOV"}} 
+                       source={{
+                        html: `
+                        <video width="100%" height="50%" style="background-color:pink}" controls>
+                            <source src="${imageurl[0]}" type="video/mp4">
+                        </video>`,}}
+                  /><Text style={{marginTop:10}}>{form.text}</Text></TouchableOpacity>}
+
       </ScrollView>
         <ActionSheet
               ref={(o) => setActionSheetRef(o)}

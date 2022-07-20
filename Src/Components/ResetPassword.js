@@ -27,6 +27,9 @@ const ResetPassword = ({ navigation ,...props}) => {
   const [secureTextEntry, setsecureTextEntry] = useState(true);
   const [csecureTextEntry, csetsecureTextEntry] = useState(true);
   const [error, setError] = useState("");
+  // const [error1, setError1] = useState(null);
+  const [error1, setError1] = useState(null);
+
   const [email, setemail] = useState("");
   const [loading, setloading] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -66,9 +69,7 @@ const passwordEmpty = () => {
     if (password.length === 0) {
       cancel = true;
     }
-    if (confirmpassword.length === 0) {
-      cancel = true;
-    }
+    
     if (cancel) {
       return updateError("Fields can not be empty.", setError);
     } else {
@@ -80,12 +81,11 @@ const passwordLength = () => {
     if (password.length < 8) {
       cancel = true;
     }
-    if (confirmpassword.length < 8 ) {
-      cancel = true;
-    }
+    console.log("cancel brfore",cancel)
+
     if (cancel) {
+    console.log("cancel after",cancel)
       return updateError('Password length should not be less then 8.', setError);
-      return false;
     } else {
       return true;
     }
@@ -103,11 +103,11 @@ const passwordEqual = () => {
     }
   };
 const submitForm = async () => {
-    setloading(true); 
     if (
       passwordLength() &&
-      passwordEmpty() && passwordEqual()
-    ) {     
+      passwordEmpty() && passwordEqual() 
+    ) {   
+
         let data = {
           User_Email: email,
           Type: 5,
@@ -115,14 +115,19 @@ const submitForm = async () => {
           User_Type: 1,
         };
         console.log(data);
+    setloading(true); 
+
         await resetpassword(data)
           .then(res => {
            setloading(false); 
            console.log('res: ', JSON.stringify(res));
            onToggleSnackBar()
            setmessage("Your password has been changed successfully. Use your new password to login.") 
+          setResetPassword({
+            password: "",
+            confirmpassword: "",})
            setcolor("green")
-           navigation.navigate("Signin")
+            const a = setTimeout(() => { navigation.navigate("Signin")}, 2000);
 
           })
           .catch(error => {
@@ -142,14 +147,17 @@ const submitForm = async () => {
                 onToggleSnackBar()
                 console.log(error)
               }
+           setloading(false); 
+
           });
-      
+                 setloading(false); 
+
     }
   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <StatusBar backgroundColor="#ffffff" />
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       <Spinner
           visible={loading}
           textContent={'Loading...'}
@@ -191,7 +199,8 @@ const submitForm = async () => {
                   color={"#9B9C9F"}
                 />
               }
-              error={error}
+              error1={error1}
+
             />
           </View>
           <View>

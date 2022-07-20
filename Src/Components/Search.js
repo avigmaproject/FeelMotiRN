@@ -82,7 +82,7 @@ return layoutMeasurement.height + contentOffset.y >=
  }
   return (
  <SafeAreaView  style={{flex:1,backgroundColor:"#fff"}}>
-   <StatusBar backgroundColor={"#FFFFFF" } />
+   <StatusBar barStyle="dark-content" backgroundColor={"#FFFFFF" } />
       <ScrollView
         onMomentumScrollEnd={(event) => { 
           if (isCloseToBottom(event.nativeEvent)) {

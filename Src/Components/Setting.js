@@ -108,7 +108,7 @@ const DATA = [
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8FA" }}>
-       <StatusBar backgroundColor={"#F8F8FA" } />
+       <StatusBar barStyle="dark-content" backgroundColor={"#F8F8FA" } />
 
       <Header onPress={() => navigation.navigate("Profile")} search={true} title={"Setting"} />
       <ScrollView contentContainerStyle={{ marginHorizontal: 10 }}>

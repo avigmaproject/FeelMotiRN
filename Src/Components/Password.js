@@ -40,7 +40,7 @@ const OhandleSecureEntry = () => {
   const { oldPassword, NewPassword,confirmPassword } = form;
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f8f8f8" }}>
-   <StatusBar backgroundColor={"#f8f8f8" } />
+   <StatusBar barStyle="dark-content" backgroundColor={"#f8f8f8" } />
       <Header
         onPress={() => navigation.navigate("Setting")}
         title={"Password"}

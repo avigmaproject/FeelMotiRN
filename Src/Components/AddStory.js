@@ -7,7 +7,7 @@ import {
   Image,
   ScrollView,
   SafeAreaView,
-StatusBar,
+StatusBar,Platform
 } from "react-native";
 import React, { useState ,useEffect} from "react";
 import Feather from "react-native-vector-icons/Feather";
@@ -112,10 +112,10 @@ const ImageGallery = async () => {
       for(let i = 0;i< image.length ; i++){
           const imagedata ={
             fileCopyUri: null,
-            name: image[i].filename,
+             name:Platform.OS ===  "ios" ? image[i].filename : image[i].modificationDate,
             size: image[i].size,
             type:image[i].mime,
-            uri:image[i].sourceURL,
+            uri:Platform.OS ===  "ios" ? image[i].sourceURL : image[i].path,
           }
             const formData = new FormData()
             formData.append('file', imagedata);
@@ -134,11 +134,11 @@ const selectVideo = async () => {
     }).then((video) => {
 for(let i = 0;i< video.length ; i++){
           const videodata ={
-            fileCopyUri: null,
-            name: video[i].filename,
+           fileCopyUri: null,
+            name:Platform.OS ===  "ios" ? video[i].filename : video[i].modificationDate,
             size: video[i].size,
             type:video[i].mime,
-            uri:video[i].sourceURL,
+            uri:Platform.OS ===  "ios" ? video[i].sourceURL : video[i].path,
           }
            const formData = new FormData()
       formData.append('file', videodata);
@@ -161,10 +161,19 @@ for(let i = 0;i< video.length ; i++){
         compressImageQuality: 0.5,
       }).then((image) => {
         console.log(image)
-       const formData = new FormData()
-      formData.append('file', image[0]);
-      console.log(formData)
-      uploadDocumnet(formData)  
+       for(let i = 0;i< image.length ; i++){
+          const imagedata ={
+            fileCopyUri: null,
+            name:Platform.OS ===  "ios" ? image[i].filename : image[i].modificationDate,
+            size: image[i].size,
+            type:image[i].mime,
+            uri:Platform.OS ===  "ios" ? image[i].sourceURL : image[i].path,
+          }
+            const formData = new FormData()
+            formData.append('file', imagedata);
+            console.log(formData)
+            uploadDocumnet(formData)
+        }
       })
     }, 1000)
   }
@@ -299,7 +308,7 @@ const CreateUpdateUserStory = async () => {
   };
   return (
    <SafeAreaView  style={{flex:1,backgroundColor:"#fff"}}>
-   <StatusBar backgroundColor={"#FFFFFF" } />
+   <StatusBar barStyle="dark-content" backgroundColor={"#FFFFFF" } />
 
     <ScrollView style={{flex:1,marginHorizontal:10}}>
       <Spinner visible={loading} textContent={lodingtext} />

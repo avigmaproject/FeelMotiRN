@@ -30,7 +30,7 @@ const Explore = ({ navigation }) => {
   const [text, onChangeText] = React.useState("Useless Text");
   return (
    <SafeAreaView  style={{flex:1,backgroundColor:"#fff"}}>
-   <StatusBar backgroundColor={"#FFFFFF" } />
+   <StatusBar  barStyle="dark-content" backgroundColor={"#FFFFFF" } />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.header}>
           <TouchableOpacity>

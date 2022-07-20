@@ -129,7 +129,7 @@ const Signup = ({ navigation }) => {
 
   return (
 <SafeAreaView  style={{flex:1,backgroundColor:"#fff"}}>
-   <StatusBar backgroundColor={"#FFFFFF" } />
+   <StatusBar barStyle="dark-content" backgroundColor={"#FFFFFF" } />
     <Header color={true} onPress={() => navigation.navigate('Signin')}/>
         <Spinner
           visible={loading}

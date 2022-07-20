@@ -247,7 +247,7 @@ return layoutMeasurement.height + contentOffset.y >=
  }
   return (
   <SafeAreaView  style={{flex:1,backgroundColor:"#fff"}}>
-   <StatusBar backgroundColor={"#FFFFFF" } />
+   <StatusBar barStyle="dark-content" backgroundColor={"#FFFFFF" } />
         <View style={{ backgroundColor: "#fff" }}>
           <View style={styles.header}>
             <View style={{justifyContent:"center",alignItems:"center"}}>
@@ -266,7 +266,7 @@ return layoutMeasurement.height + contentOffset.y >=
                 <Image source={bell} style={styles.bell} />
               </TouchableOpacity>
               <View>
-                <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+                <TouchableOpacity onPress={() => navigation.navigate("HomeTab",{screen:"Profile"})}>
                   <Image
                     resizeMode="stretch"
                     source={{ uri: profile.User_Image_Path ? profile.User_Image_Path  : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg"}}

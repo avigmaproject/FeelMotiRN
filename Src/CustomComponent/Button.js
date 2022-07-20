@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#DBBE80",
     marginBottom: 45,
     borderRadius: 10,
+    marginTop:10
   },
   submit: {
     textAlign: "center",

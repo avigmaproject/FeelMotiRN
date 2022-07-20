@@ -24,6 +24,8 @@ import ImagePicker from "react-native-image-crop-picker";
 import Spinner from 'react-native-loading-spinner-overlay';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {  Snackbar } from 'react-native-paper';
+import { Timer } from 'react-native-progress-timer';
+
 const options = [
   "Cancel",
   <View>
@@ -51,11 +53,11 @@ const EditProfile = ({ navigation }) => {
     email: profile.User_Email ? profile.User_Email:"",
     username: profile.User_MotiID ? profile.User_MotiID:"",
     profession: profile.User_Occupation ? profile.User_Occupation :"",
-    language: profile.User_Language ? profile.User_Language.toString():"1",
+    language: profile.User_Language ? profile.User_Language.toString():"0",
     dob:profile.User_DOB? moment(profile.User_DOB).format("LL"):"" ,
     company: profile.User_Company ? profile.User_Company:"",
     unitedstates: profile.User_Country ?profile.User_Country:"",
-    gender:profile.User_Gender? profile.User_Gender.toString() :"1",
+    gender:profile.User_Gender? profile.User_Gender.toString() :"0",
     city: profile.User_City ? profile.User_City:"",
     address: profile.User_Address ?  profile.User_Address:"",
     postal: profile.User_Zip ? profile.User_Zip :"",
@@ -191,7 +193,7 @@ const onOpenImage = () =>ActionSheetRef.show()
       const res = await uploadimage(data,token)
       console.log(res[0].Image_Path, "resssss")
       handleOnChangeText(res[0].Image_Path, "imagepath")
-      setmessage("Image send successfully. Save data.") 
+      setmessage("Profile picture updated successfully.") 
       setcolor("green")
       onToggleSnackBar()
 
@@ -309,8 +311,7 @@ const onOpenImage = () =>ActionSheetRef.show()
 
   return (
     <SafeAreaView style={{ backgroundColor: "#F8F8FA", flex: 1 }}>
-      <StatusBar backgroundColor={"#FFFFFF" } />
-
+      <StatusBar barStyle="dark-content" backgroundColor={"#F8F8FA" } />
       <Header
         onPress={() => navigation.navigate("Setting")}
         title={"Edit Profile"}

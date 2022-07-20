@@ -196,8 +196,8 @@ setistip(false)
 }
 const renderItem = (item) =>{
 return(
-<View style={{justifyContent:"center",alignItems:"center",marginLeft:10,height:130,width:80,marginVertical:10}}>
-  {item.US_Doc_Type === "Image" && (<TouchableOpacity  style={styles.storyContainer}><Image resizeMode="stretch" style={{ height:70,width:70,borderRadius:500}} source={{ uri: item.US_ImagePath ?item.US_ImagePath  : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg",}}  /></TouchableOpacity>)}   
+<View style={{justifyContent:"center",alignItems:"center",marginLeft:10,height:120,width:70,marginVertical:10}}>
+  {item.US_Doc_Type === "Image" && (<TouchableOpacity  style={styles.storyContainer}><Image resizeMode="stretch" style={{ height:60,width:70,borderRadius:500}} source={{ uri: item.US_ImagePath ?item.US_ImagePath  : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg",}}  /></TouchableOpacity>)}   
   {item.US_Doc_Type === "Document" && (<TouchableOpacity  style={styles.storyContainer}><AntDesign name={"filetext1"} size={40} color="#DBBE80" /></TouchableOpacity>)}
   {item.US_Doc_Type === "Audio" && (<TouchableOpacity  style={styles.storyContainer} ><AntDesign name={"sound"} size={40} color="#DBBE80" /></TouchableOpacity>)}
   {item.US_Doc_Type === "Video" && (<TouchableOpacity style={styles.storyContainer} ><FontAwesome5 name={"file-video"} size={30} color="#DBBE80" /></TouchableOpacity>)}
@@ -233,14 +233,14 @@ setisdoc(false)
 }
   return (
 <View style={{ flex: 1, backgroundColor: "#F5F5F5" ,paddingTop:Platform.OS === "ios" ?  insets.top :0}}>
-   <StatusBar backgroundColor={"#FFFFFF" } />
+   <StatusBar barStyle="dark-content" backgroundColor={"#F5F5F5" } />
       <Header
         settings={true}
         onPress={() => navigation.navigate("Home")}
         onPress2={() => navigation.navigate("Setting")}
         title={profile.User_Name}
       />
-        <View style={{marginHorizontal: 10,flex:1}}>
+        <View style={{marginHorizontal: 10,flex:1,marginTop:5}}>
           <View>
             <View
               style={{
@@ -324,7 +324,7 @@ setisdoc(false)
         <View style={{ width: '100%', display: 'flex', flexDirection: 'row', flexWrap: 'wrap',marginTop:10  }}>
          {isimg && (
           imagedata.map((item) =>{
-                return(<View style={{width:"33%",height:100,padding:5}}>
+                return(<View style={{width:"33%",height:120,padding:5}}>
                 <FastImage
                 style={{ height:"100%",width:"100%",borderRadius:10}} 
                 source={{ uri: item.US_ImagePath,
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   storyContainer: {
-   height:80,width:80,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"},
+   height:70,width:70,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"},
   title: {
     marginLeft: 10,
     marginTop: 2,

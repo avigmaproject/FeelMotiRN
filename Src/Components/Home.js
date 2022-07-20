@@ -34,7 +34,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { ActionSheetCustom as ActionSheet } from "react-native-actionsheet"
 import ImagePicker from "react-native-image-crop-picker";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import TrackPlayer ,{State}from 'react-native-track-player';
+import TrackPlayer ,{State,Capability,useProgress}from 'react-native-track-player';
 import Menu from "../CustomComponent/Menu"
 import { useFocusEffect } from "@react-navigation/native";
 import RNFetchBlob from 'rn-fetch-blob'
@@ -51,9 +51,19 @@ const options = [
   </View>
 ]
 const Home = ({ navigation }) => {
-  TrackPlayer.updateOptions({
-      stopWithApp: true
-  });
+
+TrackPlayer.updateOptions({
+   stopWithApp: true,
+    // Media controls capabilities
+    capabilities: [
+        Capability.Play,
+        Capability.Pause,
+        Capability.Stop,
+    ],
+    compactCapabilities: [Capability.Play, Capability.Pause],
+});
+     const progress = useProgress();
+
   const dispatch = useDispatch();
   const token = useSelector((state) => state.authReducer.token);
   const profile = useSelector((state) => state.profileReducer.profile);
@@ -81,7 +91,7 @@ const Home = ({ navigation }) => {
   React.useEffect(() => {
       setid(0)
       requestLocationPermission()
-      dispatch(setPagecount(1));
+      dispatch(setPagecount(10));
       GetLoaction()
       GetUserPost(pagecount);
       GetUserStory()
@@ -130,7 +140,8 @@ return (
     // "https://img.traveltriangle.com/blog/wp-content/uploads/2020/01/places-to-visit-in-Bangalore-in-June1.jpg"
       }} style={{height:"100%",width:"100%"}}>
      <SafeAreaView>
-      <View style={{flexDirection:"row",alignItems:"center",paddingHorizontal:20,width:"100%"}}>
+      <View style={{flexDirection:"row",alignItems:"center",paddingHorizontal:20,width:"100%",justifyContent:"space-between"}}>
+      <View style={{flexDirection:"row",alignItems:"center",paddingHorizontal:20,width:"70%",}}>
       <TouchableOpacity>
        <Image
         resizeMode="stretch"
@@ -140,9 +151,35 @@ return (
       </TouchableOpacity>
       <Text style={{color:"black",textTransform:"capitalize",fontSize:30,marginLeft:20}}>{statue.User_Name}</Text>
       </View>
+       <View style={{flexDirection:"row",alignItems:"center",paddingHorizontal:20,width:"30%",backgroundColor:"pink"}}>
+        <Entypo
+          onPress={()=>setShowModal(false)}
+          name={"cross"}
+          size={35}
+          color="#424242"
+          style={{ position:"absolute",right:10,}}
+        />
+      </View>
+      </View>
   <View style={{width:"100%" ,padding:10}}>
 <Progress.Bar color={"#DBBE80"} progress={count} width={null} />
 </View>
+        {statue.US_Doc_Type === "Document" && <TouchableOpacity  onPress={()=>WebViewPage(statue.US_ImagePath)} style={{width:"100%",height:200,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"filetext1"} size={100} color="#DBBE80" /><Text>{form.text}</Text></TouchableOpacity>}
+        {statue.US_Doc_Type === "Audio" && <TouchableOpacity onPress={()=>PlayTrack()} style={{width:"100%",paddingVertical:40,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"sound"} size={100} color="#DBBE80" /><Text style={{marginTop:10}}>{form.text}</Text></TouchableOpacity>}
+        {statue.US_Doc_Type === "Video" && <TouchableOpacity onPress={()=>PlayTrack()} style={{width:"100%",paddingVertical:40,justifyContent:"center",alignItems:"center"}} >
+              <WebView 
+                      mediaPlaybackRequiresUserAction={true}
+                      allowsInlineMediaPlayback={true}
+                      allowsFullscreenVideo={false}
+                      shouldStartLoad={"No"}
+                      style={{width:windowWidth,height: DeviceInfo.hasNotch ? windowHeight - 350 : windowHeight - 250}}
+                        // source={{  uri: "http://apifeelmoti.ikaart.org//UploadDocuments/637934963226839019_0.MOV"}} 
+                       source={{
+                        html: `
+                        <video width="100%" height="50%" style="background-color:pink}" controls>
+                            <source src="${statue.US_ImagePath}" type="video/mp4">
+                        </video>`,}}
+                  /><Text style={{marginTop:10}}>{form.text}</Text></TouchableOpacity>}
 
 </SafeAreaView>
 </ImageBackground>
@@ -151,11 +188,11 @@ return (
 const handleOnChangeText = (value, fieldName) =>  setForm({ ...form, [fieldName]: value });
 
   const GetUserPost = async (count) => {
-console.log(count)
+console.log("countcount",count)
     setloading(true);
     let data = {
-    PageNumber:count,
-    NoofRows:100,    
+    PageNumber:1,
+    NoofRows:count *10,    
     Type:1
     };
     console.log("GetUserPost data", data);
@@ -337,9 +374,20 @@ const GetUserStory = async () => {
     }
   }
 
- const IntilaizeSetup = async() => await TrackPlayer.setupPlayer()
- const ResetSetup = async() =>await TrackPlayer.reset();
+ const IntilaizeSetup = async() =>{ 
+
+await TrackPlayer.setupPlayer()
+
+useTrackPlayerEvents([Event.PlaybackQueueEnded], async event => {
+  if (event.type === Event.PlaybackQueueEnded && event.nextTrack !== undefined) {
+    TrackPlayer.stop();
+  }
+});
+
+}
+ const ResetSetup = async() =>await TrackPlayer.stop();
  React.useEffect(() => {
+
     IntilaizeSetup()
     return () => {
       ResetSetup()
@@ -347,8 +395,14 @@ const GetUserStory = async () => {
   }, [])
   
 const PlayTrack = async (url) => {
+      const state = await TrackPlayer.getState();
+        console.log("state",state)
+      if (state === State.Playing) {
+          ResetSetup()
+      };
+    console.log("url ==>" , url,TrackPlayer)
     const track3 = {
-      url: "http://apifeelmoti.ikaart.org//UploadDocuments/637932503293946244_0.mp3",
+      url,// "http://apifeelmoti.ikaart.org//UploadDocuments/637932503293946244_0.mp3",
       //url: "http://soundbible.com/mp3/Tyrannosaurus%20Rex%20Roar-SoundBible.com-807702404.mp3", // Load media from the file system
       // title: 'Ice Age',
       // artist: 'deadmau5',
@@ -356,7 +410,7 @@ const PlayTrack = async (url) => {
       artwork: 'file:///storage/sdcard0/Downloads/cover.png',
       // duration: 411
     };
-    console.log(track3);
+    console.log(track3, TrackPlayer.add(track3),TrackPlayer.play());
     await TrackPlayer.add(track3);
     await TrackPlayer.play();
   };
@@ -410,31 +464,28 @@ const WebViewPage = (url) => {
           console.log('The file saved to ERROR', e.message)
         })
     }
-    setloading(true);
+    setloading(false);
   }
 
 const renderItem = (item) =>{
 
 return(
 <View style={{justifyContent:"center",alignItems:"center",marginLeft:10,height:80,width:60}}>
-             
-                  {item.US_Doc_Type === "Image" && ( <TouchableOpacity onPress={()=>OpenStatus(item)} style={{height:55,width:55,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"}}>
-                    
-                    <Image 
-                  resizeMode="stretch"
-                  style={{height:50,width:50,borderRadius:50}}
-                  source={{ uri: item.US_ImagePath }}
-                  />
-                </TouchableOpacity>)}
-                  {item.US_Doc_Type === "Document" && (<TouchableOpacity onPress={()=>WebViewPage(item.US_ImagePath)} style={{height:55,width:55,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"}}><AntDesign name={"filetext1"} size={30} color="#DBBE80" /></TouchableOpacity>)}
-                  {item.US_Doc_Type === "Audio" && (<TouchableOpacity onPress={()=>PlayTrack(item.US_ImagePath)} style={{height:55,width:55,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"}} ><AntDesign name={"sound"} size={30} color="#DBBE80" /></TouchableOpacity>)}
-                  {item.US_Doc_Type === "Video" && (<TouchableOpacity style={{height:55,width:55,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"}} >
-                  <FontAwesome5 name={"file-video"} size={30} color="#DBBE80" />
-                  </TouchableOpacity>)}
-
-         
-              <Text numberOfLines={1} ellipsizeMode="tail" style={styles.title}>{item.User_Name}</Text>
-            </View>
+{item.US_Doc_Type === "Image" && ( 
+  <TouchableOpacity onPress={()=>OpenStatus(item)} style={{height:55,width:55,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"}}>
+    <Image 
+     resizeMode="stretch"
+     style={{height:50,width:50,borderRadius:50}}
+     source={{ uri: item.US_ImagePath }}/>
+  </TouchableOpacity>)}
+  {item.US_Doc_Type === "Document" && (<TouchableOpacity onPress={()=>OpenStatus(item)} style={{height:55,width:55,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"}}><AntDesign name={"filetext1"} size={30} color="#DBBE80" /></TouchableOpacity>)}
+  {item.US_Doc_Type === "Audio" && (<TouchableOpacity onPress={()=>OpenStatus(item)} style={{height:55,width:55,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"}} ><AntDesign name={"sound"} size={30} color="#DBBE80" /></TouchableOpacity>)}
+  {item.US_Doc_Type === "Video" && (
+    <TouchableOpacity style={{height:55,width:55,borderRadius:50,borderWidth:2,borderColor:"#DBBE80",justifyContent:"center",alignItems:"center"}} >
+      <FontAwesome5 name={"file-video"} size={30} color="#DBBE80" />
+    </TouchableOpacity>)}
+    <Text numberOfLines={1} ellipsizeMode="tail" style={styles.title}>{item.User_Name}</Text>
+  </View>
 )
 }
 const ShowShareButton = (item) => {
@@ -444,9 +495,8 @@ setshowshare(!showshare)
 }
 const ShareOpen = async (item) => {
     try {
-      await Share.open({
-
-        url: `Post Image : - ${item.UP_ImagePath}`,
+      await Share.open({ 
+         url: `Post Image : - ${item.UP_ImagePath}`,
         message: `User name : - ${item.User_Name}`
       })
     } catch (err) {
@@ -455,14 +505,9 @@ const ShareOpen = async (item) => {
   }
 const renderUserPost = (item) =>{
 return( <View style={{ marginTop: 10 }}>
-                <View style={styles.bar}>
-                  <View style={styles.bar1}>
-                    <TouchableOpacity>
-                      <Image
-                        source={{ uri: item.User_Image_Path ? item.User_Image_Path  : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg"}}
-                        style={styles.user}
-                      />
-                    </TouchableOpacity>
+          <View style={styles.bar}>
+            <View style={styles.bar1}>
+              <TouchableOpacity><Image source={{ uri: item.User_Image_Path ? item.User_Image_Path  : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg"}} style={styles.user}/></TouchableOpacity>
                     <View style={styles.text}>
                       <TouchableOpacity>
                         <Text style={styles.text1}>{item.User_Name}</Text>
@@ -471,8 +516,8 @@ return( <View style={{ marginTop: 10 }}>
                     </View>
                   </View>
                   {item.UP_PKeyID === id &&(
-                <TouchableOpacity onPress={()=> ShareOpen(item)} 
-                  style={{padding:10,position:"absolute",
+                    <TouchableOpacity onPress={()=> ShareOpen(item)} 
+                    style={{padding:5,position:"absolute",backgroundColor:"#fff",
                     right:32,top:20, borderWidth:1,borderColor:"#DBBE80"}}>
                 <Text style={{color:"#DBBE80"}}>Share</Text></TouchableOpacity>)}
                   <View style={styles.dot}>
@@ -486,14 +531,22 @@ return( <View style={{ marginTop: 10 }}>
                   </View>
                 </View>
                 <View style={styles.image}>
-                  {item.UP_Doc_Type === "Image" && ( <TouchableOpacity><Image
+                  {item.UP_Doc_Type === "Image" && ( 
+                  <TouchableOpacity>
+                    <Image
                       resizeMode="stretch"
                       source={{ uri: item.UP_ImagePath }}
                       style={styles.image1}
-                    /></TouchableOpacity>)}
-                  {item.UP_Doc_Type === "Document" && (<TouchableOpacity style={{...styles.image1,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"filetext1"} size={200} color="#DBBE80" /><Text>{form.text}</Text></TouchableOpacity>)}
-                  {item.UP_Doc_Type === "Audio" && (<TouchableOpacity onPress={()=>PlayTrack(item.UP_ImagePath)} style={{...styles.image1,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"sound"} size={100} color="#DBBE80" /><Text style={{marginTop:10}}>{form.text}</Text></TouchableOpacity>)}
-                  {item.UP_Doc_Type === "Video" && (<TouchableOpacity style={{width:"100%",height:DeviceInfo.hasNotch ? windowHeight - 350 : windowHeight - 250,justifyContent:"center",alignItems:"center",justifyContent:"center",alignItems:"center"}} >
+                    />
+                   <Text style={{alignSelf:"center",marginVertical:10,color:"#DBBE80"}}>{item.UP_ImageName}</Text>
+                  </TouchableOpacity>)}
+                  {item.UP_Doc_Type === "Document" && (<TouchableOpacity onPress={()=>WebViewPage(item.UP_ImagePath)}  style={{...styles.image1,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"filetext1"} size={200} color="#DBBE80" /><Text style={{alignSelf:"center",marginVertical:10,color:"#DBBE80"}}>{item.UP_ImageName}</Text></TouchableOpacity>)}
+                  {item.UP_Doc_Type === "Audio" && (<TouchableOpacity onPress={()=>PlayTrack(item.UP_ImagePath)} style={{...styles.image1,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"sound"} size={100} color="#DBBE80" />
+                  <Progress.Bar color={"#DBBE80"}  width={100}
+                    progress={progress.position}
+                    buffered={progress.buffered}/>
+                  <Text style={{alignSelf:"center",marginVertical:10,color:"#DBBE80"}}>{item.UP_ImageName}</Text></TouchableOpacity>)}
+                    {item.UP_Doc_Type === "Video" && (<TouchableOpacity style={{width:"100%",height:DeviceInfo.hasNotch ? windowHeight - 350 : windowHeight - 250,justifyContent:"center",alignItems:"center",justifyContent:"center",alignItems:"center"}} >
                 {/* <FontAwesome5 name={"file-video"} size={100} color="#DBBE80" /> */}
                   {/* <VideoPlayer
                     video={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }}
@@ -502,18 +555,18 @@ return( <View style={{ marginTop: 10 }}>
                     thumbnail={{ uri: 'https://i.picsum.photos/id/866/1600/900.jpg' }}
                     /> */}
                 <WebView 
-                      mediaPlaybackRequiresUserAction={true}
-                      allowsInlineMediaPlayback={true}
-                      allowsFullscreenVideo={false}
-                      shouldStartLoad={"No"}
-                      style={{width:windowWidth,height: DeviceInfo.hasNotch ? windowHeight - 350 : windowHeight - 250}}
-                        // source={{  uri: "http://apifeelmoti.ikaart.org//UploadDocuments/637934963226839019_0.MOV"}} 
-                       source={{
-                        html: `
-                        <video width="100%" height="100%" style="background-color:pink}" controls>
-                            <source src="${"http://apifeelmoti.ikaart.org//UploadDocuments/637934963226839019_0.MOV"}" type="video/mp4">
-                        </video>`,}}
+                  mediaPlaybackRequiresUserAction={true}
+                  allowsInlineMediaPlayback={true}
+                  allowsFullscreenVideo={false}
+                  shouldStartLoad={"No"}
+                  style={{width:windowWidth,height: DeviceInfo.hasNotch ? windowHeight - 350 : windowHeight - 250}}
+                  source={{
+                   html: `
+                     <video width="100%" height="100%" style="background-color:pink}" controls>
+                      <source src="${item.UP_ImagePath}" type="video/mp4">
+                      </video>`}}
                   />
+                   <Text style={{alignSelf:"center",marginVertical:10,color:"#DBBE80"}}>{item.UP_ImageName}</Text>
                 </TouchableOpacity>)}
                 </View>
                 <View style={styles.content}>
@@ -527,11 +580,9 @@ return( <View style={{ marginTop: 10 }}>
                         alignItems: "center",
                         justifyContent:"space-between",
                         width: "40%",
-                         paddingtop: 10,
+                        paddingtop: 10,
                         paddingHorizontal: 10,
-
-                      }}
-                    >
+                      }}>
                       <View style={styles.icontext}>
                         <TouchableOpacity onPress={()=>CreateUpdateUserFavorite(item.UP_PKeyID)}>
                           <AntDesign
@@ -575,11 +626,10 @@ return( <View style={{ marginTop: 10 }}>
 }
   const LoadMoreRandomData =() =>{
     if(userpost.length === 0 ){
-console.log("im at ooooo post")
-    dispatch(setPagecount(1));
-      GetUserPost(1)
+    dispatch(setPagecount(10));
+      GetUserPost(10)
     }else{
-    dispatch(setPagecount(pagecount+1));
+    dispatch(setPagecount(pagecount+10));
       GetUserPost(pagecount)
     }
 // alert("load more data")
@@ -591,7 +641,7 @@ const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
   }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      <StatusBar backgroundColor={"#FFFFFF" } />
+      <StatusBar  backgroundColor={"#FFFFFF"} barStyle="dark-content" />
       <Spinner
           visible={loading}
           textContent={'Loading...'}
@@ -629,13 +679,7 @@ const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
             >
             <ActionSheet
               ref={(o) => setActionSheetRef(o)}
-              title={
-                <Text
-                  style={{ color: "#000", fontSize: 18, fontWeight: "bold" }}
-                >
-                  Profile Photo
-                </Text>
-              }
+              title={<Text style={{ color: "#000", fontSize: 18, fontWeight: "bold" }}>Profile Photo</Text>}
               options={options}
               cancelButtonIndex={0}
               destructiveButtonIndex={4}
@@ -711,6 +755,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width:"90%",
     alignItems:"center",
+    marginVertical:5
   },
   user: {
     height: 50,

@@ -50,7 +50,7 @@ const DATA = [
 const MySubscription = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8FA" }}>
-   <StatusBar backgroundColor={"#f8f8f8" } />
+   <StatusBar barStyle="dark-content" backgroundColor={"#f8f8f8" } />
       <Header
         onPress={() => navigation.navigate("Setting")}
         title={"My Subscription"}

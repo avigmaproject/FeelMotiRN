@@ -142,7 +142,7 @@ const Notification = ({ navigation }) => {
   };
   return (
     <SafeAreaView  style={{flex:1,backgroundColor:"#fff"}}>
-   <StatusBar backgroundColor={"#FFFFFF" } />
+   <StatusBar barStyle="dark-content" backgroundColor={"#FFFFFF" } />
       <Header
         onPress={() => navigation.navigate("Profile")}
         search={true}

@@ -18,10 +18,30 @@ import InputText from "../CustomComponent/InputText";
 import Social from "../CustomComponent/Social";
 import Button from "../CustomComponent/Button";
 import Spinner from 'react-native-loading-spinner-overlay';
+import {  Snackbar } from 'react-native-paper';
 
+const Signin = ({ navigation }) => {
+  const dispatch = useDispatch();
 
+  const [userInfo, setUserInfo] = useState({
+    email: "",
+    password: "",
+  });
+  const [loading, setloading] = useState(false);
+  const [error, setError] = useState(null);
+  const [visible, setVisible] = useState(false);
+  const [color, setcolor] = useState("green")
+  const [message, setmessage] = useState("")
+  const [secureTextEntry, setsecureTextEntry] = useState(true);
+  const { email, password } = userInfo;
 
- 
+  useEffect(() => {
+  requestLocationPermission()
+
+  return () => {
+    requestLocationPermission()
+  }
+}, [])
 const isValidField = (obj) => {
   return Object.values(obj).every((value) => value.trim());
 };
@@ -37,27 +57,6 @@ const isValidEmail = (value) => {
   const regx = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
   return regx.test(value);
 };
-
-const Signin = ({ navigation }) => {
-  const dispatch = useDispatch();
-
-  const [userInfo, setUserInfo] = useState({
-    email: "",
-    password: "",
-  });
-  const [loading, setloading] = useState(false);
-  const [error, setError] = useState("");
-  const [secureTextEntry, setsecureTextEntry] = useState(true);
-  const { email, password } = userInfo;
-
-  useEffect(() => {
-  requestLocationPermission()
-
-  return () => {
-    requestLocationPermission()
-  }
-}, [])
-
   const handleOnChangeText = (value, fieldName) => {
     console.log(value, fieldName);
     setUserInfo({ ...userInfo, [fieldName]: value });
@@ -76,7 +75,8 @@ const Signin = ({ navigation }) => {
       );
     return true;
   };
-
+const onToggleSnackBar = () => setVisible(!visible);
+  const onDismissSnackBar = () => setVisible(false);
   const submitForm = async () => {
       setloading(true);
     console.log("first", userInfo);
@@ -104,11 +104,12 @@ const Signin = ({ navigation }) => {
         .catch((error) => {
           setloading(false);
           if (error.response) {
-            console.log("error.response", error.response);
-            console.log("responce_error", error.response.data.error);
-
+            console.log("error.response", error.response);    
             if (error.response.data.error == "0") {
-              alert("The Email or password is incorrect.");
+                 setmessage("The Email or password is incorrect.") 
+                setcolor("red")
+                onToggleSnackBar()
+              // alert("The Email or password is incorrect.");
             }
           } else if (error.request) {
             setloading(false);
@@ -133,7 +134,7 @@ const Signin = ({ navigation }) => {
   };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      <StatusBar backgroundColor="#ffffff" />
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
  <Spinner
           visible={loading}
           textContent={'Loading...'}
@@ -216,6 +217,16 @@ const Signin = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
+        <Snackbar
+        visible={visible}
+        onDismiss={onDismissSnackBar}
+        style={{backgroundColor:color}}
+        action={{
+          label: 'OK',
+          onPress: () => {
+            onDismissSnackBar
+          },
+        }}>{message}</Snackbar>
       </ScrollView>
     </SafeAreaView>
   );

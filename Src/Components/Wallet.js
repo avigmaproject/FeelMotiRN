@@ -19,7 +19,7 @@ import InputText from "../CustomComponent/InputText";
 const ForgetPassword = ({ navigation }) => {
   return (
     <SafeAreaView style={{  backgroundColor: "#F8F8FA", flex: 1 }}>
-     <StatusBar backgroundColor={"#FFFFFF" } />
+     <StatusBar barStyle="dark-content" backgroundColor={"#F8F8FA" } />
       <Header onPress={() => navigation.navigate("Setting")} title={"Wallet"} />
       <ScrollView keyboardShouldPersistTaps={"always"} contentContainerStyle={{ marginHorizontal: 20 ,}}>
         <View>

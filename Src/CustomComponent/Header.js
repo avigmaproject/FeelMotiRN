@@ -15,16 +15,12 @@ export default function Header(props) {
           style={{ marginLeft: 10 }}
         />
       </View>
-      <View
-        style={{ width: "75%", justifyContent: "center", alignItems: "center" }}
-      >
-        <Text style={{ fontSize: 24, color: "#424242", fontWeight: "700" }}>
+      <View style={{ width: "75%", justifyContent: "center", alignItems: "center" }}>
+        <Text style={{ fontSize: 24, color: "#424242", fontWeight: "700" ,textTransform:"capitalize"}}>
           {props.title}
         </Text>
       </View>
-      <View
-        style={{ width: "10%", justifyContent: "center", alignItems: "center" }}
-      >
+      <View style={{ width: "10%", justifyContent: "center", alignItems: "center" }}>
         {props.search ? (
           <Search
             name={"search1"}

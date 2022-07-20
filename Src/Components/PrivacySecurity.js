@@ -15,7 +15,7 @@ import Header from "../CustomComponent/Header";
 const PrivacySecurity = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8FA" }}>
-   <StatusBar backgroundColor={"#F8F8FA" } />
+   <StatusBar barStyle="dark-content" backgroundColor={"#F8F8FA" } />
       <Header
         onPress={() => navigation.navigate("Setting")}
         title={"Privacy And Security"}

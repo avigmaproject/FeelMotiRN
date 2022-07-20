@@ -39,6 +39,16 @@ export default function InputText(props) {
       >
         {props.error ? <Text>{props.error}</Text> : null}
       </Text>
+        {props.error1 &&  (<Text
+        style={{
+          color: "#DBBE80",
+          fontSize: 15,
+          width: "90%",
+          marginLeft: 20,
+        }}
+      >
+        {props.error1}
+      </Text>)}
     </View>
   );
 }

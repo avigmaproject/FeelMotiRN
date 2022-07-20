@@ -24,8 +24,6 @@ import ImagePicker from "react-native-image-crop-picker";
 import Spinner from 'react-native-loading-spinner-overlay';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {  Snackbar } from 'react-native-paper';
-import { Timer } from 'react-native-progress-timer';
-
 const options = [
   "Cancel",
   <View>

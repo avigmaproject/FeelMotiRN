@@ -74,25 +74,29 @@ const DATA = [
     description: "Hey! How can i help you?",
   },
 ];
-const LoadMoreRandomData =() =>{
-alert("load more data")
-}
- const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
-const paddingToBottom = 20;
-return layoutMeasurement.height + contentOffset.y >=
-  contentSize.height - paddingToBottom;
- }
-const Message = () => {
+const LoadMoreRandomData = () => {
+  alert("load more data");
+};
+const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+  const paddingToBottom = 20;
   return (
-   <SafeAreaView  style={{flex:1,backgroundColor:"#fff"}}>
-   <StatusBar barStyle="dark-content" backgroundColor={"#FFFFFF" } />
-      <ScrollView  onMomentumScrollEnd={(event) => { 
+    layoutMeasurement.height + contentOffset.y >=
+    contentSize.height - paddingToBottom
+  );
+};
+const Message = ({ navigation }) => {
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <StatusBar barStyle="dark-content" backgroundColor={"#FFFFFF"} />
+      <ScrollView
+        onMomentumScrollEnd={(event) => {
           if (isCloseToBottom(event.nativeEvent)) {
-            LoadMoreRandomData()
+            LoadMoreRandomData();
           }
-         }
-       } contentContainerStyle={{ backgroundColor: "#fff" }}>
-        <View style={{marginHorizontal:10}}>
+        }}
+        contentContainerStyle={{ backgroundColor: "#fff" }}
+      >
+        <View style={{ marginHorizontal: 10 }}>
           <View style={styles.header}>
             <TouchableOpacity>
               <Image source={moti} style={styles.moti} />
@@ -108,20 +112,54 @@ const Message = () => {
           <FlatList
             data={DATA}
             renderItem={({ item }) => (
-              <View style={{paddingHorizontal:2,width:"100%",}}>
+              <View style={{ paddingHorizontal: 2, width: "100%" }}>
                 <View style={styles.box}>
-                  <View style={{width:"20%"}}>
-                  <TouchableOpacity>
-                    <Image source={item.image} style={styles.active} />
-                  </TouchableOpacity>
+                  <View style={{ width: "20%" }}>
+                    <TouchableOpacity>
+                      <Image source={item.image} style={styles.active} />
+                    </TouchableOpacity>
                   </View>
-                  <View style={{alignItems:"flex-start",justifyContent:"center",marginLeft:20,width:"55%"}}>
-                    <Text numberOfLines={1} ellipsizeMode="tail" style={styles.boxtext}>{item.name}</Text>
-                    <Text numberOfLines={1} ellipsizeMode="tail" style={styles.boxtext1}>{item.description}</Text>
+
+                  <View
+                    style={{
+                      alignItems: "flex-start",
+                      justifyContent: "center",
+                      marginLeft: 20,
+                      width: "55%",
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("Chat")}
+                    >
+                      <Text
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                        style={styles.boxtext}
+                      >
+                        {item.name}
+                      </Text>
+                      <Text
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                        style={styles.boxtext1}
+                      >
+                        {item.description}
+                      </Text>
+                    </TouchableOpacity>
                   </View>
-                  <View style={{width:"20%",justifyContent:"flex-start",flexDirection:"row",marginTop:10}}><Text style={styles.time}>{item.time}</Text></View>
+
+                  <View
+                    style={{
+                      width: "20%",
+                      justifyContent: "flex-start",
+                      flexDirection: "row",
+                      marginTop: 10,
+                    }}
+                  >
+                    <Text style={styles.time}>{item.time}</Text>
+                  </View>
                 </View>
-                </View>
+              </View>
             )}
           />
           <View style={{ marginTop: 20 }}></View>
@@ -166,7 +204,7 @@ const styles = StyleSheet.create({
     elevation: 10,
     borderWidth: 1,
     borderColor: "rgba(160, 166, 177, 0.1)",
-    borderRadius:20
+    borderRadius: 20,
   },
   active: {
     margin: 7,
@@ -185,6 +223,7 @@ const styles = StyleSheet.create({
   time: {
     fontSize: 12,
     color: "#9B9C9F",
-    fontWeight: "400"},
+    fontWeight: "400",
+  },
 });
 export default Message;

@@ -18,8 +18,8 @@ export default function Payment({ navigation }) {
           borderRadius: 10,
         }}
       >
-        {/* <Image source={pad} style={styles.pad} />
-        <Text style={styles.text}>You haven't made any payments yet</Text> */}
+        <Image source={pad} style={styles.pad} />
+        <Text style={styles.text}>You haven't made any payments yet</Text>
       </ScrollView>
     </SafeAreaView>
   );

@@ -10,11 +10,14 @@ export const API = {
   GET_USER_POST: BASE_URL + "/api/Instaapii/GetUserPost",
   GET_USER_STORY: BASE_URL + "/api/Instaapii/GetUserStory",
   GET_USER_FAVORITE: BASE_URL + "/api/Instaapii/GetUserFavorite",
+  GET_USER_HOME: BASE_URL + "/api/Instaapii/GetUserHome",
   CREATE_UPDATE_USER_POST: BASE_URL + "/api/Instaapii/CreateUpdateUserPost",
   GET_USER_MASTER_DATA: BASE_URL + "/api/Instaapii/GetUserMasterData",
   UPDATE_PROFILE: BASE_URL + "/api/Instaapii/AddUserMasterData",
   CREATE_UPDATE_USER_FAVORITE: BASE_URL + "/api/Instaapii/CreateUpdateUserFavorite",
-  CREATE_UPDATE_USER_STORY: BASE_URL + "/api/Instaapii/CreateUpdateUserStory",
+  CREATE_UPDATE_USER_STORY: BASE_URL + "/api/Instaapii/CreateUpdateUserStory",  
+  CREATE_UPDATE_USER_LIKE: BASE_URL + "/api/Instaapii/CreateUpdateUserLike",
+
 
 
 };

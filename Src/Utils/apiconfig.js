@@ -123,6 +123,20 @@ export const getuserpost = async (data, access_token) => {
       throw error;
     });
 };
+export const getuserhome = async (data, access_token) => {
+  return axios(API.GET_USER_HOME, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + access_token,
+    },
+    data,
+  })
+    .then((response) => response.data)
+    .catch((error) => {
+      throw error;
+    });
+};
 export const getusermasterdata = async (data, access_token) => {
   console.log("data", data, access_token);
   return axios(API.GET_USER_MASTER_DATA, {
@@ -161,6 +175,20 @@ export const updateprofile = async (data, access_token) => {
 };
 export const createupdateuserfavorite = async (data, access_token) => {
   return axios(API.CREATE_UPDATE_USER_FAVORITE, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + access_token,
+    },
+    data,
+  })
+    .then((response) => response.data)
+    .catch((error) => {
+      throw error;
+    });
+};
+export const createupdateuserlike = async (data, access_token) => {
+  return axios(API.CREATE_UPDATE_USER_LIKE, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

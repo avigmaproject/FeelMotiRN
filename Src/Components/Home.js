@@ -13,7 +13,8 @@ import {
   SafeAreaView,
   Modal,
   ImageBackground,
-StatusBar
+StatusBar,
+Animated
 } from "react-native";
 import moti from "../Assets/moti.png";
 import bell from "../Assets/bell.png";
@@ -24,7 +25,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import DeviceInfo from "react-native-device-info";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import { getuserpost, getusermasterdata ,createupdateuserfavorite,requestLocationPermission,uploadimage,getuserstory} from "../Utils/apiconfig";
+import { getuserpost, getusermasterdata ,createupdateuserfavorite,requestLocationPermission,uploadimage,getuserstory,createupdateuserlike,getuserhome} from "../Utils/apiconfig";
 const windowHeight = Dimensions.get("window").height;
 const windowWidth = Dimensions.get("window").width;
 import { useSelector, useDispatch } from "react-redux";
@@ -41,6 +42,8 @@ import RNFetchBlob from 'rn-fetch-blob'
 import { WebView } from 'react-native-webview';
 import Share from 'react-native-share';
 import { SliderBox } from "react-native-image-slider-box";
+import VideoPlayer from 'react-native-video-player';
+const postheight = DeviceInfo.hasNotch ? windowHeight - 350 : windowHeight - 250
 const options = [
   "Cancel",
   <View>
@@ -79,7 +82,6 @@ TrackPlayer.updateOptions({
   const [statue, setstatue] = useState([]);
   const [userstatus, setuserstatus] = useState([])
   const [id, setid] = useState(0)
-
   const [showshare, setshowshare] = useState(false)
   const [ActionSheetRef, setActionSheetRef] = useState(null);
   const [form, setForm] = useState({
@@ -93,15 +95,11 @@ TrackPlayer.updateOptions({
       requestLocationPermission()
       dispatch(setPagecount(10));
       GetLoaction()
-      GetUserPost(pagecount);
-      GetUserStory()
-      GetUserProfile();
       IntilaizeSetup()
       dispatch(setMenu(false));
-
+      GetUserHome()
+console.log("userpost",userpost)
     return () => {
-      GetUserProfile();
-      GetUserStory()
       GetLoaction()
       IntilaizeSetup()
       dispatch(setMenu(false));
@@ -109,11 +107,12 @@ TrackPlayer.updateOptions({
   }, []);
  useFocusEffect(
     React.useCallback(() => {
-      GetUserPost(pagecount);
-      GetUserStory()
+      // GetUserPost(pagecount);
+      // GetUserStory()
       return () => console.log("close");
     }, [])
   );
+  const handleOnChangeText = (value, fieldName) =>  setForm({ ...form, [fieldName]: value });
   const GetLoaction = async() => {
   const value = await AsyncStorage.getItem('addressComponent')
     console.log(value)
@@ -130,8 +129,6 @@ TrackPlayer.updateOptions({
     setShowModal(false) 
     }, 3000)
   }
- 
-
 const renderModal = () =>{
 return (
  <Modal transparent={true} visible={showModal}>
@@ -167,7 +164,14 @@ return (
         {statue.US_Doc_Type === "Document" && <TouchableOpacity  onPress={()=>WebViewPage(statue.US_ImagePath)} style={{width:"100%",height:200,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"filetext1"} size={100} color="#DBBE80" /><Text>{form.text}</Text></TouchableOpacity>}
         {statue.US_Doc_Type === "Audio" && <TouchableOpacity onPress={()=>PlayTrack()} style={{width:"100%",paddingVertical:40,justifyContent:"center",alignItems:"center"}} ><AntDesign name={"sound"} size={100} color="#DBBE80" /><Text style={{marginTop:10}}>{form.text}</Text></TouchableOpacity>}
         {statue.US_Doc_Type === "Video" && <TouchableOpacity onPress={()=>PlayTrack()} style={{width:"100%",paddingVertical:40,justifyContent:"center",alignItems:"center"}} >
-              <WebView 
+            <VideoPlayer
+    video={{ uri: `"${statue.US_ImagePath}"` }}
+    videoWidth={windowHeight}
+    videoHeight={900}
+    thumbnail={{ uri: 'https://i.picsum.photos/id/866/1600/900.jpg' }}
+/>
+
+          {/* <WebView 
                       mediaPlaybackRequiresUserAction={true}
                       allowsInlineMediaPlayback={true}
                       allowsFullscreenVideo={false}
@@ -179,16 +183,14 @@ return (
                         <video width="100%" height="50%" style="background-color:pink}" controls>
                             <source src="${statue.US_ImagePath}" type="video/mp4">
                         </video>`,}}
-                  /><Text style={{marginTop:10}}>{form.text}</Text></TouchableOpacity>}
+                  /> */}
+          <Text style={{marginTop:10}}>{form.text}</Text></TouchableOpacity>}
 
 </SafeAreaView>
 </ImageBackground>
 </Modal>)
 }
-const handleOnChangeText = (value, fieldName) =>  setForm({ ...form, [fieldName]: value });
-
   const GetUserPost = async (count) => {
-console.log("countcount",count)
     setloading(true);
     let data = {
     PageNumber:1,
@@ -244,19 +246,25 @@ const GetUserStory = async () => {
       });
   };
  
-  const GetUserProfile = async () => {
+  
+const GetUserHome = async () => {
     setloading(true);
     let data = {
-      Type: 2,
-    };
-    console.log("GetUserProfile*****", data);
-    await getusermasterdata(data, token)
+ PageNumber:1,
+    NoofRows:100,     
+    Type:1    };
+    console.log("*****GetUserHome*****", data);
+    await getuserhome(data, token)
       .then((res) => {
-        console.log("res:GetUserProfile ", res);
+        console.log("res:GetUserHome ", res);
+        console.log("res:GetPOST", res[0]);
+        console.log("res:GetStory", res[1]);
+        console.log("res:GetUSERData", res[2]);
+        dispatch(setProfile(res[2][0]));
+        setuserstatus(res[1])
+        setuserpost(res[0]);
         setloading(false);
-        // setuseinfo(res[0][0]);
-        dispatch(setProfile(res[0][0]));
-        requestLocationPermission()
+        // sethomedate(res[0])
       })
       .catch((error) => {
         setloading(false);
@@ -266,7 +274,7 @@ const GetUserStory = async () => {
           setloading(false);
           console.log("request error", error.request);
         } else if (error) {
-          console.log("Server Error GetUserPostGetUserProfile");
+          console.log("Server Error GetUserHome");
           setloading(false);
         }
       });
@@ -285,7 +293,7 @@ const GetUserStory = async () => {
       .then((res) => {
         console.log("res:CreateUpdateUserFavoritedata ", res);
         setloading(false);
-        // setlike(!like)
+GetUserHome()
       })
       .catch((error) => {
         setloading(false);
@@ -296,6 +304,34 @@ const GetUserStory = async () => {
           console.log("request error", error.request);
         } else if (error) {
           console.log("Server Error");
+          setloading(false);
+        }
+      });
+  };
+
+
+const CreateUpdateUserLike = async (id) => {
+    setloading(true);
+    let data = {
+    UL_UP_PKeyID:id,
+    Type:1
+    };
+    console.log("CreateUpdateUserLike", data);
+    await createupdateuserlike(data, token)
+      .then((res) => {
+        console.log("res:CreateUpdateUserLikedata ", res);
+        setloading(false);
+        GetUserHome()
+      })
+      .catch((error) => {
+        setloading(false);
+        if (error.response) {
+          console.log("error.response", error.response);
+        } else if (error.request) {
+          setloading(false);
+          console.log("request error", error.request);
+        } else if (error) {
+          console.log("Server Error CreateUpdateUserLike");
           setloading(false);
         }
       });
@@ -503,6 +539,17 @@ const ShareOpen = async (item) => {
       console.log(err)
     }
   }
+const onVideoLayout = (event) =>{
+console.log("onVideoLayout",event)
+}
+const onViewRef = React.useRef((viewableItems)=> {
+      console.log("viewableItems",viewableItems)
+      // Use viewable items in state or as intended
+  })
+  const viewConfigRef = React.useRef({ viewAreaCoveragePercentThreshold: 50 })
+function kFormatter(num) {
+    return Math.abs(num) > 999 ? Math.sign(num)*((Math.abs(num)/1000).toFixed(1)) + 'k' : Math.sign(num)*Math.abs(num)
+}
 const renderUserPost = (item) =>{
 return( <View style={{ marginTop: 10 }}>
           <View style={styles.bar}>
@@ -546,27 +593,15 @@ return( <View style={{ marginTop: 10 }}>
                     progress={progress.position}
                     buffered={progress.buffered}/>
                   <Text style={{alignSelf:"center",marginVertical:10,color:"#DBBE80"}}>{item.UP_ImageName}</Text></TouchableOpacity>)}
-                    {item.UP_Doc_Type === "Video" && (<TouchableOpacity style={{width:"100%",height:DeviceInfo.hasNotch ? windowHeight - 350 : windowHeight - 250,justifyContent:"center",alignItems:"center",justifyContent:"center",alignItems:"center"}} >
-                {/* <FontAwesome5 name={"file-video"} size={100} color="#DBBE80" /> */}
-                  {/* <VideoPlayer
-                    video={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }}
-                    videoWidth={1600}
-                    videoHeight={900}
-                    thumbnail={{ uri: 'https://i.picsum.photos/id/866/1600/900.jpg' }}
-                    /> */}
-                <WebView 
-                  mediaPlaybackRequiresUserAction={true}
-                  allowsInlineMediaPlayback={true}
-                  allowsFullscreenVideo={false}
-                  shouldStartLoad={"No"}
-                  style={{width:windowWidth,height: DeviceInfo.hasNotch ? windowHeight - 350 : windowHeight - 250}}
-                  source={{
-                   html: `
-                     <video width="100%" height="100%" style="background-color:pink}" controls>
-                      <source src="${item.UP_ImagePath}" type="video/mp4">
-                      </video>`}}
-                  />
-                   <Text style={{alignSelf:"center",marginVertical:10,color:"#DBBE80"}}>{item.UP_ImageName}</Text>
+                    {item.UP_Doc_Type === "Video" && (
+              <TouchableOpacity style={{width:"100%",height:postheight,}} >
+                  <VideoPlayer
+                    video={{ uri: `${item.UP_ImagePath}` }}
+                    resizeMode={"cover"}  
+                    style={{height:postheight}}
+                    onLayout= {onVideoLayout}
+                    />
+                <Text style={{alignSelf:"center",color:"#DBBE80"}}>{item.UP_ImageName}</Text>
                 </TouchableOpacity>)}
                 </View>
                 <View style={styles.content}>
@@ -579,32 +614,32 @@ return( <View style={{ marginTop: 10 }}>
                         flexDirection: "row",
                         alignItems: "center",
                         justifyContent:"space-between",
-                        width: "40%",
+                        width: "35%",
                         paddingtop: 10,
                         paddingHorizontal: 10,
                       }}>
                       <View style={styles.icontext}>
-                        <TouchableOpacity onPress={()=>CreateUpdateUserFavorite(item.UP_PKeyID)}>
+                        <TouchableOpacity onPress={()=>CreateUpdateUserLike(item.UP_PKeyID)}>
                           <AntDesign
-                            name={like ? "heart" : "hearto"}
-                            size={22}
-                            color={like ? "red" : "#807C7D"}
+                            name={item.MyLike ? "heart" : "hearto"}
+                            size={20}
+                            color={item.MyLike ? "red" : "#807C7D"}
                           />
                         </TouchableOpacity>
                         <View>
-                          <Text style={styles.liketext}>22k</Text>
+                          <Text style={styles.liketext}>{kFormatter(item.LikeCount)}</Text>
                         </View>
                       </View>
                       <View style={styles.icontext}>
                         <TouchableOpacity>
                           <Feather
                             name={"message-circle"}
-                            size={24}
+                            size={20}
                             color="#807C7D"
                           />
                         </TouchableOpacity>
                         <View>
-                          <Text style={styles.commenttext}>
+                          <Text style={styles.liketext}>
                             {item.commentCount}{22}
                           </Text>
                         </View>
@@ -613,7 +648,7 @@ return( <View style={{ marginTop: 10 }}>
                     <View style={styles.icontext}>
                         <TouchableOpacity onPress={()=>CreateUpdateUserFavorite(item.UP_PKeyID)}>
                         <FontAwesome
-                          name={save ? "bookmark" : "bookmark-o"}
+                          name={item.FavCount ? "bookmark" : "bookmark-o"}
                           size={24}
                           color={"#898788"}
                           style={{marginRight:10}}
@@ -634,6 +669,13 @@ return( <View style={{ marginTop: 10 }}>
     }
 // alert("load more data")
 }
+ const handleScroll = (event) => {
+    const positionX = event.nativeEvent.contentOffset.x;
+    const positionY = event.nativeEvent.contentOffset.y;
+    // console.log(`positionX ${positionX},positionY ${positionY}`)
+    // console.log(`post size =  ${positionY - windowHeight}`)
+
+  };
 const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
   const paddingToBottom = 20;
   return layoutMeasurement.height + contentOffset.y >=
@@ -670,13 +712,15 @@ const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
               </View>
             </View>
           </View>
-            <ScrollView
+            {/* <ScrollView
               onMomentumScrollEnd={(event) => { 
                 if (isCloseToBottom(event.nativeEvent)) {
                   LoadMoreRandomData()}}}
               keyboardShouldPersistTaps={"always"}
               contentContainerStyle={{ flexGrow: 1,paddingBottom:100 }}
-            >
+              onScroll={handleScroll}
+              scrollEventThrottle={16}
+            > */}
             <ActionSheet
               ref={(o) => setActionSheetRef(o)}
               title={<Text style={{ color: "#000", fontSize: 18, fontWeight: "bold" }}>Profile Photo</Text>}
@@ -705,17 +749,21 @@ const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
             ListFooterComponent={()=> <View style={{width:50}}/>}
           /></View>
           </View>
-          <FlatList
+          <View>
+            <FlatList
             data={userpost}
             renderItem={({ item }) => renderUserPost(item)}
             ListFooterComponent={()=> <View style={{width:150}}/>}
+            onViewableItemsChanged={onViewRef.current}
+            viewabilityConfig={viewConfigRef.current}
             ListEmptyComponent={()=> {
             return(
             <View style={{flex:1,justifyContent:"center",alignItems:"center"}}><Text>No Post Fond</Text></View>
              )
             }}
           />
-          </ScrollView>
+          </View>
+          {/* </ScrollView> */}
         </View>
       {renderModal()}
     </SafeAreaView>
@@ -782,10 +830,9 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    // backgroundColor: "green",
   },
   image1: {
-    height: DeviceInfo.hasNotch ? windowHeight - 350 : windowHeight - 250,
+    height: postheight,
     width: "100%",
   },
   dot: {
@@ -819,8 +866,8 @@ const styles = StyleSheet.create({
   },
   liketext: {
     marginLeft: 10,
-    fontWeight: "400",
-    fontSize: 14,
+    fontWeight: "500",
+    fontSize: 15,
     color: "#231F20",
   },
   icon10: {
@@ -833,12 +880,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  commenttext: {
-    marginLeft: 10,
-    fontWeight: "400",
-    fontSize: 14,
-    color: "#231F20",
-  },
+ 
   share: {
     marginRight: 50,
     // backgroundColor: 'purple',

@@ -21,6 +21,7 @@ import Message from "../Components/Message";
 import Sponsor from "../Components/Sponsor";
 import Tip from "../Components/Tip";
 import Chat from "../Components/Chat";
+import AddNewPost from "../Components/AddNewPost";
 
 import * as React from "react";
 
@@ -55,6 +56,7 @@ export default function HomeTab() {
       <Stack.Screen name="Sponsor" component={Sponsor} />
       <Stack.Screen name="Tip" component={Tip} />
       <Stack.Screen name="Chat" component={Chat} />
+      <Stack.Screen name="AddNewPost" component={AddNewPost} />
     </Stack.Navigator>
   );
 }

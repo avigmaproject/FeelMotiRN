@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import EvilIcons from "react-native-vector-icons/EvilIcons";
 import { setMenu } from "../store/action/profile/profile";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -12,6 +13,10 @@ export default function Menu({ navigation }) {
     navigation.navigate("AddTab", { screen: "Addpost" });
   };
   const CallStory = () => {
+    dispatch(setMenu(!showmenu));
+    navigation.navigate("AddTab", { screen: "AddStory" });
+  };
+  const OnDemand = () => {
     dispatch(setMenu(!showmenu));
     navigation.navigate("AddTab", { screen: "AddStory" });
   };
@@ -45,11 +50,7 @@ export default function Menu({ navigation }) {
         }}
       >
         <Text>Post</Text>
-        <MaterialCommunityIcons
-          name={"table-large-plus"}
-          size={24}
-          color={"#000"}
-        />
+        <EvilIcons name={"image"} size={25} color={"#000"} />
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => CallStory()}
@@ -60,11 +61,11 @@ export default function Menu({ navigation }) {
           height: "50%",
           width: "100%",
           borderTopColor: "rgba(0,0,0,0.1)",
-          borderTopWidth: 2,
+          borderTopWidth: 1,
         }}
       >
         <Text>Story</Text>
-        <MaterialCommunityIcons name={"clock-plus"} size={24} color={"#000"} />
+        <Ionicons name={"ios-add-circle-outline"} size={24} color={"#000"} />
       </TouchableOpacity>
     </View>
   );

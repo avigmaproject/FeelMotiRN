@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Addpost from "../Components/Addpost";
+import AddPost from "../Components/AddPost";
 import AddStory from "../Components/AddStory";
 import OnDemand from "../Components/OnDemand";
 
@@ -14,7 +14,7 @@ export default function AddTab() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="Addpost" component={Addpost} />
+      <Stack.Screen name="AddPost" component={AddPost} />
       <Stack.Screen name="AddStory" component={AddStory} />
       <Stack.Screen name="OnDemand" component={OnDemand} />
     </Stack.Navigator>

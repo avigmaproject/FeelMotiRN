@@ -26,7 +26,6 @@ import {
   uploaddocumnet,
   uploadimage,
 } from "../Utils/apiconfig";
-import Header from "../CustomComponent/Header";
 const windowHeight = Dimensions.get("window").height;
 const windowWidth = Dimensions.get("window").width;
 import { useSelector, useDispatch } from "react-redux";
@@ -40,8 +39,8 @@ import TrackPlayer from "react-native-track-player";
 import { useFocusEffect } from "@react-navigation/native";
 import { Snackbar } from "react-native-paper";
 import { WebView } from "react-native-webview";
-import profile from "../Assets/profile.png";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+
 const options = [
   "Cancel",
   <View>
@@ -52,7 +51,7 @@ const options = [
   </View>,
 ];
 
-const AddNewPost = ({ navigation }) => {
+export default function AddNewPost({ navigation }) {
   const token = useSelector((state) => state.authReducer.token);
   const profile = useSelector((state) => state.profileReducer.profile);
   const dispatch = useDispatch();
@@ -374,110 +373,143 @@ const AddNewPost = ({ navigation }) => {
     await TrackPlayer.play();
   };
   console.log("imageurl", imageurl[0]);
-
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f8f8f8" }}>
       <StatusBar barStyle="dark-content" backgroundColor={"#FFFFFF"} />
-      <Header
-        onPress={() => navigation.navigate("Profile")}
-        title={"Create Post"}
-      />
-      <ScrollView
-        contentContainerStyle={{
-          backgroundColor: "#fff",
-          marginVertical: 30,
-          borderRadius: 10,
-        }}
-      >
-        <Spinner visible={loading} textContent={lodingtext} />
-        <View style={{ marginHorizontal: 20 }}>
-          <View style={styles.profile}>
-            <TouchableOpacity>
-              <Image source={profile} style={{ backgroundColor: "red" }} />
-            </TouchableOpacity>
-            <View
-              style={{
-                width: "85%",
 
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <TextInput
-                style={styles.textareatext}
-                onKeyPress={({ nativeEvent }) => {
-                  if (nativeEvent.key === "Backspace") {
-                    if (inputcount <= 4999) {
-                      let count = inputcount + 1;
-                      setinputcount(count);
-                    }
-                  } else {
-                    let count = 5000 - (form.text.length + 1);
-                    setinputcount(count);
-                  }
+      <ScrollView style={{ borderRadius: 40 }}>
+        <Spinner visible={loading} textContent={lodingtext} />
+        <View
+          style={{
+            marginVertical: 20,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            // alignItems: "center",
+          }}
+        >
+          <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+            <MaterialCommunityIcons
+              name={"keyboard-backspace"}
+              size={40}
+              color="#424242"
+            />
+          </TouchableOpacity>
+          <Text
+            style={{
+              color: "#424242",
+              fontWeight: "bold",
+              fontSize: 30,
+              marginRight: 95,
+            }}
+          >
+            Create Post
+          </Text>
+          {/* <Entypo
+              onPress={() => navigation.navigate("Home")}
+              name={"cross"}
+              size={35}
+              color="#424242"
+              style={{ position: "absolute", right: 10 }}
+            /> */}
+        </View>
+        <View
+          style={{
+            backgroundColor: "#fff",
+            shadowColor: "#000",
+            shadowOffset: { width: 5, height: 3 },
+            shadowOpacity: 0.1,
+            shadowRadius: 2,
+            elevation: 10,
+          }}
+        >
+          <View style={styles.textarea}>
+            <TouchableOpacity>
+              <Image
+                resizeMode="stretch"
+                source={{
+                  uri: profile.User_Image_Path
+                    ? profile.User_Image_Path
+                    : "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/1200px-Unknown_person.jpg",
                 }}
-                maxLength={5000}
-                onChangeText={(value) => handleOnChangeText(value, "text")}
-                value={form.text}
-                multiline={true}
-                numberOfLines={3}
-                placeholder={`Whats on your mind, ${profile.User_Name}??`}
+                style={styles.profile}
               />
+            </TouchableOpacity>
+            <View style={{ marginLeft: 20 }}>
+              <Text
+                style={{ color: "#DBBE80", fontWeight: "bold", fontSize: 20 }}
+              >
+                {profile.User_Name}
+              </Text>
             </View>
           </View>
-        </View>
-        <View style={styles.media}>
-          <TouchableOpacity onPress={() => onOpenImage()}>
-            <View style={styles.imagemedia}>
-              <Feather
-                name={"image"}
-                size={24}
-                color="#36596A"
-                style={{ marginTop: 15, marginLeft: 20 }}
-              />
-              <Text style={styles.imagemediatext}>Upload a Image</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => selectVideo()}>
-            <View style={styles.imagemedia}>
-              <Feather
-                name={"video"}
-                size={24}
-                color="#36596A"
-                style={{ marginTop: 15, marginLeft: 20 }}
-              />
-              <Text style={styles.imagemediatext}>Upload a Video</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => OpenDocumentPicker()}>
-            <View style={styles.imagemedia}>
-              <AntDesign
-                name={"filetext1"}
-                size={24}
-                color="#36596A"
-                style={{ marginTop: 15, marginLeft: 20 }}
-              />
-              <Text style={styles.imagemediatext}>Upload a Document</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => OpenMusicPicker()}>
-            <View style={styles.imagemedia}>
-              <Feather
-                name={"mic"}
-                size={24}
-                color="#36596A"
-                style={{ marginTop: 15, marginLeft: 20 }}
-              />
-              <Text style={styles.imagemediatext}>Upload a Voice</Text>
-            </View>
-          </TouchableOpacity>
-          <View>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => CreateUpdateUserPost()}
-            >
-              <Text style={styles.submit}>Publish</Text>
+          <View
+            style={{
+              width: "100%",
+              shadowColor: "#DBBE80",
+              shadowOffset: { width: 1, height: 1 },
+              shadowOpacity: 0.5,
+              shadowRadius: 2,
+              elevation: 10,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <TextInput
+              style={styles.textareatext}
+              onKeyPress={({ nativeEvent }) => {
+                if (nativeEvent.key === "Backspace") {
+                  if (inputcount <= 4999) {
+                    let count = inputcount + 1;
+                    setinputcount(count);
+                  }
+                } else {
+                  let count = 5000 - (form.text.length + 1);
+                  setinputcount(count);
+                }
+              }}
+              maxLength={5000}
+              onChangeText={(value) => handleOnChangeText(value, "text")}
+              value={form.text}
+              multiline={true}
+              numberOfLines={3}
+              placeholder={`Whats on your mind, ${profile.User_Name}??`}
+            />
+          </View>
+          <View style={styles.iconbox}>
+            <Text style={{ color: "#DBBE80", fontWeight: "bold" }}>
+              Add to Your Post
+            </Text>
+
+            <TouchableOpacity onPress={() => OpenDocumentPicker()}>
+              <View>
+                <AntDesign name={"filetext1"} size={24} color="#DBBE80" />
+              </View>
             </TouchableOpacity>
+            <TouchableOpacity onPress={() => onOpenImage()}>
+              <View>
+                <Feather name={"image"} size={24} color="#DBBE80" />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => selectVideo()}>
+              <View>
+                <Feather name={"video"} size={24} color="#DBBE80" />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => OpenMusicPicker()}>
+              <View>
+                <Feather name={"mic"} size={24} color="#DBBE80" />
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <TouchableOpacity onPress={() => CreateUpdateUserPost()}>
+              <View style={styles.buttonbox1}>
+                <Text style={styles.buttontext1}>Publish</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.amount}>
+            <Text style={styles.amounttext}>{inputcount}</Text>
           </View>
         </View>
         {imageurl.length > 0 && type === "Image" && (
@@ -544,9 +576,9 @@ const AddNewPost = ({ navigation }) => {
               // source={{  uri: "http://apifeelmoti.ikaart.org//UploadDocuments/637934963226839019_0.MOV"}}
               source={{
                 html: `
-                        <video width="100%" height="50%" style="background-color:pink}" controls>
-                            <source src="${imageurl[0]}" type="video/mp4">
-                        </video>`,
+                          <video width="100%" height="50%" style="background-color:pink}" controls>
+                              <source src="${imageurl[0]}" type="video/mp4">
+                          </video>`,
               }}
             />
             <Text style={{ marginTop: 10 }}>{form.text}</Text>
@@ -589,16 +621,144 @@ const AddNewPost = ({ navigation }) => {
       </Snackbar>
     </SafeAreaView>
   );
-};
+}
 const styles = StyleSheet.create({
+  moti: {
+    width: 90,
+    height: 45,
+  },
+  bell: {
+    margin: 15,
+    marginRight: 25,
+    // backgroundColor: "red",
+    width: 25,
+    height: 25,
+  },
   profile: {
-    marginTop: 30,
+    // marginHorizontal: 10,
 
-    display: "flex",
+    height: 50,
+    width: 50,
+    borderRadius: 50,
+  },
+  bar: {
+    padding: 5,
+    marginTop: 20,
+    width: "100%",
+    height: 50,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  bar1: {
     flexDirection: "row",
   },
+  user: {
+    height: 50,
+    width: 50,
+    borderRadius: 50,
+  },
+  text: {
+    marginLeft: 10,
+  },
+  text1: {
+    fontSize: 20,
+    color: "#36596A",
+    fontWeight: "400",
+    textTransform: "capitalize",
+  },
+  text2: {
+    fontSize: 15,
+    height: 16,
+    color: "#A6A6A6",
+    fontWeight: "400",
+    textTransform: "capitalize",
+  },
+  image: {
+    width: "100%",
+    // backgroundColor: "green",
+  },
+  image1: {
+    height: DeviceInfo.hasNotch ? windowHeight - 350 : windowHeight - 250,
+    width: "100%",
+  },
+  dot: {
+    marginRight: 20,
+    justifyContent: "flex-end",
+    width: 15,
+    height: 30,
+  },
+  content: {
+    width: "100%",
+    backgroundColor: "#FFFFFF",
+    paddingtop: 10,
+    paddingHorizontal: 10,
+    paddingBottom: 20,
+    // shadowColor: "#DBBE80",
+    // shadowOffset: { width: 5, height: 2 },
+    // shadowOpacity: 0.5,
+    // shadowRadius: 2,
+    // elevation: 10,
+  },
+  content1: {
+    padding: 10,
+    fontWeight: "400",
+    fontSize: 14,
+    color: "#9B9C9F",
+    lineHeight: 22,
+  },
+  icon10: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  icontext: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  moti: {
+    width: 90,
+    height: 45,
+  },
+  // box: {
+  //   // marginLeft: 20,
+  //   backgroundColor: "#f8f8f8f8",
+  //   width: "100%",
+  //   height: 140,
+  // },
+  // buttonbox: {
+  //   marginLeft: 20,
+  //   marginTop: 20,
+  //   width: "90%",
+  //   height: 40,
+  //   backgroundColor: "#DBBE80",
+  //   borderRadius: 20,
+  //   display: "flex",
+  //   flexDirection: "row",
+  // },
+  // buttonboxicon: {
+  //   marginTop: 6,
+  //   marginLeft: 60,
+  //   color: "#FFFFFF",
+  // },
+  // buttontext: {
+  //   display: "flex",
+  //   justifyContent: "center",
+  //   textAlign: "center",
+  //   marginLeft: 10,
+  //   marginTop: 9,
+  //   fontSize: 16,
+  //   color: "#FFFFFF",
+  // },
+  textarea: {
+    display: "flex",
+    flexDirection: "row",
+    marginTop: 20,
+    width: "100%",
+    alignItems: "center",
+  },
   textareatext: {
-    // marginRight: 10,
     backgroundColor: "#fff",
     textAlignVertical: "top",
     width: "99%",
@@ -606,47 +766,48 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     paddingTop: 10,
     paddingLeft: 20,
-    marginBottom: 200,
   },
-  media: {
-    backgroundColor: "#FAFAFA",
-    elevation: 10,
-    borderWidth: 1,
-    borderColor: "#F1E7E7",
-    borderRadius: 10,
-  },
-  imagemedia: {
+  iconbox: {
     display: "flex",
     flexDirection: "row",
-    height: 55,
-    backgroundColor: "#fff",
-    borderRadius: 4,
+    width: "100%",
+    padding: 10,
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#DBBE80",
+    borderRadius: 10,
+  },
+
+  buttonbox1: {
+    marginTop: 15,
+    width: "100%",
+    height: 45,
+    backgroundColor: "#DBBE80",
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttontext1: {
+    fontSize: 20,
+    color: "#FFFFFF",
+    fontWeight: "bold",
+  },
+
+  amount: {
     marginTop: 15,
     marginLeft: 20,
+    marginRight: 10,
     width: "90%",
+    marginBottom: 15,
   },
-  imagemediatext: {
-    padding: 17,
-    // marginLeft: 10,
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#36596A",
+  amounttext: {
+    textAlign: "right",
   },
-  button: {
-    marginTop: 30,
-    marginLeft: 20,
-    width: "90%",
-    height: 60,
-    backgroundColor: "#DBBE80",
-    borderRadius: 5,
-  },
-  submit: {
-    textAlign: "center",
-    padding: 18,
-    fontSize: 18,
-
-    fontWeight: "700",
-    color: "#FFFFFF",
+  text: {
+    marginTop: 7,
+    marginLeft: 5,
+    fontSize: 12,
+    fontWeight: "300",
   },
 });
-export default AddNewPost;

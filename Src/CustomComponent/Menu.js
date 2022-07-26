@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import { setMenu } from "../store/action/profile/profile";
 import { useSelector, useDispatch } from "react-redux";
@@ -10,15 +11,15 @@ export default function Menu({ navigation }) {
   const showmenu = useSelector((state) => state.profileReducer.showmenu);
   const CallPost = () => {
     dispatch(setMenu(!showmenu));
-    navigation.navigate("AddTab", { screen: "Addpost" });
+    navigation.navigate("AddPost", { screen: "AddPost" });
   };
   const CallStory = () => {
     dispatch(setMenu(!showmenu));
     navigation.navigate("AddTab", { screen: "AddStory" });
   };
-  const OnDemand = () => {
+  const ONDemand = () => {
     dispatch(setMenu(!showmenu));
-    navigation.navigate("AddTab", { screen: "AddStory" });
+    navigation.navigate("OnDemand", { screen: "OnDemand" });
   };
 
   return (
@@ -30,8 +31,8 @@ export default function Menu({ navigation }) {
         zIndex: 1,
         right: 10,
         borderRadius: 5,
-        height: "13%",
-        width: "35%",
+        height: "20%",
+        width: "40%",
         paddingHorizontal: 10,
         // borderColor: "rgba(0,0,0,0.1)",
         borderColor: "#EBEBEB",
@@ -45,7 +46,7 @@ export default function Menu({ navigation }) {
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
-          height: "50%",
+          height: "33%",
           width: "100%",
         }}
       >
@@ -58,14 +59,30 @@ export default function Menu({ navigation }) {
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
-          height: "50%",
+          height: "33%",
           width: "100%",
           borderTopColor: "rgba(0,0,0,0.1)",
           borderTopWidth: 1,
         }}
       >
         <Text>Story</Text>
+
         <Ionicons name={"ios-add-circle-outline"} size={24} color={"#000"} />
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => ONDemand()}
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          height: "33%",
+          width: "100%",
+          borderTopColor: "rgba(0,0,0,0.1)",
+          borderTopWidth: 1,
+        }}
+      >
+        <Text>on-demand</Text>
+        <MaterialIcons name={"ondemand-video"} size={24} color={"#000"} />
       </TouchableOpacity>
     </View>
   );

@@ -12,7 +12,7 @@ import {
   Dimensions,
   SafeAreaView,
   TextInput,
-StatusBar,
+  StatusBar,
 } from "react-native";
 import moti from "../Assets/moti.png";
 
@@ -29,8 +29,8 @@ import profile from "../Assets/profile.png";
 const Explore = ({ navigation }) => {
   const [text, onChangeText] = React.useState("Useless Text");
   return (
-   <SafeAreaView  style={{flex:1,backgroundColor:"#fff"}}>
-   <StatusBar  barStyle="dark-content" backgroundColor={"#FFFFFF" } />
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <StatusBar barStyle="dark-content" backgroundColor={"#FFFFFF"} />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.header}>
           <TouchableOpacity>
@@ -174,7 +174,6 @@ const styles = StyleSheet.create({
     height: 45,
   },
   box: {
-    // marginLeft: 20,
     backgroundColor: "#f8f8f8f8",
     width: "100%",
     height: 150,

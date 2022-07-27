@@ -21,7 +21,11 @@ import DeviceInfo from "react-native-device-info";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import Foundation from "react-native-vector-icons/Foundation";
-import { createupdateuserstory, uploaddocumnet } from "../Utils/apiconfig";
+import {
+  createupdateuserpost,
+  uploaddocumnet,
+  uploadimage,
+} from "../Utils/apiconfig";
 import Header from "../CustomComponent/Header";
 const windowHeight = Dimensions.get("window").height;
 const windowWidth = Dimensions.get("window").width;
@@ -48,13 +52,12 @@ const options = [
   </View>,
 ];
 
-const AddStory = ({ navigation }) => {
+const OnDemand = ({ navigation }) => {
   const token = useSelector((state) => state.authReducer.token);
   const profile = useSelector((state) => state.profileReducer.profile);
   const dispatch = useDispatch();
   const [loading, setloading] = useState(false);
   const [inputcount, setinputcount] = useState(5000);
-  const [showkeyboard, setshowkeyboard] = useState(false);
   const [userpostdata, setuserpostdata] = useState([]);
   const [ActionSheetRef, setActionSheetRef] = useState(null);
   const [type, settype] = useState("Text");
@@ -69,10 +72,8 @@ const AddStory = ({ navigation }) => {
     longitude: 0,
     latitude: 0,
   });
-
   const onToggleSnackBar = () => setVisible(!visible);
   const onDismissSnackBar = () => setVisible(false);
-
   const handleError = (err) => {
     if (DocumentPicker.isCancel(err)) {
       console.warn("cancelled");
@@ -125,6 +126,32 @@ const AddStory = ({ navigation }) => {
       })
       .catch(handleError);
   };
+  const selectVideo = async () => {
+    settype("Video");
+    ImagePicker.openPicker({
+      mediaType: "video",
+      multiple: true,
+    }).then((video) => {
+      console.log("videovideo", video);
+      for (let i = 0; i < video.length; i++) {
+        const videodata = {
+          fileCopyUri: null,
+          name:
+            Platform.OS === "ios"
+              ? video[i].filename
+              : video[i].modificationDate,
+          size: video[i].size,
+          type: video[i].mime,
+          uri: Platform.OS === "ios" ? video[i].sourceURL : video[i].path,
+        };
+        const formData = new FormData();
+        formData.append("file", videodata);
+        console.log(formData);
+        uploadDocumnet(formData);
+      }
+    });
+  };
+
   const ImageGallery = async () => {
     settype("Image");
     setTimeout(() => {
@@ -157,30 +184,6 @@ const AddStory = ({ navigation }) => {
         }
       });
     }, 1000);
-  };
-  const selectVideo = async () => {
-    settype("Video");
-    ImagePicker.openPicker({
-      mediaType: "video",
-      multiple: true,
-    }).then((video) => {
-      for (let i = 0; i < video.length; i++) {
-        const videodata = {
-          fileCopyUri: null,
-          name:
-            Platform.OS === "ios"
-              ? video[i].filename
-              : video[i].modificationDate,
-          size: video[i].size,
-          type: video[i].mime,
-          uri: Platform.OS === "ios" ? video[i].sourceURL : video[i].path,
-        };
-        const formData = new FormData();
-        formData.append("file", videodata);
-        console.log(formData);
-        uploadDocumnet(formData);
-      }
-    });
   };
 
   const ImageCamera = async () => {
@@ -215,15 +218,17 @@ const AddStory = ({ navigation }) => {
     }, 1000);
   };
   const onOpenImage = () => ActionSheetRef.show();
-  //   const handleOnChangeText = (value, fieldName) =>
-  //     setForm({ ...form, [fieldName]: value });
+  const handleOnChangeText = (value, fieldName) =>
+    setForm({ ...form, [fieldName]: value });
   const uploadDocumnet = async (data) => {
+    setimageurl([]);
+    // console.log("uploadDocumnetuploadDocumnet==",data)
     setloading(true);
     setlodingtext("Uploading multimedia file.....");
-    console.log("chekkk data", data);
     try {
       const res = await uploaddocumnet(data, token);
       console.log("uploadDocumnet ===>", res.Data[0]);
+      console.log(res);
       const postdata = {
         UI_Name: res.Data[0].name,
         UI_File_Name: res.Data[0].name,
@@ -232,10 +237,9 @@ const AddStory = ({ navigation }) => {
       };
       console.log(postdata);
       userpostdata.push(postdata);
-      setuserpostdata([...userpostdata, postdata]);
+      setuserpostdata(userpostdata);
       imageurl.push(res.Data[0].url);
       setimageurl(imageurl);
-
       setlodingtext("Uploaded file.");
       setloading(false);
     } catch (error) {
@@ -255,40 +259,60 @@ const AddStory = ({ navigation }) => {
         onToggleSnackBar();
         console.log(error);
       }
+      setloading(false);
+
+      ImagePicker.clean()
+        .then(() => {
+          console.log("removed all tmp images from tmp directory");
+        })
+        .catch((e) => {
+          alert(e);
+        });
     }
-    ImagePicker.clean()
-      .then(() => {
-        console.log("removed all tmp images from tmp directory");
-      })
-      .catch((e) => {
-        alert(e);
-      });
   };
-  const CreateUpdateUserStory = async () => {
+  const Validation = () => {
+    let validation = false;
+    if (form.text.length > 0) {
+      validation = true;
+    }
+    return validation;
+  };
+  const CreateUpdateUserPost = async () => {
+    let values = await AsyncStorage.multiGet([
+      "currentLatitude",
+      "currentLongitude",
+      "addressComponent",
+    ]);
     console.log(userpostdata.length > 0);
     // return 0
-    if (userpostdata.length > 0 && userpostdata[0].UI_File_Path) {
+    if (values !== null && Validation()) {
+      console.log(values[0][1], values[1][1], values[2][1]);
       setloading(true);
       let data = {
-        US_ImageName:
+        UP_ImageName:
           userpostdata.length > 0 ? userpostdata[0].UI_File_Name : "",
-        US_ImagePath:
+        UP_ImagePath:
           userpostdata.length > 0 ? userpostdata[0].UI_File_Path : "",
-        US_IsActive: 1,
-        US_Product_URL: "",
-        US_Doc_Type: type,
+        UP_UserID: profile.User_PkeyID,
+        UP_UC_PKeyID: profile.User_PkeyID,
+        UP_Product_URL: "",
+        UP_Coll_Desc: form.text,
+        UP_Doc_Type: type,
+        UP_Location: values[2][1],
+        UP_latitude: values[0][1],
+        UP_longitude: values[1][1],
+        Type: 1,
         User_Image_Post_DTO:
           userpostdata.length > 0 ? JSON.stringify(userpostdata) : [],
-        Type: 1,
       };
       console.log("==============================");
-      console.log("CreateUpdateUserStory", data);
+      console.log("CreateUpdateUserPost", data);
       console.log("==============================");
 
       // return 0
-      await createupdateuserstory(data, token)
+      await createupdateuserpost(data, token)
         .then((res) => {
-          console.log("res:CreateUpdateUserStory ", res);
+          console.log("res:CreateUpdateUserPost ", res);
           setloading(false);
           setuserpostdata([]);
           setimageurl([]);
@@ -297,7 +321,7 @@ const AddStory = ({ navigation }) => {
             location: "",
           });
           onToggleSnackBar();
-          setmessage("Story uploaded successfully.");
+          setmessage("Post uploaded successfully.");
           setcolor("green");
         })
         .catch((error) => {
@@ -320,11 +344,12 @@ const AddStory = ({ navigation }) => {
           }
         });
     } else {
-      setmessage("Select atleast one media file....");
+      setmessage("Select atleast one media file or enter some text....");
       setcolor("red");
       onToggleSnackBar();
     }
   };
+
   const IntilaizeSetup = async () => await TrackPlayer.setupPlayer();
   const ResetSetup = async () => await TrackPlayer.reset();
   useEffect(() => {
@@ -335,9 +360,8 @@ const AddStory = ({ navigation }) => {
   }, []);
 
   const PlayTrack = async () => {
-    console.log(imageurl[0].url);
     const track3 = {
-      url: imageurl[0].url, //"http://apifeelmoti.ikaart.org//UploadDocuments/637932503293946244_0.mp3",
+      url: "http://apifeelmoti.ikaart.org//UploadDocuments/637932503293946244_0.mp3",
       //url: "http://soundbible.com/mp3/Tyrannosaurus%20Rex%20Roar-SoundBible.com-807702404.mp3", // Load media from the file system
       // title: 'Ice Age',
       // artist: 'deadmau5',
@@ -349,14 +373,12 @@ const AddStory = ({ navigation }) => {
     await TrackPlayer.add(track3);
     await TrackPlayer.play();
   };
+  console.log("imageurl", imageurl[0]);
 
   return (
     <SafeAreaView style={{ flex: 1,backgroundColor:"#F8F8FA" }}>
-      <StatusBar barStyle="dark-content" backgroundColor={"#FFFFFF"} />
-      <Header
-        onPress={() => navigation.navigate("Home")}
-        title={"Create Story"}
-      />
+      <StatusBar barStyle="dark-content" backgroundColor={"#F8F8FA"} />
+      <Header  onPress={() => navigation.navigate("Home")} title={"On Demand"} />
       <ScrollView
         contentContainerStyle={{
           backgroundColor: "#fff",
@@ -379,7 +401,7 @@ const AddStory = ({ navigation }) => {
                 style={styles.profile}
               />
             </TouchableOpacity>
-            {/* <View
+            <View
               style={{
                 width: "85%",
 
@@ -407,7 +429,7 @@ const AddStory = ({ navigation }) => {
                 numberOfLines={3}
                 placeholder={`Whats on your mind, ${profile.User_Name}??`}
               />
-            </View> */}
+            </View>
           </View>
         </View>
         <View style={styles.media}>
@@ -458,7 +480,7 @@ const AddStory = ({ navigation }) => {
           <View>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => CreateUpdateUserStory()}
+              onPress={() => CreateUpdateUserPost()}
             >
               <Text style={styles.submit}>Publish</Text>
             </TouchableOpacity>
@@ -577,15 +599,13 @@ const AddStory = ({ navigation }) => {
 const styles = StyleSheet.create({
   body: {
     marginTop: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    // display: "flex",
-    // flexDirection: "row",
+
+    display: "flex",
+    flexDirection: "row",
   },
   profile: {
-    marginTop: 40,
-    height: 100,
-    width: 100,
+    height: 50,
+    width: 50,
     borderRadius: 50,
   },
   textareatext: {
@@ -640,4 +660,4 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
 });
-export default AddStory;
+export default OnDemand;

@@ -14,7 +14,7 @@ import DebitCard from "../Assets/DebitCard.png";
 import Feather from "react-native-vector-icons/Feather";
 // import CheckBox from "@react-native-community/checkbox";
 
-export default function Mycard({ navigation }) {
+export default function AddNewCard({ navigation }) {
   return (
     <SafeAreaView>
       <Header
@@ -46,7 +46,7 @@ export default function Mycard({ navigation }) {
         <View>
           <TouchableOpacity
             style={styles.card}
-            onPress={() => navigation.navigate("AddNewCard")}
+            onPress={() => navigation.navigate("Sponsor")}
           >
             <Feather
               name={"plus"}
@@ -61,7 +61,7 @@ export default function Mycard({ navigation }) {
         </View>
         <View>
           <TouchableOpacity style={styles.button}>
-            <Text style={styles.submit}>Continue</Text>
+            <Text style={styles.submit}>Confirm Method</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

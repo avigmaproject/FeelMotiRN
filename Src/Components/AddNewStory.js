@@ -1,43 +1,30 @@
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
   TouchableOpacity,
   Image,
-  Dimensions,
   ScrollView,
   SafeAreaView,
   StatusBar,
   Platform,
 } from "react-native";
-import moti from "../Assets/moti.png";
-import bell from "../Assets/bell.png";
 import React, { useState, useEffect } from "react";
-import Entypo from "react-native-vector-icons/Entypo";
 import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import DeviceInfo from "react-native-device-info";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import Foundation from "react-native-vector-icons/Foundation";
-import { createupdateuserstory, uploaddocumnet } from "../Utils/apiconfig";
-import Header from "../CustomComponent/Header";
-const windowHeight = Dimensions.get("window").height;
-const windowWidth = Dimensions.get("window").width;
+import Entypo from "react-native-vector-icons/Entypo";
+import { uploaddocumnet, createupdateuserstory } from "../Utils/apiconfig";
 import { useSelector, useDispatch } from "react-redux";
-import Spinner from "react-native-loading-spinner-overlay";
 import { ActionSheetCustom as ActionSheet } from "react-native-actionsheet";
 import ImagePicker from "react-native-image-crop-picker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import DocumentPicker, { isInProgress } from "react-native-document-picker";
 import { SliderBox } from "react-native-image-slider-box";
 import TrackPlayer from "react-native-track-player";
 import { useFocusEffect } from "@react-navigation/native";
+import Spinner from "react-native-loading-spinner-overlay";
 import { Snackbar } from "react-native-paper";
-import { WebView } from "react-native-webview";
-import profile from "../Assets/profile.png";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 const options = [
   "Cancel",
   <View>
@@ -48,7 +35,7 @@ const options = [
   </View>,
 ];
 
-const AddStory = ({ navigation }) => {
+export default function AddStory({ navigation }) {
   const token = useSelector((state) => state.authReducer.token);
   const profile = useSelector((state) => state.profileReducer.profile);
   const dispatch = useDispatch();
@@ -215,8 +202,7 @@ const AddStory = ({ navigation }) => {
     }, 1000);
   };
   const onOpenImage = () => ActionSheetRef.show();
-  //   const handleOnChangeText = (value, fieldName) =>
-  //     setForm({ ...form, [fieldName]: value });
+  // const handleOnChangeText = (value, fieldName) =>  setForm({ ...form, [fieldName]: value });
   const uploadDocumnet = async (data) => {
     setloading(true);
     setlodingtext("Uploading multimedia file.....");
@@ -349,25 +335,68 @@ const AddStory = ({ navigation }) => {
     await TrackPlayer.add(track3);
     await TrackPlayer.play();
   };
-
   return (
-    <SafeAreaView style={{ flex: 1,backgroundColor:"#F8F8FA" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <StatusBar barStyle="dark-content" backgroundColor={"#FFFFFF"} />
-      <Header
-        onPress={() => navigation.navigate("Home")}
-        title={"Create Story"}
-      />
-      <ScrollView
-        contentContainerStyle={{
-          backgroundColor: "#fff",
-          marginVertical: 30,
-          borderRadius: 10,
-          flex: 1,
-        }}
-      >
+
+      <ScrollView style={{ flex: 1, marginHorizontal: 10 }}>
         <Spinner visible={loading} textContent={lodingtext} />
-        <View style={{ marginHorizontal: 20, flex: 1 }}>
-          <View style={styles.body}>
+        {/* <View style={styles.box}>
+            <TouchableOpacity>
+              <View style={styles.buttonbox}>
+                <View style={styles.buttonboxicon}>
+                  <SimpleLineIcons
+                    name={"compass"}
+                    size={15}
+                    style={styles.buttonboxicon}
+                  />
+                </View>
+                <Text style={styles.buttontext}>Explore Posts</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <View style={styles.buttonbox}>
+                <View style={styles.buttonboxicon}>
+                  <SimpleLineIcons
+                    name={"compass"}
+                    size={15}
+                    style={styles.buttonboxicon}
+                  />
+                </View>
+                <Text style={styles.buttontext}>Explore Creators</Text>
+              </View>
+            </TouchableOpacity>
+          </View> */}
+        <View
+          style={{
+            marginVertical: 20,
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ color: "#DBBE80", fontWeight: "bold", fontSize: 30 }}>
+            Create Story
+          </Text>
+          <Entypo
+            onPress={() => navigation.navigate("Home")}
+            name={"cross"}
+            size={35}
+            color="#424242"
+            style={{ position: "absolute", right: 10 }}
+          />
+        </View>
+        <View
+          style={{
+            backgroundColor: "#fff",
+            shadowColor: "#000",
+            shadowOffset: { width: 5, height: 3 },
+            shadowOpacity: 0.1,
+            shadowRadius: 2,
+            elevation: 10,
+          }}
+        >
+          <View style={styles.textarea}>
             <TouchableOpacity>
               <Image
                 resizeMode="stretch"
@@ -379,163 +408,119 @@ const AddStory = ({ navigation }) => {
                 style={styles.profile}
               />
             </TouchableOpacity>
-            {/* <View
-              style={{
-                width: "85%",
-
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <TextInput
-                style={styles.textareatext}
-                onKeyPress={({ nativeEvent }) => {
-                  if (nativeEvent.key === "Backspace") {
-                    if (inputcount <= 4999) {
-                      let count = inputcount + 1;
-                      setinputcount(count);
-                    }
-                  } else {
-                    let count = 5000 - (form.text.length + 1);
-                    setinputcount(count);
-                  }
-                }}
-                maxLength={5000}
-                onChangeText={(value) => handleOnChangeText(value, "text")}
-                value={form.text}
-                multiline={true}
-                numberOfLines={3}
-                placeholder={`Whats on your mind, ${profile.User_Name}??`}
-              />
-            </View> */}
+            <View style={{ marginLeft: 20 }}>
+              <Text
+                style={{ color: "#DBBE80", fontWeight: "bold", fontSize: 20 }}
+              >
+                {profile.User_Name}
+              </Text>
+            </View>
           </View>
-        </View>
-        <View style={styles.media}>
-          <TouchableOpacity onPress={() => onOpenImage()}>
-            <View style={styles.imagemedia}>
-              <Feather
-                name={"image"}
-                size={24}
-                color="#36596A"
-                style={{ marginTop: 15, marginLeft: 20 }}
-              />
-              <Text style={styles.imagemediatext}>Upload a Image</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => selectVideo()}>
-            <View style={styles.imagemedia}>
-              <Feather
-                name={"video"}
-                size={24}
-                color="#36596A"
-                style={{ marginTop: 15, marginLeft: 20 }}
-              />
-              <Text style={styles.imagemediatext}>Upload a Video</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => OpenDocumentPicker()}>
-            <View style={styles.imagemedia}>
-              <AntDesign
-                name={"filetext1"}
-                size={24}
-                color="#36596A"
-                style={{ marginTop: 15, marginLeft: 20 }}
-              />
-              <Text style={styles.imagemediatext}>Upload a Document</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => OpenMusicPicker()}>
-            <View style={styles.imagemedia}>
-              <Feather
-                name={"mic"}
-                size={24}
-                color="#36596A"
-                style={{ marginTop: 15, marginLeft: 20 }}
-              />
-              <Text style={styles.imagemediatext}>Upload a Voice</Text>
-            </View>
-          </TouchableOpacity>
-          <View>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => CreateUpdateUserStory()}
-            >
-              <Text style={styles.submit}>Publish</Text>
+          <View style={{ marginVertical: 20 }}>
+            {imageurl.length < 0 && (
+              <View
+                style={{
+                  alignSelf: "center",
+                  marginVertical: 20,
+                  borderWidth: 1,
+                  borderColor: "#DBBE80",
+                  borderRadius: 100,
+                  height: 120,
+                  width: 120,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    color: "#DBBE80",
+                    fontWeight: "bold",
+                    fontSize: 20,
+                    alignSelf: "center",
+                    textAlign: "center",
+                  }}
+                >
+                  Preview Story
+                </Text>
+              </View>
+            )}
+            {imageurl.length > 0 && type === "Image" && (
+              <View>
+                <SliderBox
+                  images={imageurl}
+                  sliderBoxHeight={300}
+                  onCurrentImagePressed={(index) =>
+                    console.warn(`image ${index} pressed`)
+                  }
+                  resizeMode="stretch"
+                />
+                <Text>{form.text}</Text>
+              </View>
+            )}
+            {imageurl.length > 0 && type === "Document" && (
+              <TouchableOpacity
+                style={{
+                  width: "100%",
+                  height: 200,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <AntDesign name={"filetext1"} size={100} color="#DBBE80" />
+                <Text>{form.text}</Text>
+              </TouchableOpacity>
+            )}
+            {imageurl.length > 0 && type === "Audio" && (
+              <TouchableOpacity
+                onPress={() => PlayTrack(imageurl[0])}
+                style={{
+                  width: "100%",
+                  paddingVertical: 40,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <AntDesign name={"sound"} size={100} color="#DBBE80" />
+                <Text style={{ marginTop: 10 }}>{form.text}</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+          <View style={styles.iconbox}>
+            <Text style={{ color: "#DBBE80", fontWeight: "bold" }}>
+              Add to Your story
+            </Text>
+            <TouchableOpacity onPress={() => OpenDocumentPicker()}>
+              <View>
+                <AntDesign name={"filetext1"} size={24} color="#DBBE80" />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => onOpenImage()}>
+              <View>
+                <Feather name={"image"} size={24} color="#DBBE80" />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => selectVideo()}>
+              <View>
+                <Feather name={"video"} size={24} color="#DBBE80" />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => OpenMusicPicker()}>
+              <View>
+                <Feather name={"mic"} size={24} color="#DBBE80" />
+              </View>
             </TouchableOpacity>
           </View>
-        </View>
-        {imageurl.length > 0 && type === "Image" && (
           <View>
-            <SliderBox
-              resizeMode="stretch"
-              images={imageurl}
-              sliderBoxHeight={150}
-              onCurrentImagePressed={(index) =>
-                console.warn(`image ${index} pressed`)
-              }
-            />
-            <Text>{form.text}</Text>
+            <TouchableOpacity onPress={() => CreateUpdateUserStory()}>
+              <View style={styles.buttonbox1}>
+                <Text style={styles.buttontext1}>Publish</Text>
+              </View>
+            </TouchableOpacity>
           </View>
-        )}
-        {imageurl.length > 0 && type === "Document" && (
-          <TouchableOpacity
-            style={{
-              width: "100%",
-              height: 200,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <AntDesign name={"filetext1"} size={100} color="#DBBE80" />
-            <Text>{form.text}</Text>
-          </TouchableOpacity>
-        )}
-        {imageurl.length > 0 && type === "Audio" && (
-          <TouchableOpacity
-            onPress={() => PlayTrack()}
-            style={{
-              width: "100%",
-              paddingVertical: 40,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <AntDesign name={"sound"} size={100} color="#DBBE80" />
-            <Text style={{ marginTop: 10 }}>{form.text}</Text>
-          </TouchableOpacity>
-        )}
-        {imageurl.length > 0 && type === "Video" && (
-          <TouchableOpacity
-            onPress={() => PlayTrack()}
-            style={{
-              width: "100%",
-              paddingVertical: 40,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <WebView
-              mediaPlaybackRequiresUserAction={true}
-              allowsInlineMediaPlayback={true}
-              allowsFullscreenVideo={false}
-              shouldStartLoad={"No"}
-              style={{
-                width: windowWidth,
-                height: DeviceInfo.hasNotch
-                  ? windowHeight - 350
-                  : windowHeight - 250,
-              }}
-              // source={{  uri: "http://apifeelmoti.ikaart.org//UploadDocuments/637934963226839019_0.MOV"}}
-              source={{
-                html: `
-                          <video width="100%" height="50%" style="background-color:pink}" controls>
-                              <source src="${imageurl[0]}" type="video/mp4">
-                          </video>`,
-              }}
-            />
-            <Text style={{ marginTop: 10 }}>{form.text}</Text>
-          </TouchableOpacity>
-        )}
+          <View style={styles.amount}>
+            <Text style={styles.amounttext}>{inputcount}</Text>
+          </View>
+        </View>
       </ScrollView>
       <ActionSheet
         ref={(o) => setActionSheetRef(o)}
@@ -573,71 +558,108 @@ const AddStory = ({ navigation }) => {
       </Snackbar>
     </SafeAreaView>
   );
-};
+}
 const styles = StyleSheet.create({
-  body: {
-    marginTop: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    // display: "flex",
-    // flexDirection: "row",
-  },
   profile: {
-    marginTop: 40,
-    height: 100,
-    width: 100,
+    height: 50,
+    width: 50,
     borderRadius: 50,
   },
-  textareatext: {
-    marginTop: 30,
-    backgroundColor: "#fff",
-    textAlignVertical: "top",
-    width: "99%",
-    height: 100,
-    marginVertical: 10,
-    paddingTop: 10,
-    paddingLeft: 20,
-    marginBottom: 200,
+  text1: {
+    fontSize: 20,
+    color: "#36596A",
+    fontWeight: "400",
+    textTransform: "capitalize",
   },
-  media: {
-    backgroundColor: "#FAFAFA",
-    elevation: 10,
-    borderWidth: 1,
-    borderColor: "#F1E7E7",
-    borderRadius: 10,
-  },
-  imagemedia: {
+
+  buttonbox: {
+    marginTop: 20,
+    width: "100%",
+    height: 40,
+    backgroundColor: "#DBBE80",
+    borderRadius: 20,
     display: "flex",
     flexDirection: "row",
-    height: 55,
-    backgroundColor: "#fff",
-    borderRadius: 4,
-    marginTop: 15,
-    marginLeft: 20,
-    width: "90%",
   },
-  imagemediatext: {
-    padding: 17,
-    // marginLeft: 10,
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#36596A",
-  },
-  button: {
-    marginTop: 30,
-    marginLeft: 20,
-    width: "90%",
-    height: 60,
-    backgroundColor: "#DBBE80",
-    borderRadius: 5,
-  },
-  submit: {
-    textAlign: "center",
-    padding: 18,
-    fontSize: 18,
-
-    fontWeight: "700",
+  buttonboxicon: {
+    marginTop: 6,
+    marginLeft: 60,
     color: "#FFFFFF",
   },
+  buttontext: {
+    display: "flex",
+    justifyContent: "center",
+    textAlign: "center",
+    marginLeft: 10,
+    marginTop: 9,
+    fontSize: 16,
+    color: "#FFFFFF",
+  },
+  textarea: {
+    display: "flex",
+    flexDirection: "row",
+    marginTop: 20,
+    width: "100%",
+    alignItems: "center",
+  },
+  textareatext: {
+    textAlignVertical: "top",
+    width: "80%",
+    height: 70,
+  },
+  iconbox: {
+    display: "flex",
+    flexDirection: "row",
+    width: "100%",
+    padding: 10,
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#DBBE80",
+    borderRadius: 10,
+  },
+  icon: {
+    marginLeft: 15,
+  },
+  buttonbox1: {
+    marginTop: 15,
+    width: "100%",
+    height: 40,
+    backgroundColor: "#DBBE80",
+    borderRadius: 20,
+  },
+  buttontext1: {
+    display: "flex",
+    justifyContent: "center",
+    textAlign: "center",
+    marginTop: 9,
+    fontSize: 16,
+    color: "#FFFFFF",
+  },
+  icon1: {
+    marginLeft: 30,
+  },
+  amount: {
+    marginTop: 15,
+    width: "95%",
+    marginBottom: 15,
+  },
+  amounttext: {
+    textAlign: "right",
+  },
+  text: {
+    marginTop: 7,
+    marginLeft: 5,
+    fontSize: 12,
+    fontWeight: "300",
+  },
+  spinnerTextStyle: {
+    color: "#FFF",
+  },
+  box: {
+    // marginLeft: 20,
+    backgroundColor: "#f8f8f8f8",
+    width: "100%",
+    height: 140,
+  },
 });
-export default AddStory;
